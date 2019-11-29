@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
+import util.TimeUtil;
+
 import java.util.Map;
 
 @Log
@@ -64,7 +66,31 @@ public class FadadaCallBackController {
     }
 
     @RequestMapping(value = "/orgAuthTo")
+    @ResponseBody
     public void fddAuthCallBack(@RequestParam Map paraMap){
+        //法大大认证return url,,,{companyName=枣庄星联信息科技有限公司, transactionNo=6300f86ca6e24bfebd15f661d98c8e48, authenticationType=2, status=3, sign=Q0NBRUZBNzlENTFGNkM2QTkwQTAxNEQyRDFEMjE0NkM5RjBFOUZGOA==}
+        String transactionNo = (String)paraMap.get("transactionNo");
+        String status = (String)paraMap.get("status");
+        String authenticationType = (String)paraMap.get("authenticationType");
+        Example example = new Example(AuthRecord.class);
+        example.and().andEqualTo("transactionNo",transactionNo);
+        AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
+        AuthRecord authRecordNew = new AuthRecord();
+        //如果有记录，则更改状态
+        if(authRecord != null) {
+            authRecordNew.setId(authRecord.getId());
+            authRecordNew.setStatus(status);
+            authRecordNew.setLastUpdateTime(TimeUtil.getNowDateTime());
+            fadadaAuthRecordMapper.updateByPrimaryKeySelective(authRecordNew);
+        }else {
+            authRecordNew.setId(idWorker.nextId()+"");
+            authRecordNew.setTransactionNo(transactionNo);
+            authRecordNew.setStatus(status);
+            authRecordNew.setAuthenticationType(authenticationType);
+            authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
+            fadadaAuthRecordMapper.insertSelective(authRecordNew);
+        }
+
         log.info("法大大认证return url,,,"+paraMap.toString());
     }
 

@@ -64,4 +64,8 @@ public class AuthRecord implements Serializable {
      */
     private String certStatus;
 
+    private String createTime;
+
+    private String lastUpdateTime;
+
 }

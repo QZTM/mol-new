@@ -1,14 +1,8 @@
 package com.mol.supplier.entity.dingding.solr;
 
-import com.mol.supplier.entity.dingding.login.AppUser;
 import lombok.Data;
-import org.apache.solr.client.solrj.beans.Field;
-import org.springframework.data.solr.core.mapping.Dynamic;
-
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 @Data
 public class fyPurchase implements Serializable {
