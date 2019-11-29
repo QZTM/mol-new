@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mol.expert.mapper.newMysql.expert.ExpertRecomendMapper">
+    <select id="findPurAndAdopt" parameterType="java.lang.String" resultType="com.mol.expert.entity.dingding.solr.fyPurchase">
+        select
+         fp.* ,er.adopt
+        from expert_recommend er
+        left join fy_purchase fp on fp.id=er.purchase_id
+        WHERE
+        er.expert_id=#{expertId}
+        <if test="adopt!=null">
+            and adopt=#{adopt}
+        </if>
+        order by er.create_time desc
+    </select>
+
+    <select id="findPurAndAdoptSuccessOrFail" parameterType="java.lang.String" resultType="com.mol.expert.entity.dingding.solr.fyPurchase">
+        select
+        fp.* ,er.adopt
+        from expert_recommend er
+        left join fy_purchase fp on fp.id=er.purchase_id
+        WHERE
+        er.expert_id=#{expertId}
+        and
+        er.adopt in(1,0)
+        order by er.create_time desc
+    </select>
+    <select id="findPur" parameterType="java.lang.String" resultType="com.mol.expert.entity.dingding.solr.fyPurchase">
+        SELECT
+            fp.*,
+            er.commission_money
+        FROM
+            expert_recommend er
+            LEFT JOIN fy_purchase fp ON fp.id = er.purchase_id
+        WHERE
+            er.expert_id = #{expertId}
+            AND er.adopt IN ( "1")
+        ORDER BY
+            er.create_time DESC
+    </select>
+</mapper>

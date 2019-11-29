@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mol.purchase.mapper.newMysql.ExpertRecommendMapper">
+    <update id="updataAdoptByPurIdAndExpertId" parameterType="java.lang.String">
+        update expert_recommend set adopt="1" where  purchase_id= #{purId}and expert_id=#{expertId}
+    </update>
+    <update id="updataAdoptNotChecked" parameterType="java.lang.String">
+        update expert_recommend set adopt="0" where  purchase_id= #{purId} and adopt="2"
+    </update>
+    <update id="updataComissionMoneyByPurIdAndExpertId" parameterType="java.lang.String">
+        update expert_recommend set commission_money=#{moneyOne},com_money_time=#{nowTime} where purchase_id=#{purId} AND expert_id=#{expertId}
+    </update>
+</mapper>

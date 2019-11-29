@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta charset="UTF-8">
+    <title>采购详情</title>
+
+    <!-- Bootstrap -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery) -->
+    <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。 -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <script th:src="@{/layui/layui.all.js}"></script>
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
+
+    <style>
+        .button{
+            clear: both;
+            /*width: 120px;*/
+            text-align: right;
+            padding-right: 13px;
+            margin-top: 163px;
+            height: 50px;
+
+        }
+        .tabble{
+            border-bottom: 1px solid #dddddd;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <p th:text="${pur.applyCause}" style="text-align: center;font-size: 16px;font-weight: bold;height: 36px;padding-top: 14px"></p>
+    <!--    <p style="text-align: center;font-size: 22px;font-weight: bold;">采购信息</p>-->
+    <!-- 评审费  -->
+    <div th:if="${expertReview=='true'}" style="float: right;margin-right: 10px">
+        需支付专家评审费：<text th:text="${expertReward}" style="color: red">200</text>元
+    </div>
+    <!--产品名称开始-->
+    <div style="text-align: center;border: 1px solid #eeeeee;font-size: 14px;padding-top: 6px;clear: both;">
+
+        <div  class="col-xs-4 col-md-4">
+            <p style="text-align: center;">已报价商家:<span style="color: red;" th:text="${quoteCount}">
+				14
+			</span></p>
+        </div>
+        <div >
+            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">
+
+			</span></p>
+        </div>
+    </div>
+    <!--产品名称结束-->
+    <!--发布日期开始-->
+    <div style="padding-top: 6px" >
+        <!--        <div  class="col-xs-3 col-md-3">-->
+        <!--            <p style="text-align: center;">要求商家:<span style="color: red;" th:text="${quoNum}">-->
+        <!--			</span></p>-->
+        <!--        </div>-->
+
+        <span style="float:left;font-size: 12px;padding-left: 10px;width: 24%">
+            <p style="color: blue;">类型:<span th:text="${pur.goodsType}" style="color: black;"></span></p>
+
+        </span>
+        <span style="font-size: 12px;float: left;width: 24%" >
+            <p style="color: blue;">&nbsp;状态:<span th:text="${pur.status}" style="color: black;"></span></p>
+        </span>
+
+        <span style="font-size: 12px;float: left;width: 24%" >
+            <p style="color: blue;">&nbsp;付款方式:<span th:text="${payMent}" style="color: black;"></span></p>
+        </span>
+
+        <span style="font-size: 12px;float: left;width: 24%" >
+            <p style="color: blue;">&nbsp;供货周期:<span th:text="${supplyCycle}" style="color: black;"></span><span style="color: black;">天</span></p>
+        </span>
+        <!--        <div  class="col-xs-4 col-md-4">-->
+        <!--            <p style="text-align: center;">付款方式:<span style="color: red;" th:text="${payMent}">-->
+        <!--				货到付款-->
+        <!--			</span></p>-->
+        <!--        </div>-->
+        <!--        <div  class="col-xs-4 col-md-4">-->
+        <!--        <p style="text-align: center;">供货周期:<span style="color: red;" th:text="${supplyCycle}">-->
+        <!--				30-->
+        <!--			</span>天</p>-->
+        <!--        </div>-->
+        <!--        <div class="col-xs-6 col-md-6">-->
+        <!--            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">-->
+
+        <!--			</span></p>-->
+        <!--        </div>-->
+
+    </div>
+    <!--发布日期结束-->
+
+    <!--编号开始-->
+    <div style="border: 1px solid #eeeeee;clear: both;">
+         <span style="float:left;padding-left: 9px;font-size: 12px;padding-top: 6px">
+            <p>编号&nbsp;:&nbsp;<span th:text="${pur.orderNumber}"></span></p>
+
+        </span>
+        <span style="font-size: 12px;float: right;padding-right: 72px;padding-top: 6px" >
+<!--            -->
+            <!--    查询到的专家的电话号码放到此处        -->
+            <!--            -->
+            <p>技术支持&nbsp;: &nbsp;<span  th:text="${tst}" style="color: blue;">11111</span></p>
+        </span>
+    </div>
+    <!--编号结束-->
+    <!--表格开始-->
+    <div >
+        <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
+            <tr>
+                <td style="width: 12%">序号</td>
+                <td  style="width: 28%;">名称</td>
+                <td  style="width: 32%;">规格</td>
+                <td style="width: 12%">单位</td>
+                <td style="width: 16%">数量</td>
+            </tr>
+            <tr th:each="en,f:${purList}">
+                <td th:text="${f.index+1}" style="width: 12%">序号</td>
+                <td th:text="${en.itemName}" style="width: 32%;">名称</td>
+                <td th:text="${en.norms}"  style="width: 32%;">规格</td>
+                <td th:text="${en.unit}" style="width: 12%">单位</td>
+                <td th:text="${en.count}" style="width: 12%">数量</td>
+            </tr>
+
+        </table>
+    </div>
+    <!--表格结束-->
+
+    <div style="margin-left: 16px;font-size: 12px;clear: both;">
+        <!--详情需求pdf-->
+        <div style="float: left;font-size: 12px">
+            <a href="#">详情需求PDF</a>
+        </div>
+        <!--截止日期-->
+        <div style="font-size: 12px;color: #ff0000;float: right;padding-right: 43px">
+            <span>截止日期：</span>
+            <span th:text="${dealLine}">2019-6-9 18:00:00</span>
+        </div>
+    </div>
+
+
+    <div style="clear:both;">
+        <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
+            <tr>
+                <td colspan="2">
+                    我的报价
+                </td>
+                <td></td>
+                <td colspan="2">
+                    供货周期：
+                </td>
+                <td th:text="${supplyCycle}"></td>
+            </tr>
+            <tr>
+                <td style="width: 10%">序号</td>
+                <td  style="width: 27%;">名称</td>
+                <td  style="width: 23%;">规格</td>
+                <td style="width: 12%">数量</td>
+                <td style="width: 12%">报价</td>
+                <td style="width: 16%">总计</td>
+
+            </tr>
+            <tr th:each="en,f:${purList}">
+                <td th:text="${f.index+1}" style="width: 9%">序号</td>
+                <td th:text="${en.itemName}" style="width: 27%;">名称</td>
+                <td th:text="${en.norms}"  style="width: 27%;">规格</td>
+                <td th:text="${en.count}" style="width: 12%">数量</td>
+                <td th:text="${en.quote}" style="width: 12%">报价</td>
+                <td th:text="${en.sum}" style="width: 13%">总计</td>
+            </tr>
+
+        </table>
+    </div>
+    <!-- 我的报价结束-->
+    <!-- 中标结果开始-->
+    <div th:if="${not #lists.isEmpty(okList)}">
+        <div style="color: red;">
+            中标结果
+        </div>
+        <div>
+            <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
+                <tr>
+                    <td style="width: 10%">序号</td>
+                    <td  style="width: 27%;">名称</td>
+                    <td  style="width: 23%;">规格</td>
+                    <td style="width: 12%">数量</td>
+                    <td style="width: 12%">报价</td>
+                    <td style="width: 16%">总计</td>
+
+                </tr>
+                <tr th:each="en,f:${okList}">
+                    <td th:text="${f.index+1}" style="width: 9%">序号</td>
+                    <td th:text="${en.itemName}" style="width: 27%;">名称</td>
+                    <td th:text="${en.norms}"  style="width: 27%;">规格</td>
+                    <td th:text="${en.count}" style="width: 12%">数量</td>
+                    <td th:text="${en.quote}" style="width: 12%">报价</td>
+                    <td th:text="${en.sum}" style="width: 13%">总计</td>
+                </tr>
+
+            </table>
+        </div>
+
+    </div>
+    <!-- 中标结果结束-->
+    <div th:if="${not #lists.isEmpty(okList)}">
+
+        <div th:if="${expertReview=='true'||electronicContract=='true' }" >
+            <div style="clear: both;border: 1px solid black;height: 36px;margin-left: 10px;padding: 3px 3px 0px 3px ;">
+<!--                 <span style="float: left;">-->
+<!--                    专家评审费：-->
+<!--                </span>-->
+<!--                    <span th:if="${expertReview=='true'}" style="float: left;color: #b92c28;"  th:text="${expertReward}"></span><span style="float: left;"  >元</span>-->
+<!--                    <span th:if="${expertReview=='true'}" style="float: left;color: #b92c28;"  th:text="${contractCost}"></span><span style="float: left;"  >元</span>-->
+                <span th:if="${expertReview=='true'}" >专家评审费:<span style="color: #b92c28;" th:text="${expertRewardOne}">20</span><span >元</span></span>
+                <span th:if="${electronicContract=='true'}" >电子合同费:<span style="color: #b92c28;" th:text="${contractCost}">20</span><span >元</span></span>
+                <span style="width: 14%;float: right">
+                    <button  id="basic-addon1" style="background-color: #5B9BD5;text-align: center">支付</button>
+                </span>
+            </div>
+            <div style="clear: both;margin: 3px 0px 0px 10px ;">
+                请尽快支付相关费用，以免耽误合作进度！
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="jumbotron">
+        <h2  style="text-align: center"><small th:text="${pur.status}"></small></h2>
+
+    </div>
+
+</div>
+<script th:src="@{/js/common.js}"></script>
+<script th:inline="javascript">
+
+    window.onload=function(){
+        //鉴权：
+        var jsauthmap = [[${jsauthmap}]];
+        console.log("jsauthmap");
+        console.log(jsauthmap);
+        dd.config({
+            'agentId': jsauthmap.agentId,
+            'corpId': jsauthmap.corpId,
+            'timeStamp': jsauthmap.timeStamp,
+            'nonceStr': jsauthmap.nonceStr,
+            'signature': jsauthmap.signature,
+            'jsApiList': [
+                'runtime.info',
+                'device.notification.prompt',
+                'biz.chat.pickConversation',
+                'device.notification.confirm',
+                'device.notification.alert',
+                'device.notification.prompt',
+                'biz.chat.open',
+                'biz.util.open',
+                'biz.user.get',
+                'biz.contact.choose',
+                'biz.telephone.call',
+                'biz.util.uploadImage',
+                'biz.ding.post',
+                'biz.alipay.pay']
+        });
+
+
+
+
+        $("#basic-addon1").on('click',function(){
+            //支付1.去后端获取支付信息     2，带着支付信息调用钉钉微应用的支付接口
+            //禁用支付，防止多次支付
+            $("#basic-addon1").attr('disabled','disable');
+            var purchaseId = [[${pur.id}]];
+            var paraData = {'payfor':'5','purchaseId':purchaseId};
+            dd.ready(function(){
+                getPayInfo(paraData).then(function(res){
+                    console.log("getPayInfo...then:");
+                    console.log("res:");
+                    console.log(res);
+                    console.log("res.success:"+res.success);
+                    if(res.success){
+                        return toalipay(res.result,res.message);
+                    }else{
+                        alertMsg(res.message);
+                        return ;
+                    }
+                }).then(function(res){
+                    console.log("第二个then");
+                    console.log("异步结果：应该是自定义订单号");
+                    console.log(res);
+                    //带着自定义订单id去后端查询订单状态
+                    getOrderStatus(res,15,'/sche/getScheduleOne?id='+purchaseId);
+                }).then(function(res){
+                    // console.log("第四个then")
+                    // console.log(res.success);
+                    // //alert(JSON.stringify(res));
+                    // hideLoading();
+                    // if(res.success){
+                    //     alertMsg("支付成功");
+                    //     setTimeout(function(){
+                    //         location.href='/sche/getScheduleOne?id='+purchaseId;
+                    //     },1000);
+                    // }else{
+                    //     alertMsg("支付未成功");
+                    // }
+                }).catch(function (res) {
+                    hideLoading();
+                    console.log("异步支付出错了：");
+                    console.log(res);
+                });
+            })
+        })
+
+
+
+
+
+    }
+
+
+    // function pay() {
+    //
+    //     alert("正在更新")
+    //     //支付完成，修改expert-recommend  commission = 1
+    //     //      commission-money 字段
+    //     //E完成后再E应用  显示可以联系供应商
+    // }
+</script>
+</body>
+
+</html>
