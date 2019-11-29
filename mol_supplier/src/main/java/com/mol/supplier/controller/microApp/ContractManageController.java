@@ -1,14 +1,18 @@
 package com.mol.supplier.controller.microApp;
 
+import com.mol.fadada.handler.RegistAndAuthHandler;
+import com.mol.fadada.pojo.AuthRecord;
+import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.service.microApp.MicroContractService;
 import com.mol.supplier.service.microApp.MicroUserService;
+import entity.ServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import tk.mybatis.mapper.entity.Example;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,7 @@ public class ContractManageController {
     @Autowired
     private FadadaAuthRecordMapper fadadaAuthRecordMapper;
 
+
     @RequestMapping("/index")
     public String showContractIndex(Model model){
         List<Map> dataList = microContractService.getPurchaseAndContractList("266752374326324047");
@@ -38,7 +43,26 @@ public class ContractManageController {
 
 
     @RequestMapping("/showCheck")
-    public String showCheckPage(){
+    public String showCheckPage(HttpSession session){
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        //查询该商户是否注册过：
+        ServiceResult serviceResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(), "2");
+        String customerId = "";
+        if(serviceResult.isSuccess()) {
+            customerId = (String)serviceResult.getResult();
+            Example example = new Example(AuthRecord.class);
+            example.and().andEqualTo("companyName",supplier.getName()).andEqualTo("authenticationType","2");
+            AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
+            if(authRecord != null && authRecord.getStatus() == "1") {
+
+            }
+
+            //根据customerId查询
+
+
+
+        }
+
         return "e_contract_auth";
     }
 
