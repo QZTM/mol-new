@@ -16,6 +16,8 @@ import com.mol.purchase.entity.dingding.solr.fyPurchase;
 import com.mol.purchase.service.dingding.schedule.SchedulerRepairService;
 import entity.ServiceResult;
 import com.mol.purchase.entity.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,10 +45,13 @@ public class SchedulerRepairController {
     @Autowired
     private SchedulerRepairService schedulerRepairService;
 
+    private static final Logger log= LoggerFactory.getLogger(SchedulerRepairController.class);
+
 
     @RequestMapping(value = "/getList",method = RequestMethod.GET)
     public ServiceResult getList(String orgId, String userId,int pageNum,int pageSize){
         List<fyPurchase> purList=schedulerRepairService.getList(orgId,userId,pageNum,pageSize);
+        log.info("E应用进度页面 查询List:"+purList);
         return ServiceResult.success(purList);
     }
 
@@ -102,20 +107,6 @@ public class SchedulerRepairController {
 
     @GetMapping("/getApproveList")
     public ServiceResult getApproveList(String purId){
-//        AppAuthOrg org=schedulerRepairService.getOrg(orgId);
-//        String approve = org.getPurchaseApproveList();
-//
-//        if (approve == null){
-//            return ServiceResult.failure("查询审核人异常！");
-//        }
-//        String[] split = approve.split(",");
-//        List<String> list= new ArrayList<>();
-//        for (String s : split) {
-//            list.add(s);
-//        }
-//
-//        List<AppUser> userList=schedulerRepairService.getAppUserByIdList(list);
-//        return ServiceResult.success(userList);
         if (purId==null){
             return ServiceResult.failureMsg("订单id传递失败！");
         }
@@ -133,10 +124,13 @@ public class SchedulerRepairController {
     @GetMapping("/getSaleMan")
     public ServiceResult getSaleman(String purId,String supplierId){
         if (purId ==null || supplierId==null){
+            log.info("联系供应商 参数异常");
             return ServiceResult.failure("查询失败！");
         }
         String id =schedulerRepairService.getSalemanId(purId,supplierId);
+        log.info("联系供应商  查询到报价人员id"+id);
         SupplierSalesman man=schedulerRepairService.getSaleManById(id);
+        log.info("联系供应商  查询到报价人员信息"+man);
         return ServiceResult.success(man);
     }
 
@@ -149,7 +143,9 @@ public class SchedulerRepairController {
     @GetMapping("/getPayresult")
     public ServiceResult getPayR(String supplierId,String purId){
         QuotePayresult qp=schedulerRepairService.getPayExpertResult(supplierId,purId);
+        log.info("查询供应商支付订单前期费用 :"+qp);
         if (qp ==null){
+            log.info("查询供应商支付订单前期费用 信息为空");
             return ServiceResult.failureMsg("查询失败！");
         }
         return ServiceResult.success(qp);

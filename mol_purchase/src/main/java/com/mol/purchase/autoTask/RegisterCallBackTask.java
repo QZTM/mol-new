@@ -40,7 +40,7 @@ public class RegisterCallBackTask implements ApplicationRunner {
         // 重新为企业注册回调
         client = new DefaultDingTalkClient(URLConstant.REGISTER_CALLBACK);
         OapiCallBackRegisterCallBackRequest registerRequest = new OapiCallBackRegisterCallBackRequest();
-        registerRequest.setUrl(Constant.CALLBACK_URL_HOST + "/callback");
+        registerRequest.setUrl("http://"+Constant.CALLBACK_URL_HOST + "/callback");
         registerRequest.setAesKey(Constant.ENCODING_AES_KEY);
         registerRequest.setToken(Constant.TOKEN);
         registerRequest.setCallBackTag(Arrays.asList("bpms_instance_change", "bpms_task_change"));

@@ -16,4 +16,14 @@
     <select id="GetCustomer_id" resultType="java.util.Map">
         select * from  fadada_regist_record where open_id=#{open_id}
     </select>
+
+    <select id="Setfadada_auth_record" resultType="java.util.Map">
+        select  * from  fadada_auth_record where customer_id=#{customerId}
+    </select>
+    <insert id="AuthSynchronizeNotity" parameterType="java.util.Map">
+        insert into fadada_auth_record(id,customer_id,transaction_no,authentication_type,sign,status,create_time) values (#{id},#{customer_id},#{transaction_no},#{authentication_type},#{sign},#{status},#{create_time})
+    </insert>
+    <update id="AuthAsynchronousNotity">
+        update  fadada_auth_record set `status`=#{status},transaction_no=#{transaction_no},status_desc=#{status_desc},last_update_time=#{last_update_time} where customer_id=#{customerId}
+    </update>
 </mapper>

@@ -348,6 +348,7 @@ public class RegistAndAuthHandler {
 
 
 
+
     /**
      * 测试
      * 个人法大大id:6EBA30799A0BDAD439A44702D0C2B8A4
