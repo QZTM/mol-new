@@ -8,6 +8,7 @@ import entity.ServiceResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import util.IdWorker;
+
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,8 +45,18 @@ public class ElectronicContractSigninginforService
          Map map= electronicContractSigninginforMapper.GetCustomer_id("1161174896704700416");
          if (map.get("customer_id")!=null)
          {
-             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),"http://fyycg66.vaiwan.com/ElectronicContractSigninginforController/AuthAsynchronousNotity","http://fyycg66.vaiwan.com/ElectronicContractSigninginforController/AuthSynchronizeNotity");
-             map1.put("statu",true);
+             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),"http://fyycg66.vaiwan.com/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString(),"http://fyycg66.vaiwan.com/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString());
+             if (serviceResult.isSuccess()==true)//获取认证url
+             {
+                 String items=serviceResult.getResult().toString().split(",")[1];
+                 String url =items.substring(5,items.length()-1);
+                 map1.put("url",url);
+                 map1.put("statu",true);
+             }
+             else
+             {
+                 map1.put("statu",false);
+             }
          }
          else
          {
@@ -56,15 +67,26 @@ public class ElectronicContractSigninginforService
 
     public void AuthSynchronizeNotityLogic(Map map)//认证同步回调地址
     {
-        Map map1=map;
+        try
+        {
+            Map map1=map;
+            if (map.get("status").toString().equals("0") && electronicContractSigninginforMapper.Setfadada_auth_record(map.get("customer_id").toString())==null)
+            {
+                electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime());
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
     }
 
     public void AuthAsynchronousNotityLogic(Map map)//认证异步回调地址
     {
-        Map map1=map;
+        electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
     }
     /**
-     *
+     *上传合同
      * @param file
      * @param map
      * @return
@@ -73,12 +95,13 @@ public class ElectronicContractSigninginforService
     {
         Map map1=new HashMap();
         try {
+            ServiceResult authResult=RegistAndAuthHandler.checkIfAuthed("1161174896704700416","2");
             if (RegistAndAuthHandler.checkIfRegisted("1161174896704700416","2").isSuccess()==false)//查询是否注册
             {
                 map1.put("statu","2");//未注册
                 return map1;
             }
-            else if (RegistAndAuthHandler.checkIfAuthed("1161174896704700416","2").isSuccess()==false)//查询是否认证
+            else if (authResult.isSuccess()==false)//查询是否认证
             {
                 map1.put("statu","3");//未认证
                 return map1;
@@ -98,8 +121,11 @@ public class ElectronicContractSigninginforService
                  ServiceResult result =ContractHandler.uploadContract(toFile.getName(),toFile);//调用法大上传合同接口上传
                  if(result.isSuccess()==true)
                  {
+                     Map map2= electronicContractSigninginforMapper.GetCustomer_id("1161174896704700416");
                      electronicContractSigninginforMapper.Upload_Contract(String.valueOf(new IdWorker().nextId()) ,result.getResult().toString(), DataUtil.GetNowSytemTime(),map.get("userid").toString());//保存上传合同的信息
-                     //******自动签署接口预留位置******
+                     ContractHandler.ApplyNumCert(map2.get("customer_id").toString(),"f104f1a60bca43dbb5846e50588b5d1e");//编号证书
+                     //******自动签署接口预留位置****** 客户编号 交易号 合同编号 关键字盖章 文档标题
+                    ContractHandler.ExtsignAuto(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),result.getResult().toString(),"",toFile.getName());
                      electronicContractSigninginforMapper.Supplier_Contract(String.valueOf(new IdWorker().nextId()),map.get("purchase_id").toString(),map.get("supplier_id").toString(),result.getResult().toString(),"",DataUtil.GetNowSytemTime(),DataUtil.GetNowSytemTime(),"2");
                  }
                  ins.close();
