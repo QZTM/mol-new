@@ -292,8 +292,7 @@
                     if(res.success){
                         return toalipay(res.result,res.message);
                     }else{
-                        alertMsg('获取支付信息失败！');
-
+                        alertMsg(res.message);
                         return ;
                     }
                 }).then(function(res){
@@ -304,7 +303,7 @@
                     if(res){
                         getOrderStatus(res,5,'/sche/getScheduleOne?id='+purchaseId);
                     }else{
-                       alertMsg('支付失败！');
+                       return ;
                     }
 
                 }).then(function(res){
