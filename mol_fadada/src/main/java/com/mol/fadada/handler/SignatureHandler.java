@@ -31,7 +31,7 @@ public class SignatureHandler {
         if("success".equals(msg)){
             String data = JSON.parseObject(result).getString("data");
             String signatureId = JSON.parseObject(data).getString("signature_id");
-            Signature
+            //Signature
         }
 
         System.out.println(result);
