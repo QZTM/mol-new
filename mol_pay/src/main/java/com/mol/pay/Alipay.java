@@ -9,9 +9,7 @@ import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.mol.pay.entity.AlipayCreateInfo;
-import com.mol.pay.entity.AlipayCreateInfoBuilder;
 import lombok.Data;
-import util.TimeUtil;
 
 import java.util.HashMap;
 import java.util.Map;

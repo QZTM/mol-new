@@ -1,14 +1,20 @@
 package com.mol.supplier.controller.microApp;
 
+import com.mol.fadada.handler.RegistAndAuthHandler;
+import com.mol.fadada.pojo.AuthRecord;
+import com.mol.fadada.pojo.RegistRecord;
+import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.service.microApp.MicroContractService;
 import com.mol.supplier.service.microApp.MicroUserService;
+import entity.ServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +35,51 @@ public class ContractManageController {
     @Autowired
     private FadadaAuthRecordMapper fadadaAuthRecordMapper;
 
+
+    @RequestMapping("/checkAuth")
+    @ResponseBody
+    public ServiceResult checkAuth(HttpSession session){
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        //验证是否已认证，如果没有认证，则提示去认证：
+        ServiceResult sr = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(),"2");
+        if(sr.isSuccess()){
+            RegistRecord rr = (RegistRecord)sr.getResult();
+            String customerId = rr.getCustomerId();
+            Example example = new Example(AuthRecord.class);
+            example.and().andEqualTo("customerId",customerId);
+            AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
+            if(authRecord == null || !("4".equals(authRecord.getStatus()))){
+                return ServiceResult.failureMsg("请先完成电子合同认证");
+            }
+        }else {
+            return ServiceResult.failureMsg("请先完成电子合同认证");
+        }
+        return ServiceResult.successMsg("已完成电子合同认证");
+    }
+
+
     @RequestMapping("/index")
-    public String showContractIndex(Model model){
+    public String showContractIndex(Model model,HttpSession session){
+//        Supplier supplier = microUserService.getSupplierFromSession(session);
+//        //验证是否已认证，如果没有认证，则提示去认证：
+//        ServiceResult sr = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(),"2");
+//        if(sr.isSuccess()){
+//            RegistRecord rr = (RegistRecord)sr.getResult();
+//            String customerId = rr.getCustomerId();
+//            Example example = new Example(AuthRecord.class);
+//            example.and().andEqualTo("customerId",customerId);
+//            AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
+//            if(authRecord == null || !("4".equals(authRecord.getStatus()))){
+//                model.addAttribute("failreason","请先完成电子合同认证");
+//                return "fadada_auth_fail";
+//            }
+//        }else {
+//            model.addAttribute("failreason","请先完成电子合同认证");
+//                return "fadada_auth_fail";
+//        }
+
+
+
         List<Map> dataList = microContractService.getPurchaseAndContractList("266752374326324047");
         model.addAttribute("list",dataList);
         return "contract_index";
@@ -38,8 +87,36 @@ public class ContractManageController {
 
 
     @RequestMapping("/showCheck")
-    public String showCheckPage(){
-        return "e_contract_auth";
+    public String showCheckPage(HttpSession session,Model model){
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        //查询该商户是否注册过：
+        ServiceResult serviceResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(), "2");
+        String customerId = "";
+        if(serviceResult.isSuccess()) {
+            RegistRecord rr = (RegistRecord)serviceResult.getResult();
+            customerId = rr.getCustomerId();
+            Example example = new Example(AuthRecord.class);
+            example.and().andEqualTo("customerId",customerId).andEqualTo("authenticationType","2");
+            AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
+            if(authRecord != null && "3".equals(authRecord.getStatus())) {
+                return "fadada_auth_waiting";
+            }else if(authRecord != null && "4".equals(authRecord.getStatus())) {
+                return "fadada_auth_success";
+            }else if(authRecord != null && "5".equals(authRecord.getStatus())){
+                if(authRecord.getStatusDesc() != null){
+                    model.addAttribute("failreason",authRecord.getStatusDesc());
+                }
+                return "fadada_auth_fail";
+            }else {
+                return "e_contract_auth";
+            }
+
+            //根据customerId查询
+
+        }else {
+            return "e_contract_auth";
+        }
+
     }
 
 

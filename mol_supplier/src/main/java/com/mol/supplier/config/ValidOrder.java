@@ -4,7 +4,6 @@ import com.mol.supplier.mapper.dingding.purchase.fyPurchaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.annotation.Reference;
 
 /**
  * ClassName:ValidOrder
@@ -19,8 +18,8 @@ public class ValidOrder {
 
     private static final Logger logger=LoggerFactory.getLogger(ValidOrder.class);
 
-    @Reference
-    private fyPurchaseMapper  fyPurchaseMapper;
+//    @Reference
+//    private fyPurchaseMapper  fyPurchaseMapper;
 //
 //    @Scheduled(cron = "0 */1 * * * *")
 //    public void DetectOrderStatus(){

@@ -78,12 +78,13 @@ public class EContractRegistAndAuthController {
 
     @RequestMapping(value = "/getAuthUrl", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResult getAuthUrl(String customerId, String authType) {
+    public ServiceResult getAuthUrl(String customerId, String authType,HttpSession session) {
+        Supplier supplier = microUserService.getSupplierFromSession(session);
         log.info("getAuthUrl:...customerId:"+customerId+",authType:"+authType);
         if ("1".equals(authType)) {
             return RegistAndAuthHandler.getAuthPersonurl(customerId, "", null);
         } else if ("2".equals(authType)) {
-            ServiceResult sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo");
+            ServiceResult sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
             if(sr.isSuccess()) {
                 Map resultMap = (Map)sr.getResult();
                 return ServiceResult.success(resultMap.get("url"));
