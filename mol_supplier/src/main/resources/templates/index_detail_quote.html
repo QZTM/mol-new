@@ -89,10 +89,19 @@
 
         </div>
         <!--        供货周期-->
+<!--        <div class="input-group">-->
+<!--            <span class="input-group-addon" id="basic-addon1">供货周期</span>-->
+<!--            <input type="text" id="cycle" class="form-control" placeholder="请输入供货周期" aria-describedby="basic-addon1" th:name="${'quotes[0].supplyCycle'}">-->
+<!--            <span class="input-group-addon" id="basic-addon1">天</span>-->
+<!--        </div>-->
+
         <div class="input-group">
-            <span class="input-group-addon" id="basic-addon1">供货周期</span>
+            <span class="input-group-addon">供货周期</span>
             <input type="text" id="cycle" class="form-control" placeholder="请输入供货周期" aria-describedby="basic-addon1" th:name="${'quotes[0].supplyCycle'}">
+            <span class="input-group-addon">天</span>
         </div>
+
+
         <!--        <input type="submit" value="提交">-->
         <button  class="btn btn-primary" style="margin-left: 42%;margin-top: 12px;" onclick="sub()" id="subBtn">提交</button>
         <!-- 公司id-->
