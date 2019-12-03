@@ -53,7 +53,7 @@ public class MicroAlipayController {
 
 
 
-    private static final String payCallBackUrl = Constant.domain+"/pay/alipay/callback";
+    private static final String payCallBackUrl = "http://"+Constant.domain+"/pay/alipay/callback";
 
 
     /**

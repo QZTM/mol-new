@@ -292,7 +292,8 @@
                     if(res.success){
                         return toalipay(res.result,res.message);
                     }else{
-                        alertMsg(res.message);
+                        alertMsg('获取支付信息失败！');
+
                         return ;
                     }
                 }).then(function(res){
@@ -300,7 +301,12 @@
                     console.log("异步结果：应该是自定义订单号");
                     console.log(res);
                     //带着自定义订单id去后端查询订单状态
-                    getOrderStatus(res,5,'/sche/getScheduleOne?id='+purchaseId);
+                    if(res){
+                        getOrderStatus(res,5,'/sche/getScheduleOne?id='+purchaseId);
+                    }else{
+                       alertMsg('支付失败！');
+                    }
+
                 }).then(function(res){
                     // console.log("第四个then")
                     // console.log(res.success);
