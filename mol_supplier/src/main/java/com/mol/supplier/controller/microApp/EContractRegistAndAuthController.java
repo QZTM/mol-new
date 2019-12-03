@@ -1,10 +1,12 @@
 package com.mol.supplier.controller.microApp;
 
 import com.mol.fadada.handler.RegistAndAuthHandler;
+import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import com.mol.supplier.config.Constant;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
+import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.service.microApp.MicroUserService;
 import entity.ServiceResult;
 import lombok.extern.java.Log;
@@ -14,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
+import util.IdWorker;
+import util.TimeUtil;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +34,12 @@ public class EContractRegistAndAuthController {
 
     @Autowired
     private MicroUserService microUserService;
+
+    @Autowired
+    private FadadaAuthRecordMapper fadadaAuthRecordMapper;
+
+    @Autowired
+    private IdWorker idWorker;
 
     @RequestMapping("/checkRegist")
     @ResponseBody
@@ -86,8 +98,20 @@ public class EContractRegistAndAuthController {
         } else if ("2".equals(authType)) {
             ServiceResult sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
             if(sr.isSuccess()) {
-                Map resultMap = (Map)sr.getResult();
-                return ServiceResult.success(resultMap.get("url"));
+                Map paraMap = (HashMap)sr.getResult();
+                //第一次存入数据库：
+                //查询数据库中有没有该单位的认证记录：
+                AuthRecord authRecordNew = new AuthRecord();
+                //如果有记录，则更改状态：
+                    authRecordNew.setId(idWorker.nextId()+"");
+                    authRecordNew.setCustomerId(customerId);
+                    authRecordNew.setTransactionNo((String)paraMap.get("transactionNo"));
+                    authRecordNew.setUrl((String)paraMap.get("url"));
+                    authRecordNew.setStatus("0");
+                    authRecordNew.setAuthenticationType("2");
+                    authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
+                    fadadaAuthRecordMapper.insertSelective(authRecordNew);
+                return ServiceResult.success(paraMap.get("url"));
             }else {
                 return ServiceResult.failure("获取失败");
             }
