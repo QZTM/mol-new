@@ -1,7 +1,7 @@
 package com.mol.supplier.util;
 
+import com.mol.supplier.config.Constant;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class PageUrlUtils {
@@ -20,7 +20,8 @@ public class PageUrlUtils {
             queryString = "";
         }
         String domain = request.getScheme()
-                + "://" + request.getServerName()
+                //+ "://" + request.getServerName()
+                +"://"+ Constant.domain
                 + request.getRequestURI()
                 +queryString;
         return domain;

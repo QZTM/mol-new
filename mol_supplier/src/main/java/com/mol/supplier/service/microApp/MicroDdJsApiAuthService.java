@@ -40,7 +40,7 @@ public class MicroDdJsApiAuthService {
         String nonceStr = RandomStr.getRandom(7, RandomStr.TYPE.LETTER);
         long timeStamp = System.currentTimeMillis() / 1000;
         //String accessToken = microTokenService.getToken();;
-        String ticket = microJsapiTicketService.getJsApiTicket();;
+        String ticket = microJsapiTicketService.getJsApiTicket();
         String signature = null;
 
         try {

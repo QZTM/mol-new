@@ -1,7 +1,11 @@
 package com.mol.fadada.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fadada.sdk.client.FddClientBase;
+import com.fadada.sdk.client.authForfadada.ApplyCert;
+import com.fadada.sdk.client.authForfadada.ApplyNumCert;
+import com.fadada.sdk.client.request.ExtsignReq;
 import com.mol.fadada.dao.ContractUploadMapper;
 import com.mol.fadada.pojo.ContractUploadRecord;
 import com.mol.oos.OOSConfig;
@@ -11,6 +15,7 @@ import lombok.Synchronized;
 import lombok.extern.java.Log;
 import util.IdWorker;
 import util.TimeUtil;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -28,6 +33,8 @@ public class ContractHandler {
     private static String V = "2.0";
     private static String HOST = "https://testapi.fadada.com:8443/api/";
     private static FddClientBase clientBase = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+    private static StringBuffer response = new StringBuffer("==================Welcome ^_^ ==================");
+
 
     /**
      * 上传法大大合同
@@ -69,6 +76,104 @@ public class ContractHandler {
         return sr;
     }
 
+    /**
+     * 自动签署
+     * @param Customer_id 客户编号
+     * @param Transaction_id 交易号
+     * @param Contract_id 合同编号
+     * @param Sign_keyword 关键字盖章
+     * @param Doc_title 文档标题
+     * @return
+     */
+    public static ServiceResult ExtsignAuto(String Customer_id,String Transaction_id,String Contract_id,String Sign_keyword ,String Doc_title)
+    {
+        try {
+            response.append("\n").append("自动签");
+            FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+            ExtsignReq req = new ExtsignReq();
+            req.setCustomer_id(Customer_id);//客户编号
+            req.setTransaction_id(Transaction_id);//交易号
+            req.setContract_id(Contract_id);//合同编号
+            req.setClient_role("1");//客户角色1 接入平台
+            req.setSign_keyword(Sign_keyword);//关键字盖章
+            req.setDoc_title(Doc_title);//文档标题
+            String result = base.invokeExtSignAuto(req);
+            JSONObject code=JSONObject.parseObject(result);
+
+            if (code.get("code").equals("1000"))
+            {
+                return ServiceResult.success(result);
+            }
+            else
+            {
+                return ServiceResult.failure(result);
+            }
+         /*   response.append("\n").append(result);
+            String viewpdf_url = JSON.parseObject(result).getString("viewpdf_url");
+            Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + viewpdf_url);*/
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  ServiceResult.failure(e.toString());
+        }
+    }
+
+
+    /**
+     * 实名证书
+     * @param customer_id 客户编号 注册账号时返回
+     * @param verified_serialno  实名认证序列号 获取实名认证 地址时返回
+     * @return
+     */
+    public static  ServiceResult ApplyCert(String customer_id,String verified_serialno)
+    {
+        try {
+            response.append("\n").append("申请实名证书:");
+            ApplyCert applyCert = new ApplyCert(APP_ID,APP_SECRET,V,HOST);
+            String result = applyCert.invokeApplyCert(customer_id,verified_serialno);
+            JSONObject code=JSONObject.parseObject(result);
+            if (code.equals("1"))
+            {
+               return ServiceResult.success(result);
+            }
+            else
+            {
+                return ServiceResult.failure(result);
+            }
+        }
+        catch (Exception e)
+        {
+            return ServiceResult.failure(e.toString());
+        }
+    }
+
+    /**
+     * 编号证书
+     * @param customer_id  客户编号 注册账号时返回
+     * @param verified_serialno 实名认证序列号 获取实名认证 地址时返回
+     * @return
+     */
+    public static ServiceResult ApplyNumCert(String customer_id,String verified_serialno)
+    {
+        try {
+            response.append("\n").append("编号证书申请:");
+            ApplyNumCert applyNumCert = new ApplyNumCert(APP_ID,APP_SECRET,V,HOST);
+            String result = applyNumCert.invokeapplyNumcert(customer_id,verified_serialno);
+            JSONObject code=JSONObject.parseObject(result);
+            if (code.equals("1"))
+            {
+                return ServiceResult.success(result);
+            }
+            else
+            {
+                return ServiceResult.failure(result);
+            }
+        }
+        catch (Exception e)
+        {
+            return ServiceResult.failure(e.toString());
+        }
+    }
+
     public static void main(String[] args) {
         //上传合同
         File file = new File("c:/法大大.pdf");
@@ -84,4 +189,6 @@ public class ContractHandler {
 
         //上传模板：
     }
+
+
 }

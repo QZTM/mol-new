@@ -60,6 +60,23 @@ public class RegistAndAuthHandler {
     public static final String CALLBACK_ORG_AUTH = "http://fyycg88.vaiwan.com/fddCallback/orgAuth" ;
     public static final String ORG_AUTH_TOPAGE = "http://fyycg88.vaiwan.com/fddCallback/orgAuthTo" ;
 
+
+    /**
+     * 已提交待审核
+     */
+    public static final String AUTH_ORG_SUB_WAIT_CONFIRM = "3";
+    /**
+     * 审核通过
+     */
+    public static final String AUTH_ORG_SUCCESS = "4";
+    /**
+     * 审核不通过
+     */
+    public static final String AUTH_ORG_FAIL = "5";
+
+
+
+
     /**
      * 注册账号
      * @param openId            客户在平台的唯一id
@@ -280,7 +297,7 @@ public class RegistAndAuthHandler {
             customerId = registRecord.getCustomerId();
             EntityHelper.initEntityNameMap(AuthRecord.class, new Config());
             Example example = new Example(AuthRecord.class);
-            example.and().andEqualTo("customerId",customerId).andEqualTo("status","2");
+            example.and().andEqualTo("customerId",customerId).andEqualTo("status",AUTH_ORG_SUCCESS);
             AuthRecord authRecord = RecordDbHandler.getAuthRecordMapper().selectOneByExample(example);
             if(authRecord!=null){
                 return ServiceResult.success(authRecord);
@@ -300,7 +317,7 @@ public class RegistAndAuthHandler {
     public static ServiceResult checkIfAuthedByCustomerId(String customerId,String registType){
         EntityHelper.initEntityNameMap(AuthRecord.class, new Config());
         Example example = new Example(AuthRecord.class);
-        example.and().andEqualTo("customerId",customerId).andEqualTo("status","2");
+        example.and().andEqualTo("customerId",customerId).andEqualTo("status",AUTH_ORG_SUCCESS);
         AuthRecord authRecord = RecordDbHandler.getAuthRecordMapper().selectOneByExample(example);
         if(authRecord!=null){
             return ServiceResult.success(authRecord);
@@ -327,6 +344,7 @@ public class RegistAndAuthHandler {
             return ServiceResult.failure("查看合同失败");
         }
     }
+
 
 
 
