@@ -394,6 +394,23 @@ public class RegistAndAuthHandler {
         return customerId;
     }
 
+    /**
+     * 通过customerId获取平台唯一id
+     * @param customerId
+     * @return
+     */
+    public synchronized static String getOpenIdByCustomerId(String customerId){
+        String openId = "";
+        EntityHelper.initEntityNameMap(RegistRecord.class, new Config());
+        Example example = new Example(RegistRecord.class);
+        example.and().andEqualTo("customerId",customerId);
+        RegistRecord registRecord = RecordDbHandler.getRegistRecordMapper().selectOneByExample(example);
+        if(registRecord != null){
+            openId = registRecord.getOpenId();
+        }
+        return openId;
+    }
+
 
 
 }

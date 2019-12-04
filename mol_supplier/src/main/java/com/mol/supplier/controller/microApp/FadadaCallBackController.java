@@ -1,8 +1,13 @@
 package com.mol.supplier.controller.microApp;
 
+import com.mol.fadada.handler.RegistAndAuthHandler;
 import com.mol.fadada.pojo.AuthRecord;
+import com.mol.fadada.pojo.SignResultRecord;
 import com.mol.supplier.config.Constant;
+import com.mol.supplier.entity.MicroApp.PurchaseSupplierContract;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
+import com.mol.supplier.mapper.microApp.FadadaSignResultRecordMapper;
+import com.mol.supplier.mapper.microApp.MicroPurchaseSupplierContractMapper;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,12 @@ public class FadadaCallBackController {
 
     @Autowired
     private FadadaAuthRecordMapper fadadaAuthRecordMapper;
+
+    @Autowired
+    private FadadaSignResultRecordMapper fadadaSignResultRecordMapper;
+
+    @Autowired
+    private MicroPurchaseSupplierContractMapper microPurchaseSupplierContractMapper;
 
     @RequestMapping(value = "/personAuth")
     @ResponseBody
@@ -163,5 +174,94 @@ public class FadadaCallBackController {
         return "forward:/microApp/my/show";
     }
 
+    @RequestMapping("/signTo")
+    public String signCallBack(@RequestParam Map paraMap){
+        log.info("*****法大大手动签署合同同步通知*****");
+        this.handlerParaMapToDb(paraMap);
+        return "forward:/contract/index";
+    }
+
+    @RequestMapping("/sign")
+    @ResponseBody
+    public void sign(@RequestParam Map paraMap){
+        log.info("*****法大大手动签署合同异步通知*****");
+        this.handlerParaMapToDb(paraMap);
+    }
+
+
+
+    public void handlerParaMapToDb(Map paraMap){
+        System.out.println(paraMap.toString());
+        String resultCode = (String)paraMap.get("result_code");
+        String customerId = (String)paraMap.get("customerId");
+        String purchaseId= (String)paraMap.get("purchaseId");
+        String openId = RegistAndAuthHandler.getOpenIdByCustomerId(customerId);
+        String contractId = (String)paraMap.get("contract_id");
+        Example example1 = new Example(PurchaseSupplierContract.class);
+        example1.and().andEqualTo("purchaseId",purchaseId).andEqualTo("supplierId",openId).andEqualTo("contractId",contractId);
+        PurchaseSupplierContract purchaseSupplierContract1 = microPurchaseSupplierContractMapper.selectOneByExample(example1);
+        if(purchaseSupplierContract1 != null && PurchaseSupplierContract.合同已归档.equals(purchaseSupplierContract1.getSignStatus())) {
+            return ;
+        }else if(PurchaseSupplierContract.采购方供应商都已签署.equals(purchaseSupplierContract1.getSignStatus())) {
+            //todo:合同归档
+        }else {
+            if ("3000".equals(resultCode)) {
+                //签章成功：contract_id
+
+                String transactionId = (String) paraMap.get("transaction_id");
+                Object resultDescObj = paraMap.get("result_desc");
+                String resultDesc = "";
+                if (resultDescObj != null) {
+                    resultDesc = (String) resultDescObj;
+                }
+
+                Object downloadUrlObj = paraMap.get("download_url");
+                String downloadUrl = "";
+                if (downloadUrlObj != null) {
+                    downloadUrl = (String) downloadUrlObj;
+                }
+
+                Object viewpdfUrlObj = paraMap.get("viewpdf_url");
+                String viewpdfUrl = "";
+                if (viewpdfUrlObj != null) {
+                    viewpdfUrl = (String) viewpdfUrlObj;
+                }
+
+                Example example = new Example(SignResultRecord.class);
+                example.and().andEqualTo("customerId", customerId).andEqualTo("contractId", contractId);
+                SignResultRecord signResultRecordDb = fadadaSignResultRecordMapper.selectOneByExample(example);
+                SignResultRecord srr = new SignResultRecord();
+                srr.setCustomerId(customerId);
+                srr.setTransactionId(transactionId);
+                srr.setContractId(contractId);
+                srr.setResultCode(resultCode);
+                if (!StringUtils.isEmpty(resultDesc)) {
+                    srr.setResultDesc(resultDesc);
+                }
+                if (!StringUtils.isEmpty(downloadUrl)) {
+                    srr.setDownloadUrl(downloadUrl);
+                }
+                if (!StringUtils.isEmpty(viewpdfUrl)) {
+                    srr.setViewpdfUrl(viewpdfUrl);
+                }
+
+                if (signResultRecordDb == null) {
+                    srr.setId(idWorker.nextId() + "");
+                    fadadaSignResultRecordMapper.insert(srr);
+                } else {
+                    srr.setId(signResultRecordDb.getId());
+                    fadadaSignResultRecordMapper.updateByPrimaryKeySelective(srr);
+                }
+
+                PurchaseSupplierContract purchaseSupplierContract = new PurchaseSupplierContract();
+                purchaseSupplierContract.setSignStatus(PurchaseSupplierContract.采购方供应商都已签署);
+                microPurchaseSupplierContractMapper.updateByExampleSelective(purchaseSupplierContract, example1);
+                //PurchaseSupplierContract purchaseSupplierContract = microPurchaseSupplierContractMapper.selectOneByExample(example1);
+
+            } else {
+
+            }
+        }
+    }
 
 }

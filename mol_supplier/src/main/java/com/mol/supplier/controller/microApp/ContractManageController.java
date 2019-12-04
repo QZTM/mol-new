@@ -1,9 +1,11 @@
 package com.mol.supplier.controller.microApp;
 
+import com.mol.fadada.handler.ContractHandler;
 import com.mol.fadada.handler.RegistAndAuthHandler;
 import com.mol.fadada.handler.SignatureHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
+import com.mol.supplier.config.Constant;
 import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.service.microApp.MicroContractService;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
+import util.IdWorker;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -37,6 +40,9 @@ public class ContractManageController {
 
     @Autowired
     private FadadaAuthRecordMapper fadadaAuthRecordMapper;
+
+    @Autowired
+    private IdWorker idWorker;
 
 
     @RequestMapping("/checkAuth")
@@ -83,7 +89,7 @@ public class ContractManageController {
 
 
 
-        List<Map> dataList = microContractService.getPurchaseAndContractList("266752374326324047");
+        List<Map> dataList = microContractService.getPurchaseAndContractList("1178121287969550336");
         model.addAttribute("list",dataList);
         return "contract_index";
     }
@@ -137,50 +143,20 @@ public class ContractManageController {
      * @param contractId
      */
     @RequestMapping("/sign")
-    public void signContract(@RequestParam String contractId, HttpSession session) throws InterruptedException {
-//        Supplier supplier = microUserService.getSupplierFromSession(session);
-//        Salesman salesman = microUserService.getUserFromSession(session);
-//        //首先判断该供应商是否已经实名认证了：
-//        RegistRecord rr = new RegistRecord();
-//        ServiceResult registResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(),"2");
-//        int registCount = 0;
-//        boolean newRegistSuccess = false;
-//        while((!registResult.isSuccess()) && registCount <5 && !newRegistSuccess){
-//            //调用注册接口：
-//            ServiceResult newRegistResult = RegistAndAuthHandler.regAccount(supplier.getPkSupplier(),"2");
-//            if(newRegistResult.isSuccess()){
-//                newRegistSuccess = true;
-//            }
-//            registCount ++;
-//            Thread.sleep(1000);
-//            registResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(),"2");
-//        }
-//        if(!registResult.isSuccess() && !newRegistSuccess){
-//            //法大大注册异常
-//            throw new RuntimeException("法大大注册异常！");
-//        }else{
-//
-//        }
-//        rr = (RegistRecord)registResult.getResult();
-//        ServiceResult authResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(),"2");
-//        if(!authResult.isSuccess()){
-//            //调用认证接口获得认证链接，然后重定向到认证页面。
-//            ServiceResult authCompanyurl = RegistAndAuthHandler.getAuthCompanyurl(rr.getCustomerId(), RegistAndAuthHandler.CALLBACK_ORG_AUTH, null);
-//        }
-//
-//
-//        Example example = new Example(AuthRecord.class);
-//        example.and().andEqualTo("customerId",supplier.getPkSupplier()).andEqualTo("status","2");
-//        AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
-//        if(authRecord == null){
-//            //查询是否已经注册，如果没有注册，去注册：
-//
-//        }
-
+    @ResponseBody
+    public ServiceResult signContract(@RequestParam String contractId,String purchaseId, HttpSession session) throws InterruptedException {
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        String customerId = RegistAndAuthHandler.getCustomerIdByOpenId(supplier.getPkSupplier());
+        ServiceResult extsign = ContractHandler.extsign(customerId, idWorker.nextId() + "", contractId, "2", "http://" + Constant.domain + "/fddCallback/signTo?customerId="+customerId+"&contract_id="+contractId+"&purchaseId="+purchaseId,"http://" + Constant.domain + "/fddCallback/sign?customerId="+customerId+"&purchaseId="+purchaseId);
+        if(extsign.isSuccess()) {
+            return ServiceResult.success(extsign.getResult());
+        }else {
+            return ServiceResult.failureMsg("获取签署地址失败");
+        }
     }
 
     /**
-     * 显示合同管理页面
+     * 显示电子签章管理页面
      * @return
      */
     @RequestMapping("/sealManage")

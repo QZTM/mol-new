@@ -14,9 +14,12 @@ import com.mol.oos.TYOOSUtil;
 import entity.ServiceResult;
 import lombok.Synchronized;
 import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 import util.IdWorker;
 import util.TimeUtil;
 
+import javax.print.Doc;
 import java.io.File;
 import java.io.IOException;
 
@@ -27,7 +30,6 @@ import java.io.IOException;
 public class ContractHandler {
 
     private static FddClientBase clientBase = FddBaseClient.getFddClientBase();
-    private static StringBuffer response = new StringBuffer("==================Welcome ^_^ ==================");
 
 
     /**
@@ -41,24 +43,21 @@ public class ContractHandler {
     public static ServiceResult uploadContract(String contractTitle, File file) throws IOException {
         String contractId = TimeUtil.getNow(TimeUtil.payOrderFormat);
         String resultStr = clientBase.invokeUploadDocs(contractId,contractTitle , file, "", ".pdf");
-        log.info(resultStr);
+        log.info("上传法大大合同，resultStr:"+resultStr);
         String result =  JSON.parseObject(resultStr).getString("result");
         ServiceResult sr = null;
-        if("success".equals(result))
-        {
+        if("success".equals(result)) {
             //存入数据库
             ContractUploadRecord contractUploadRecord = new ContractUploadRecord();
             contractUploadRecord.setId(new IdWorker().nextId()+"");
             contractUploadRecord.setContractId(contractId);
             contractUploadRecord.setUploadTime(TimeUtil.getNowDateTime());
             ContractUploadMapper contractUploadMapper = RecordDbHandler.getContractUploadMapper();
-            System.out.println(contractUploadMapper);
             try{
                 int insert = contractUploadMapper.insert(contractUploadRecord);
                 //存入oos
                 TYOOSUtil.getUtil().uploadObjToBucket(OOSConfig.法大大文件夹,"contract/fadaddaUploadBackup/"+contractId+".pdf",file);
-            }catch (Exception e)
-            {
+            }catch (Exception e) {
                 log.warning("法大大合同上传成功，但是数据库记录或者上传入oos发生异常！");
                 e.printStackTrace();
             }
@@ -66,7 +65,6 @@ public class ContractHandler {
         }else{
             sr = ServiceResult.failureMsg("上传失败！");
         }
-        log.info(sr.toString());
         return sr;
     }
 
@@ -84,7 +82,6 @@ public class ContractHandler {
     {
         try
         {
-            response.append("\n").append("自动签");
             FddClientBase base = FddBaseClient.getFddClientBase();
             ExtsignReq req = new ExtsignReq();
             req.setCustomer_id("");//客户编号
@@ -125,27 +122,62 @@ public class ContractHandler {
      * @param Return_url 页面跳转 URL（签署 结果同步 通知）
      * @return
      */
-    public static ServiceResult extsign(String Customer_id,String Transaction_id,String Contract_id,String Doc_title,String Return_url)
-    {
-        try
-        {
-            response.append("\n").append("手动签署接口:");
-            FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+    public static ServiceResult extsign(String Customer_id,String Transaction_id,String Contract_id,String Doc_title,String Return_url) {
+//        log.info("*****法大大手动签署合同接口*****");
+//        log.info("customerId:"+Customer_id+",transactionId:"+Transaction_id+",contractId:"+Contract_id+",docTitle:"+Doc_title+",returnUrl:"+Return_url);
+//        try {
+//            ExtsignReq req = new ExtsignReq();
+//            req.setCustomer_id(Customer_id);
+//            req.setTransaction_id(Transaction_id);
+//            req.setContract_id(Contract_id);
+//            req.setDoc_title(Doc_title);
+//            req.setReturn_url(Return_url);
+//            String result = clientBase.invokeExtSign(req);
+//            return ServiceResult.success(result);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return  ServiceResult.failure(e.getMessage());
+//        }
+        return extsign(Customer_id,Transaction_id,Contract_id, Doc_title,Return_url,"");
+    }
+
+    /**
+     * 手动签署
+     * @param Customer_id  客户编号
+     * @param Transaction_id 交易号
+     * @param Contract_id 合同编号
+     * @param Doc_title 文档标题
+     * @param Return_url 页面跳转 URL（签署 结果同步 通知）
+     * @return
+     */
+    public static ServiceResult extsign(String Customer_id,String Transaction_id,String Contract_id,String Doc_title,String Return_url,String notifyUrl) {
+        log.info("*****法大大手动签署合同接口*****");
+        log.info("customerId:"+Customer_id+",transactionId:"+Transaction_id+",contractId:"+Contract_id+",docTitle:"+Doc_title+",returnUrl:"+Return_url);
+        try {
             ExtsignReq req = new ExtsignReq();
             req.setCustomer_id(Customer_id);
             req.setTransaction_id(Transaction_id);
             req.setContract_id(Contract_id);
             req.setDoc_title(Doc_title);
             req.setReturn_url(Return_url);
-            String result = base.invokeExtSign(req);
+            if(!StringUtils.isEmpty(notifyUrl)) {
+                req.setNotify_url(notifyUrl);
+            }
+            String result = clientBase.invokeExtSign(req);
             return ServiceResult.success(result);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            return  ServiceResult.failure(e.toString());
+            return  ServiceResult.failure(e.getMessage());
         }
     }
+
+    @Test
+    public void test(){
+        ServiceResult extsign = extsign("3F11ECF5809DDF90C0F06860275F0FEE", "2589631478", "20191204154825412", "1", "http://fyycg88.vaiwan.com/fddCallback/signTo?customerId=3F11ECF5809DDF90C0F06860275F0FEE");
+        System.out.println(extsign.toString());
+
+    }
+
 
 
     /**
@@ -157,7 +189,6 @@ public class ContractHandler {
     public static  ServiceResult ApplyCert(String customer_id,String verified_serialno)
     {
         try {
-            response.append("\n").append("申请实名证书:");
             ApplyCert applyCert = new ApplyCert(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
             String result = applyCert.invokeApplyCert(customer_id,verified_serialno);
             JSONObject code=JSONObject.parseObject(result);
@@ -172,7 +203,7 @@ public class ContractHandler {
         }
         catch (Exception e)
         {
-            return ServiceResult.failure(e.toString());
+            return ServiceResult.failure(e.getMessage());
         }
     }
 
@@ -185,7 +216,6 @@ public class ContractHandler {
     public static ServiceResult ApplyNumCert(String customer_id,String verified_serialno)
     {
         try {
-            response.append("\n").append("编号证书申请:");
             ApplyNumCert applyNumCert = new ApplyNumCert(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
             String result = applyNumCert.invokeapplyNumcert(customer_id,verified_serialno);
             JSONObject code=JSONObject.parseObject(result);
@@ -200,25 +230,7 @@ public class ContractHandler {
         }
         catch (Exception e)
         {
-            return ServiceResult.failure(e.toString());
+            return ServiceResult.failure(e.getMessage());
         }
     }
-
-    public static void main(String[] args) {
-        //上传合同
-        File file = new File("c:/法大大.pdf");
-        System.out.println(file.exists());
-        log.info(""+file.exists());
-        if(file.exists()){
-            try{
-                uploadContract("与大千公司的采购合同",file);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        //上传模板：
-    }
-
-
 }
