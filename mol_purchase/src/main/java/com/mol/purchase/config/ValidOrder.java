@@ -30,7 +30,7 @@ public class ValidOrder {
         @Autowired
     ValidOrderService validOrderService;
 
-    @Scheduled(cron = "0 0/3 * * * ? ")//0 0/1 * * * ?
+    @Scheduled(cron = "0 0/10 * * * ? ")//0 0/1 * * * ?
     public void allSupplierPayExpertCost(){
         logger.info("allSupplierPayExpertCost 定时任务开启");
         List<QuotePayresult> payResultByStatusList = validOrderService.findPayResultByStatus(OrderStatus.ALL_SUPPLIER_PAY_NOT + "");

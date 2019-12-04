@@ -9,6 +9,7 @@ import com.fadada.sdk.client.authForfadada.model.AgentInfoINO;
 import com.fadada.sdk.client.authForfadada.model.BankInfoINO;
 import com.fadada.sdk.client.authForfadada.model.CompanyInfoINO;
 import com.fadada.sdk.client.authForfadada.model.LegalInfoINO;
+import com.mol.fadada.config.FddBaseClient;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import entity.ServiceResult;
@@ -33,14 +34,7 @@ import java.util.Map;
 @Log
 public class RegistAndAuthHandler {
 
-    /**
-     * 参数
-     */
-    private static String APP_ID = "402664";
-    private static String APP_SECRET = "xeVHW4Cbn8nWgwCWC16VDbVe";
-    private static String V = "2.0";
-    private static String HOST = "https://testapi.fadada.com:8443/api/";
-    private static FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+    private static FddClientBase base = FddBaseClient.getFddClientBase();
 
     private String customer_name;
     private String id_card = "";// 身份证号码;
@@ -153,7 +147,7 @@ public class RegistAndAuthHandler {
             failResult.setMessage("notifyUrl(异步通知地址)不能为空！");
             return failResult;
         }
-        GetPersonVerifyUrl personverify = new GetPersonVerifyUrl(APP_ID,APP_SECRET,V,HOST);
+        GetPersonVerifyUrl personverify = new GetPersonVerifyUrl(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
         String result = personverify.invokePersonVerifyUrl(customerId,verifiedWay,
                 pageModify,notifyUrl,returnUrl,"","",
                 "","","","1","0");
@@ -227,7 +221,7 @@ public class RegistAndAuthHandler {
         if(StringUtils.isEmpty(certFlay) || !certFlay.matches("[1,0]")){
             certFlay = "0";
         }
-        GetCompanyVerifyUrl comverify = new GetCompanyVerifyUrl(APP_ID,APP_SECRET,V,HOST);
+        GetCompanyVerifyUrl comverify = new GetCompanyVerifyUrl(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
         String result = comverify.invokeCompanyVerifyUrl(companyInfo,bankInfo,legalInfo
                 ,agentInfo, customerId,verifyedWay,"",pageModify,
                 "0",returnPage,notifyUrl,resultType,certFlay);
@@ -256,12 +250,12 @@ public class RegistAndAuthHandler {
      * @return
      */
     public static synchronized ServiceResult getAuthCompanyurl(String customerId,String notifyUrl,LegalInfoINO legalInfo){
-        return getAuthCompanyurl(customerId,"","","",notifyUrl,"","","",null,null,legalInfo,null);
+        return getAuthCompanyurl(customerId,"","","",notifyUrl,"","1","",null,null,legalInfo,null);
     }
 
 
     public static synchronized ServiceResult getAuthCompanyurl(String customerId,String notifyUrl,String returnUrl){
-        return getAuthCompanyurl(customerId,"","","",notifyUrl,returnUrl,"","",null,null,null,null);
+        return getAuthCompanyurl(customerId,"","","",notifyUrl,returnUrl,"1","",null,null,null,null);
     }
 
 
@@ -334,7 +328,7 @@ public class RegistAndAuthHandler {
     {
         try {
             response.append("\n").append("合同查看");
-            FddClientExtra extra = new FddClientExtra(APP_ID,APP_SECRET,V,HOST);
+            FddClientExtra extra = new FddClientExtra(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
             String result = extra.invokeViewPdfURL(contract_id);
            // response.append("\n").append(result);
           // Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + result);
@@ -380,6 +374,24 @@ public class RegistAndAuthHandler {
             return "";
         }
         return bizContent;
+    }
+
+
+    /**
+     * 通过平台唯一id获取customerId
+     * @param openId
+     * @return
+     */
+    public synchronized static String getCustomerIdByOpenId(String openId){
+        String customerId = "";
+        EntityHelper.initEntityNameMap(RegistRecord.class, new Config());
+        Example example = new Example(RegistRecord.class);
+        example.and().andEqualTo("openId",openId);
+        RegistRecord registRecord = RecordDbHandler.getRegistRecordMapper().selectOneByExample(example);
+        if(registRecord != null){
+            customerId = registRecord.getCustomerId();
+        }
+        return customerId;
     }
 
 

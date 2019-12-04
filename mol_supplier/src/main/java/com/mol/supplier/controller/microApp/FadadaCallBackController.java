@@ -1,6 +1,7 @@
 package com.mol.supplier.controller.microApp;
 
 import com.mol.fadada.pojo.AuthRecord;
+import com.mol.supplier.config.Constant;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
 import util.TimeUtil;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Log
@@ -129,8 +132,7 @@ public class FadadaCallBackController {
      * @param paraMap
      */
     @RequestMapping(value = "/orgAuthTo")
-    @ResponseBody
-    public void fddAuthCallBack(@RequestParam Map paraMap){
+    public String fddAuthCallBack(@RequestParam Map paraMap, HttpServletResponse response){
         log.info("法大大企业认证同步回调事件,,,"+paraMap.toString());
         //法大大认证return url,,,{companyName=枣庄星联信息科技有限公司, transactionNo=6300f86ca6e24bfebd15f661d98c8e48, authenticationType=2, status=3, sign=Q0NBRUZBNzlENTFGNkM2QTkwQTAxNEQyRDFEMjE0NkM5RjBFOUZGOA==}
         String transactionNo = (String)paraMap.get("transactionNo");
@@ -158,6 +160,7 @@ public class FadadaCallBackController {
             authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
             fadadaAuthRecordMapper.insertSelective(authRecordNew);
         }
+        return "forward:/microApp/my/show";
     }
 
 

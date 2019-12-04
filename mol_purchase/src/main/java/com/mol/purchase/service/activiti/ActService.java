@@ -53,6 +53,7 @@ import util.IdWorker;
 import util.TimeUtil;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -398,7 +399,12 @@ public class ActService {
         //验证model对象
         BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
         byte[] bytes = bpmnXMLConverter.convertToXML(bpmnModel);
-        String s = new String(bytes);
+        String s = null;
+        try {
+            s = new String(bytes,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         System.out.println(s);
         ProcessValidatorFactory factory = new ProcessValidatorFactory();
         ProcessValidator va = factory.createDefaultProcessValidator();

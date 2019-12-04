@@ -1,6 +1,7 @@
 package com.mol.supplier.controller.third;
 
 import com.alibaba.fastjson.JSON;
+import com.mol.supplier.config.BuyChannelResource;
 import com.mol.supplier.config.ContractConfig;
 import com.mol.supplier.config.OrderStatus;
 import com.mol.supplier.entity.MicroApp.DDUser;
@@ -508,20 +509,25 @@ public class ThirdPlatformController {
      */
     @RequestMapping("/quote")
     public String toGetQuote(String id, ModelMap map, HttpSession session) {
-
         String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
+        Supplier su=platformService.getSupplierById(supplierId);
+
         DDUser ddUser = (DDUser)session.getAttribute("ddUser");
         String ddUserId = ddUser.getUserid();
 
+        if (su.getIfAttrNormal()!=1){
+            //供应商不是基础供应商
+            return "error_quote";
+        }
+
         fyPurchase purchase = platformService.selectOneById(id);
-        if (purchase.getBuyChannelId() == 3) {
+        if (purchase.getBuyChannelId().equals(BuyChannelResource.STRATEGY)) {
             //判断供应商是不是战略供应商，不是则跳转报错页面；
-            Supplier su=platformService.getSupplierById(supplierId);
             if (su.getIfAttrStrategy()!=1){
                 return "error_quote";
             }
         }
-        if (purchase.getBuyChannelId() == 5) {
+        if (purchase.getBuyChannelId().equals(BuyChannelResource.SINGLESOURCE)) {
             //判断供应商是不是单一供应商，不是则跳转；
             String pkSupplier = purchase.getPkSupplier();
             if (pkSupplier==null || !pkSupplier.equals(supplierId)){

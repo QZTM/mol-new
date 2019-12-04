@@ -177,7 +177,11 @@ ActController {
 
 
                 //保存订单，选中的供应商，是否支付
-                actService.saveQuotePayresult(pur);
+                //1.判断订单是否（电子合同，专家推荐）二有一，有则插入数据记录
+                if ("true".equals(pur.getExpertReview()) || "true".equals(pur.getElectronicContract())){
+                    logger.info("订单需要支付专家费用或者电子合同费用，插入新数据");
+                    actService.saveQuotePayresult(pur);
+                }
                 //设置订单结束审批的时间
                 actService.updataPurchaseApprovalEndTime(pur.getId());
 

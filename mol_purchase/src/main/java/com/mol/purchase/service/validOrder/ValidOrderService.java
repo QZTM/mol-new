@@ -44,10 +44,6 @@ public class ValidOrderService {
 
 
     public List<QuotePayresult> findPayResultByStatus(String status){
-//        Example e =new Example(QuotePayresult.class);
-//        e.and().andEqualTo("status",status);
-//        e.setDistinct(true);
-//        return quotePayresultMapper.selectByExample(e);
         return quotePayresultMapper.findPayResultListByStatus(status);
     }
 
@@ -75,6 +71,10 @@ public class ValidOrderService {
          logger.info("支付专家费用逻辑执行*****");
          //查询订单
          fyPurchase pur = purchaseMapper.findOneById(purId);
+         if("false".equals(pur.getExpertReview())){
+             logger.info("订单没有设置专家推荐，不需要给专家给钱！");
+             return 0;
+         }
          logger.info("支付专家推荐的订单："+pur);
          //奖励金额
          String expertReward = pur.getExpertReward();

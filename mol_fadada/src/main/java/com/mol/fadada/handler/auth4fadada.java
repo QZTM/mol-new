@@ -92,8 +92,8 @@ public class auth4fadada {
     public void Test3(){
 //        uploadContract();//8合同上传
 //        extsign();//12手动签署接口
-        extsignAuto();//11自动签署
-        //viewContract();//13合同查看
+//        extsignAuto();//11自动签署
+        viewContract();//13合同查看
 //        downloadContract();//14合同下载
 //        contractFiling();//15合同归档
     }
@@ -303,11 +303,11 @@ public class auth4fadada {
             response.append("\n").append("自动签");
             FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
             ExtsignReq req = new ExtsignReq();
-            req.setCustomer_id("CF3A877D6FE05557AB3369B9CFC7DE3E");
-            req.setTransaction_id("11111111112222222233333333");
-            req.setContract_id("20191203105902491");
+            req.setCustomer_id("");
+            req.setTransaction_id(transaction_id);
+            req.setContract_id("");
             req.setClient_role("1");
-            req.setSign_keyword("编写目的");
+            req.setSign_keyword("");
             req.setDoc_title("1");
             String result = base.invokeExtSignAuto(req);
             response.append("\n").append(result);

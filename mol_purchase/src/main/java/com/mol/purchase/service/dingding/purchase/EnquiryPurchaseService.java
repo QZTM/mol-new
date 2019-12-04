@@ -83,6 +83,8 @@ public class EnquiryPurchaseService {
 
     @Autowired
     private BdSupplierSalesmanMapper bdSupplierSalesmanMapper;
+    @Autowired
+    private BdSupplierMapper bdSupplierMapper;
 
     @Transient
     public synchronized StraregyObj save(PageArray pageArray, String staId, String orgId)  {
@@ -193,34 +195,28 @@ public class EnquiryPurchaseService {
     /**
      * 查询商家个数
      *
-     * @param purchaseArray
+     * @param
      * @return
      */
-    public ServiceResult<Integer> getSupplierNum(List<PurchaseArray> purchaseArray) {
-        HashMap<String,String> map=new HashMap<String,String>();
-        int key =1;
-        if (purchaseArray.size() > 0 && purchaseArray != null) {
-            for (int i = 0; i < purchaseArray.size(); i++) {
-                String itemName = purchaseArray.get(i).getItemName();
-                //先用物品名称在mysql查询物品的id,查不到则去oracl查询
-                String mysqlId = mysqlMapper.getMysqlId(itemName);
-                if (mysqlId!=null){
-                    map.put(key+"",mysqlId);
-                    key++;
-                }else {
-                    //去oracl数据库查询
-                    String oraclId = oraclMapper.getOraclId(itemName);
-                    map.put(key+"",oraclId);
-                    key++;
-                }
-            }
-        } else {
-            return null;
+    public Integer getSupplierNum(String pkMarclassId) {
+        if (pkMarclassId!=null){
+            Supplier t =new Supplier();
+            t.setIndustryFirst(pkMarclassId);
+            t.setIfAttrNormal(1);
+            int count=bdSupplierMapper.selectCount(t);
+            return count;
         }
-
-        //通过查询出来的id，查询商品的供应商数量
-        int num=mysqlMapper.getSupplierSellerNum(map);
-        return ServiceResult.success(num);
+        return 0;
+    }
+    public Integer getStrateSupplierNum(String pkMarclassId) {
+        if (pkMarclassId!=null){
+            Supplier t =new Supplier();
+            t.setIndustryFirst(pkMarclassId);
+            t.setIfAttrStrategy(1);
+            int count=bdSupplierMapper.selectCount(t);
+            return count;
+        }
+        return 0;
     }
     /**
      * 产生订单号
@@ -326,5 +322,11 @@ public class EnquiryPurchaseService {
             }
             logger.info("询价采购---短信，通知发送成功："+list);
         }
+    }
+
+    public BdMarbasclass findPkMarclassById(String pkMarclassId) {
+        BdMarbasclass t =new BdMarbasclass();
+        t.setPkMarbasclass(pkMarclassId);
+        return bdMarbasclassMapper.selectOne(t);
     }
 }

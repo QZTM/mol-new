@@ -91,13 +91,18 @@ public class TobeNegotiatedService {
 
     public fyPurchase findFypurchaseById(String id) {
         fyPurchase pur = fyPurchaseMapper.findOneById(id);
+        return pur;
+    }
 
-        //申请人信息
-        AppUser appUser = new AppUser();
-        appUser.setId(pur.getStaffId());
-        appUser= appUserMapper.selectOne(appUser);
-        pur.setStaffId(appUser.getUserName());
-
+    public  fyPurchase getStaffName(fyPurchase pur){
+        if (pur!=null){
+            AppUser appUser = new AppUser();
+            appUser.setId(pur.getStaffId());
+            appUser= appUserMapper.selectOne(appUser);
+            if(appUser!=null){
+                pur.setStaffId(appUser.getUserName());
+            }
+        }
         return pur;
     }
 

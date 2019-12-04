@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
 import util.TimeUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Log

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0, user-scalable=0">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta charset="UTF-8">
+    <title>手机验证</title>
+    <!-- Bootstrap -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/common.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery) -->
+    <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <script th:src="@{/layui/layui.all.js}"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。 -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/jquery-cookie.js}"></script>
+    <script th:src="@{/js/phoneCode.js}"></script>
+    <style>
+        body{
+            font-size:18px;
+            color:#555;
+        }
+        .out_div{
+            width:100%;
+            height:40px;
+            padding-left:20px;
+            padding-right:20px;
+        }
+        .inner_div{
+            width:100%;
+            height:100%;
+            padding-top:10px;
+            padding-bottom:10px;
+            border-bottom: 1px solid #d5d5d5;
+        }
+        .phone_input{
+            display:inline-block;
+            width:160px;
+            border: none;
+        }
+        input[disabled]{color:#555;opacity:1;background-color:#fff;}
+        .sub_span{
+            float:right;
+        }
+    </style>
+</head>
+<body>
+<div class="black_div" style="height:20px;"></div>
+    <div class="out_div">
+        <div class="inner_div">
+            <span th:text="${user.name}" style="margin-right:20px"></span>
+            <span>部门：</span>
+            <span th:text="${user.deptName}"></span>
+        </div>
+    </div>
+<div class="out_div">
+    <div class="inner_div">
+        <span>手机号：</span>
+        <input type="number" disabled="disabled" th:value="${user.phone}"  class="phone_input" id="phoneInput"/>
+        <span style="display:inline-block;float:right;color:dodgerblue;font-size:14px;" id="update_btn">修改</span>
+    </div>
+</div>
+<div class="out_div" hidden="hidden" id="get_code_out_div">
+    <div class="inner_div">
+        <span>验证码：</span>
+        <input type="number" style="width:100px;border:none;" id="checkcodeinput"/>
+        <span style="display:inline-block;float:right;color:#24d9bb;font-size:14px;" id="get_code_btn">获取验证码</span>
+    </div>
+</div>
+<div class="out_div">
+    <div class="inner_div" style="border:none">
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal sub_span" id="subspan">提交</button>
+    </div>
+</div>
+</body>
+<script  th:inline="javascript">
+    window.onload=function(){
+        var dbPhoneNum = [[${user.phone}]];
+        console.log(dbPhoneNum);
+        $("#update_btn").on('click',function(){
+            $(this).hide();
+            $("#phoneInput").removeAttr("disabled");
+            $("#phoneInput").val("");
+            $("#phoneInput").focus();
+            $("#get_code_out_div").show();
+        })
+        var resend;
+        //验证码倒计时相关
+        /*仿刷新：检测是否存在cookie*/
+        if($.cookie("captcha")){
+            var count = $.cookie("captcha");
+            var btn = $('#check-code-span');
+            btn.text(count+'秒后可重新获取').attr('disabled',true).css('cursor','not-allowed');
+            resend = setInterval(function(){
+                count--;
+                if (count > 0){
+                    btn.text("重新获取("+count+"秒)").css("color","#aaa");
+                    $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
+                }else {
+                    clearInterval(resend);
+                    resend = undefined;
+                    btn.text("获取验证码").css("color","#24d9bb");
+                }
+            }, 1000);
+        }
+        /*获取验证码点击事件*/
+        $('#get_code_btn').click(function(){
+            /*验证手机号码的有效性*/
+            var phone = $("#phoneInput").val();
+            console.log("phone:"+phone+",dbPhoneNum:"+dbPhoneNum);
+            if(dbPhoneNum == phone){
+                alertMsg("手机号码没有变动，无需修改");
+                return ;
+            }
+            if(!isPhoneNo(phone)){
+                alertMsg("请输入正确的手机号码！");
+                return ;
+            }
+            /*发送短信*/
+            sendMes(phone,'salesmanUpdate').then(function (res) {
+                console.log(res.result);
+                if(res.success){
+                    alertMsg("发送成功");
+                    $("#checkcodeinput").focus();
+                }else{
+                    alertMsg("发送失败，请稍后再试");
+                    return ;
+                }
+            });
+            var btn = $(this);
+            var count = 60;
+            if(!resend){
+                resend = setInterval(function(){
+                    count--;
+                    if (count > 0){
+                        btn.text("重新获取("+count+"秒)").css("color","#aaa");
+                        $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
+                    }else {
+                        clearInterval(resend);
+                        resend = undefined;
+                        btn.text("获取验证码").css("color","#24d9bb");
+                    }
+                }, 1000);
+            }
+            btn.attr('disabled',true).css('cursor','not-allowed');
+        });
+        //提交：1.验证验证码，
+        $("#subspan").on('click',function(){
+            //验证手机号码：
+            var phoneNum = $("#phoneInput").val();
+            var checkcode = $("#checkcodeinput").val();
+            if(!isPhoneNo(phoneNum)){
+                alertMsg("请输入正确的手机号码！");
+                return ;
+            }
+            if(dbPhoneNum == phoneNum){
+                alertMsg("手机号码没有变动，无需修改");
+                return ;
+            }
+            if(!checkcode){
+                alertMsg("请输入正确的验证码！");
+                return ;
+            }
+            checkPhoneCode(phoneNum,checkcode).then(function(res){
+                if(res.success){
+                    //修改数据库
+                    return updatePhone(phoneNum);
+                }else{
+                    alertMsg(res.message);
+                }
+            },function(res){
+                alertMsg(res.message);
+            }).then(function(res){
+                if(res.success){
+                    alertMsg("修改成功！");
+                    location.reload();
+                }else{
+                    alertMsg(res.message);
+                }
+            },function(res){
+                alertMsg(res.message);
+            })
+        })
+    }
+
+    function updatePhone(phone){
+        return new Promise(function(resolve, reject){
+            $.ajax({
+                url: '/auth/phoneupdate',
+                data: phone+'',
+                type: 'post',
+                dataType: "json",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (data) {
+                    console.log(data);
+                    resolve(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                    reject(data);
+                },
+            })
+        })
+    }
+</script>
+</html>

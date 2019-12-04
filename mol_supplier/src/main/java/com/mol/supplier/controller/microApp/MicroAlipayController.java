@@ -53,7 +53,7 @@ public class MicroAlipayController {
 
 
 
-    private static final String payCallBackUrl = Constant.domain+"/pay/alipay/callback";
+    private static final String payCallBackUrl = "http://"+Constant.domain+"/pay/alipay/callback";
 
 
     /**
@@ -94,7 +94,7 @@ public class MicroAlipayController {
                 break;
             case PuiSupplierDeposit.ORDER_PAY_FOR_EXPERT_REVIEW_AND_CONTRACT_FEE:
                 Example example1 = new Example(QuotePayresult.class);
-                example1.and().andEqualTo("purchaseId",(String)paramap.get("purchaseId")).andEqualTo("supplierId",supplier.getPkSupplier());
+                example1.and().andEqualTo("purchaseId",(String)paramap.get("purchaseId")).andEqualTo("supplierId",supplier.getPkSupplier()).andEqualTo("payResult","1");
                 QuotePayresult quotePayresult = quotePayresultMapper.selectOneByExample(example1);
                 if(quotePayresult != null){
                     return ServiceResult.failureMsg("已经支付过");
