@@ -34,6 +34,7 @@
         <mapper class="com.mol.fadada.dao.AuthRecordMapper" />
         <mapper class="com.mol.fadada.dao.SignResultRecordMapper" />
         <mapper class="com.mol.fadada.dao.ContractUploadMapper" />
+        <mapper class="com.mol.fadada.dao.SignatureMapper" />
     </mappers>
 
 </configuration>

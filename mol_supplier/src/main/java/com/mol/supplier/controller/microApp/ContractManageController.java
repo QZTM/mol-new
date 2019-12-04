@@ -1,6 +1,7 @@
 package com.mol.supplier.controller.microApp;
 
 import com.mol.fadada.handler.RegistAndAuthHandler;
+import com.mol.fadada.handler.SignatureHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import com.mol.supplier.entity.MicroApp.Supplier;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +90,7 @@ public class ContractManageController {
 
 
     @RequestMapping("/showCheck")
-    public String showCheckPage(HttpSession session,Model model){
+    public String showCheckPage(HttpSession session, Model model, HttpServletResponse response) throws IOException {
         Supplier supplier = microUserService.getSupplierFromSession(session);
         //查询该商户是否注册过：
         ServiceResult serviceResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(), "2");
@@ -98,25 +101,31 @@ public class ContractManageController {
             Example example = new Example(AuthRecord.class);
             example.and().andEqualTo("customerId",customerId).andEqualTo("authenticationType","2");
             AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
-            if(authRecord != null && "3".equals(authRecord.getStatus())) {
-                return "fadada_auth_waiting";
-            }else if(authRecord != null && "4".equals(authRecord.getStatus())) {
-                return "fadada_auth_success";
-            }else if(authRecord != null && "5".equals(authRecord.getStatus())){
-                if(authRecord.getStatusDesc() != null){
-                    model.addAttribute("failreason",authRecord.getStatusDesc());
-                }
-                return "fadada_auth_fail";
-            }else {
+            if(authRecord != null){
+                return "redirect:"+authRecord.getUrl();
+                //response.sendRedirect(authRecord.getUrl());
+            }else{
                 return "e_contract_auth";
             }
+//            if(authRecord != null && "3".equals(authRecord.getStatus())) {
+//                response.sendRedirect(authRecord.getUrl());
+//                return "fadada_auth_waiting";
+//            }else if(authRecord != null && "4".equals(authRecord.getStatus())) {
+//                return "fadada_auth_success";
+//            }else if(authRecord != null && "5".equals(authRecord.getStatus())){
+//                if(authRecord.getStatusDesc() != null){
+//                    model.addAttribute("failreason",authRecord.getStatusDesc());
+//                }
+//                return "fadada_auth_fail";
+//            }else {
+//                return "e_contract_auth";
+//            }
 
             //根据customerId查询
 
         }else {
             return "e_contract_auth";
         }
-
     }
 
 
@@ -168,6 +177,25 @@ public class ContractManageController {
 //
 //        }
 
+    }
+
+    /**
+     * 显示合同管理页面
+     * @return
+     */
+    @RequestMapping("/sealManage")
+    public String sealManage(HttpSession session){
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        String customerId = RegistAndAuthHandler.getCustomerIdByOpenId(supplier.getPkSupplier());
+        //查询是否上传过电子签章：
+        ServiceResult sr = SignatureHandler.getSignature(customerId);
+        if(sr.isSuccess()){
+
+        }else{
+
+        }
+
+        return "seal_manage";
     }
 
 }

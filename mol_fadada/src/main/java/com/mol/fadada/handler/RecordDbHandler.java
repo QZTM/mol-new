@@ -1,10 +1,7 @@
 package com.mol.fadada.handler;
 
 import com.mol.fadada.config.MapperFactory;
-import com.mol.fadada.dao.AuthRecordMapper;
-import com.mol.fadada.dao.ContractUploadMapper;
-import com.mol.fadada.dao.RegistRecordMapper;
-import com.mol.fadada.dao.SignResultRecordMapper;
+import com.mol.fadada.dao.*;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import com.mol.fadada.pojo.SignResultRecord;
@@ -15,6 +12,7 @@ public class RecordDbHandler {
     private static AuthRecordMapper authRecordMapper = MapperFactory.createMapper(AuthRecordMapper.class);
     private static SignResultRecordMapper signResultRecordMapper = MapperFactory.createMapper(SignResultRecordMapper.class);
     private static ContractUploadMapper contractUploadMapper = MapperFactory.createMapper(ContractUploadMapper.class);
+    private static SignatureMapper signatureMapper = MapperFactory.createMapper(SignatureMapper.class);
 
     @Synchronized
     public static RegistRecordMapper getRegistRecordMapper(){
@@ -47,6 +45,15 @@ public class RecordDbHandler {
         }
         return contractUploadMapper;
     }
+
+    @Synchronized
+    public static SignatureMapper getSignatureMapper(){
+        if(signatureMapper == null){
+            signatureMapper = MapperFactory.createMapper(SignatureMapper.class);
+        }
+        return signatureMapper;
+    }
+
 
     public static int saveRegistRecord(RegistRecord registRecord){
         return getRegistRecordMapper().insert(registRecord);

@@ -6,6 +6,7 @@ import com.fadada.sdk.client.FddClientBase;
 import com.fadada.sdk.client.authForfadada.ApplyCert;
 import com.fadada.sdk.client.authForfadada.ApplyNumCert;
 import com.fadada.sdk.client.request.ExtsignReq;
+import com.mol.fadada.config.FddBaseClient;
 import com.mol.fadada.dao.ContractUploadMapper;
 import com.mol.fadada.pojo.ContractUploadRecord;
 import com.mol.oos.OOSConfig;
@@ -25,14 +26,7 @@ import java.io.IOException;
 @Log
 public class ContractHandler {
 
-    /**
-     * 参数
-     */
-    private static String APP_ID = "402664";
-    private static String APP_SECRET = "xeVHW4Cbn8nWgwCWC16VDbVe";
-    private static String V = "2.0";
-    private static String HOST = "https://testapi.fadada.com:8443/api/";
-    private static FddClientBase clientBase = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+    private static FddClientBase clientBase = FddBaseClient.getFddClientBase();
     private static StringBuffer response = new StringBuffer("==================Welcome ^_^ ==================");
 
 
@@ -89,9 +83,9 @@ public class ContractHandler {
     {
         try {
             response.append("\n").append("自动签");
-            FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+            FddClientBase base = FddBaseClient.getFddClientBase();
             ExtsignReq req = new ExtsignReq();
-            req.setCustomer_id(Customer_id);//客户编号
+            req.setCustomer_id("");//客户编号
             req.setTransaction_id(Transaction_id);//交易号
             req.setContract_id(Contract_id);//合同编号
             req.setClient_role("1");//客户角色1 接入平台
@@ -128,7 +122,7 @@ public class ContractHandler {
     {
         try {
             response.append("\n").append("申请实名证书:");
-            ApplyCert applyCert = new ApplyCert(APP_ID,APP_SECRET,V,HOST);
+            ApplyCert applyCert = new ApplyCert(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
             String result = applyCert.invokeApplyCert(customer_id,verified_serialno);
             JSONObject code=JSONObject.parseObject(result);
             if (code.equals("1"))
@@ -156,7 +150,7 @@ public class ContractHandler {
     {
         try {
             response.append("\n").append("编号证书申请:");
-            ApplyNumCert applyNumCert = new ApplyNumCert(APP_ID,APP_SECRET,V,HOST);
+            ApplyNumCert applyNumCert = new ApplyNumCert(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
             String result = applyNumCert.invokeapplyNumcert(customer_id,verified_serialno);
             JSONObject code=JSONObject.parseObject(result);
             if (code.equals("1"))
