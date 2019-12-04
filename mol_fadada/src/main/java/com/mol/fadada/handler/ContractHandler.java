@@ -85,9 +85,11 @@ public class ContractHandler {
      * @param Doc_title 文档标题
      * @return
      */
+
     public static ServiceResult ExtsignAuto(String Customer_id,String Transaction_id,String Contract_id,String Sign_keyword ,String Doc_title)
     {
-        try {
+        try
+        {
             response.append("\n").append("自动签");
             FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
             ExtsignReq req = new ExtsignReq();
@@ -111,7 +113,41 @@ public class ContractHandler {
          /*   response.append("\n").append(result);
             String viewpdf_url = JSON.parseObject(result).getString("viewpdf_url");
             Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + viewpdf_url);*/
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return  ServiceResult.failure(e.toString());
+        }
+    }
+
+
+    /**
+     * 手动签署
+     * @param Customer_id  客户编号
+     * @param Transaction_id 交易号
+     * @param Contract_id 合同编号
+     * @param Doc_title 文档标题
+     * @param Return_url 页面跳转 URL（签署 结果同步 通知）
+     * @return
+     */
+    public static ServiceResult extsign(String Customer_id,String Transaction_id,String Contract_id,String Doc_title,String Return_url)
+    {
+        try
+        {
+            response.append("\n").append("手动签署接口:");
+            FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
+            ExtsignReq req = new ExtsignReq();
+            req.setCustomer_id(Customer_id);
+            req.setTransaction_id(Transaction_id);
+            req.setContract_id(Contract_id);
+            req.setDoc_title(Doc_title);
+            req.setReturn_url(Return_url);
+            String result = base.invokeExtSign(req);
+            return ServiceResult.success(result);
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             return  ServiceResult.failure(e.toString());
         }

@@ -48,7 +48,7 @@ public class PurchasOrderinforService
             }
             else
             {
-                purchasOrderinforben.get(n).setSign_status("未签署合同");
+                purchasOrderinforben.get(n).setSign_status("未上传合同");
             }
         }
 

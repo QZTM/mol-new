@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.t hymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -10,7 +10,6 @@
 <!--电子合同详情页-->
 <div style="padding: 2px;">
     <div>
-
         <div style="margin: 12px; width:98%;height: 100px; background-color: #009F95;border-radius:12px;color: #fbfbfb;padding: 12px">
             <div style="width: 100%;">
                 <p id="Tilte_name" th:text="${goods_name}" style="font-size: 24px;display: inline-block">标题零部件名字</p>
@@ -81,7 +80,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/PurchasOrderinfor/OrderDetailedinfor',
+                url: '/ElectronicContractSigninginforController/GetConfirmSupplier',
                 dataType: 'json',
                 data:{PurchasId:document.getElementById("Oreder_number").innerText.split(':')[1]},
                 // headers:{  'eticket': app.globalData.eticket},
@@ -92,14 +91,22 @@
                     {
                         var elements= document.createElement('div')
                         var butuntext;
-                        if (data[n][0].sign_status==='未签署合同')
+                        if (data[n][0].sign_status==='未上传合同')
                         {
                             butuntext=
                             '<div onclick="click_input(this)" style="float: left; cursor:pointer;margin-top: 6px;margin-left: 12px;padding:4px;background-color:#009688;width: 70px;color: #fbfbfb;text-align: center">' +
                             '<p>上传合同</p>'  +
-                            '<p style="display: none">'+data[n][0].pk_supplier_id+'</p>'+
+                            '<p class="supplier_id" style="display: none">'+data[n][0].pk_supplier_id+'</p>'+
                             '<input id="files" onchange="File_upload(this)" name="file" type="file" style="display: none">' +
                             '</div>'
+                        }
+                        else if (data[n][0].sign_status==='未签署合同')
+                        {
+                            butuntext=
+                                ' <div onclick="signContract(this)" style="float: left; cursor:pointer;margin-top: 6px;margin-left: 12px;padding:4px;background-color:#009688;width: 70px;color: #fbfbfb;text-align: center">' +
+                                '<p >签署合同</p>'  +
+                                '<p style="display: none">'+data[n][0].pk_supplier_id+'</p>'+
+                                '   </div>'
                         }
                         else if (data[n][0].sign_status==='等待签署合同')
                         {
@@ -158,7 +165,6 @@
                     alert("获取审核议价信息失败")
                 }
             });
-
         });
     }
 
@@ -189,9 +195,33 @@
                 alert("获取审核议价信息失败")
             }
         });
+    }
 
-      //  window.open("https://testapi.fadada.com:8443/api/viewContract.api?app_id=402664&v=2.0&timestamp=20191128114609&contract_id=20191127161612252&msg_digest=MzhENTFCNUExNzkxODU4RDIwM0UwOUM4QUE0MUU5MEQxNDFENjU0QQ==")
-        //window.location.href="";
+    function signContract(e)//签署合同合同
+    {
+        var supplier_id=e.childNodes[1]//拿到供应商id
+        $.ajax({
+            type: 'POST',
+            url: '/ElectronicContractSigninginforController/signContract',
+            dataType: 'json',
+            data:{purchasId:document.getElementById("Oreder_number").innerText.split(':')[1],supplierid:supplier_id.innerText},
+            // headers:{  'eticket': app.globalData.eticket},
+            success: function (data) {
+                if (data.statu===true)
+                { var bb=document.getElementById("")
+
+                    window.open(data.url);
+                    layer.confirm('是否完成签署？', function(index)
+                    {
+                        location.reload();//刷新界面
+                        layer.close(index);
+                    });
+                }
+            },
+            error: function (data) {
+                alert("获取审核议价信息失败")
+            }
+        });
     }
 
     function File_upload(e)//上传文件的方法，参数 url controller地址 上传文件类型的div id 如名片div的id 或者 身份材料的divid
@@ -217,12 +247,12 @@
             }
             else //文件通过，可以上传
             {
-
-                var supplier_id=e.parentElement.childNodes[2]
+                var  that=$(e);
+                var supplier_id=that.parent().children(".supplier_id")[0].innerText
                 var files = new FormData(document.getElementById('File_upload_form'));//"domeform"
                 files.set("userid",[[${session.userid}]].toString());//传一个专家id
                 files.set("purchase_id",[[${Oreder_number}]].toString().split(":")[1]);//采购单号
-                files.set("supplier_id",supplier_id.innerText);//供应商id
+                files.set("supplier_id",supplier_id);//供应商id
 
                 $.ajax({
                     url: "/ElectronicContractSigninginforController/Upload_Contract",
@@ -235,6 +265,7 @@
                         if (data.statu==="0")
                         {
                             alert("上传合同成功")
+                            location.reload();
                         }
                         else if (data.statu==="1")
                         {
@@ -277,7 +308,6 @@
                                     {
                                         if (data1.statu===true)
                                         {
-                                            console.log(data1.url)
                                             window.open(data1.url);
                                         }
                                     },
@@ -292,7 +322,6 @@
                     error: function(e) {
                     }
                 });
-
             }
         }
         else

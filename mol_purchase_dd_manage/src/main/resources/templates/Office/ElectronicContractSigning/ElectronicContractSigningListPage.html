@@ -55,6 +55,7 @@
 
     function close_Details_page()//关闭订单详情通话页
     {
+        LandingTable(0);
         $("#Details").animate({width:"50%"}, 0);//收起
         document.getElementById("datagridview").style.display="block";
         document.getElementById("Details").style.display="none";
@@ -130,7 +131,6 @@
         //监听单元格事件
         table.on('tool(test1)', function(obj){//显示详情页
             var data = obj.data;
-            console.log(data);
 
             if( obj.event === 'setEve4' )
             {
@@ -140,7 +140,6 @@
                 //document.getElementById("subWin").contentWindow.document.body.innerHTML="供应商通话记录:山东XXX公司";
             }
             else if(obj.event === 'edit'){
-                console.log(data.type);
                 document.getElementById("datagridview").style.display="none";
                 document.getElementById("subWin").src="/Home/ElectronicContractSigninginforPage?Oreder_number="+data.id+"&user_name="+data.user_name+"&create_time="+data.create_time+"&goods_name="+data.goods_name;//跳转到合同详情 传送一个合同编号
                 document.getElementById("Details").style.display="block";
