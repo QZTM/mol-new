@@ -63,6 +63,7 @@ public class MicroRegistController {
             Salesman salesman = new Salesman();
             salesman.setPkSupplier(exitedSupplier.getPkSupplier());
             salesman.setName(username);
+            salesman.setDeptName(deptName);
             salesman.setPhone(phone);
             if (session.getAttribute("ddUser") != null) {
                 DDUser ddUser = (DDUser) session.getAttribute("ddUser");
@@ -102,6 +103,7 @@ public class MicroRegistController {
                 Salesman salesman = new Salesman();
                 salesman.setPkSupplier(insertResult);
                 salesman.setName(username);
+                salesman.setDeptName(deptName);
                 salesman.setPhone(phone);
                 if (session.getAttribute("ddUser") != null) {
                     DDUser ddUser = (DDUser) session.getAttribute("ddUser");

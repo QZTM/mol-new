@@ -13,6 +13,8 @@ public class Salesman {
 
     private String name;
 
+    private String deptName;
+
     private String phone;
 
     private Integer gender;

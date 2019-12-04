@@ -436,4 +436,13 @@ public class MicroAuthController {
         }
 
     }
+
+
+
+    @RequestMapping("/phoneupdate")
+    public String updatephone(HttpSession session,Model model){
+        Salesman salesman = microUserService.getUserFromSession(session);
+        model.addAttribute("user",salesman);
+        return "phone_update";
+    }
 }

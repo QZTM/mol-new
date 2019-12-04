@@ -47,7 +47,7 @@
         <div style="float: left;" th:text="${session.user.name}"></div>
         <div style="float: left;">
             <span>&nbsp;&nbsp;&nbsp;&nbsp;部门:</span>
-            <span>销售部</span>
+            <span th:text="${session.user.deptName}">销售部</span>
         </div>
         <div style="float: left;clear: both;margin-top: 15px;" th:text="${session.supplier.name}">枣庄星联信息科技有限公司</div>
     </div>
@@ -61,7 +61,7 @@
 </div> -->
 <div >
     <ul style="margin: 0px 0 5px 25px;font-size: 16px;">
-        <li role="presentation" style="margin-top: 10px;" ><span>供应商性质：</span><span th:text="${supplierattr}"></span></li>
+        <li role="presentation" style="margin-top: 10px;" ><span>供应商性质：</span><span th:text="${session.supplier.ifAttrStrategy == 1?'战略采购供应商':session.supplier.ifAttrSingle == 1?'单一来源供应商':'基础供应商'}"></span></li>
         <li role="presentation" style="margin-top: 10px;" ><span>所属行业：</span><span th:text="${industrystr==''?'暂未设置':industrystr}"></span></li>
     </ul>
 </div>
@@ -70,7 +70,7 @@
 
 <div>
     <ul class="nav nav-pills nav-stacked">
-        <li role="presentation" style="border:1px solid #dddddd;"><a href="#">手机验证</a></li>
+        <li role="presentation" style="border:1px solid #dddddd;"><a href="/auth/phoneupdate">手机验证</a></li>
         <li role="presentation"  style="border:1px solid #dddddd;"><a href="/auth/attr">供应商属性认证</a></li>
         <li role="presentation"  style="border:1px solid #dddddd;"><a href="#javascript;" id="manage_contract_btn">合同管理</a></li>
         <li role="presentation"  style="border:1px solid #dddddd;"><a href="/contract/showCheck">电子合同认证</a></li>

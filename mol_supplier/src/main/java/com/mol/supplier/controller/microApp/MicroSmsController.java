@@ -35,6 +35,7 @@ public class MicroSmsController {
     private static final String MSMTYPE_SUPPLIER_REGIST = "supplierRegist";
     private static final String MSMTYPE_SUPPLIER_AUTH = "supplierAuth";
     private static final String MSMTYPE_SUPPLIER_UPDATE = "supplieUpdate";
+    private static final String MSMTYPE_SALESMAN_UPDATE = "salesmanUpdate";
 
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     @ResponseBody
@@ -58,6 +59,9 @@ public class MicroSmsController {
                 template = XiaoNiuMsmTemplate.供应商认证模板();
                 break;
             case MSMTYPE_SUPPLIER_UPDATE:
+                template = XiaoNiuMsmTemplate.供应商修改信息模板();
+                break;
+            case MSMTYPE_SALESMAN_UPDATE:
                 template = XiaoNiuMsmTemplate.供应商修改信息模板();
         }
         String sendResult = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, template,phone);
