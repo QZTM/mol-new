@@ -193,6 +193,15 @@ public class MicroDDLoginController {
         salesman = microSalesmanService.getSalesman(example1);
         logger.info("salesman == null?---" + (salesman == null));
 
+
+        if(salesman == null) {
+            //根据渠道id再查一遍：
+            Example example2 = new Example(Salesman.class);
+            example2.and().andEqualTo("name",ddUser.getName()).andEqualTo("ddUserId",ddUser.getUserid());
+            salesman = microSalesmanService.getSalesman(example2);
+        }
+        logger.info("salesman == null?---" + (salesman == null));
+
         if (salesman != null) {
 
             Example example = new Example(Supplier.class);
