@@ -74,7 +74,7 @@
         <li role="presentation"  style="border:1px solid #dddddd;"><a href="/auth/attr">供应商属性认证</a></li>
         <li role="presentation"  style="border:1px solid #dddddd;"><a href="#javascript;" id="manage_contract_btn">合同管理</a></li>
         <li role="presentation"  style="border:1px solid #dddddd;"><a href="/contract/showCheck">电子合同认证</a></li>
-        <li role="presentation"  style="border:1px solid #dddddd;"><a href="/contract/sealManage">电子签章管理</a></li>
+        <li role="presentation"  style="border:1px solid #dddddd;"><a href="#javascript;" id="manage_seal_btn">电子签章管理</a></li>
     </ul>
 </div>
 <!--导入导航模块-->
@@ -87,6 +87,24 @@
         layer = layui.layer;
     })
         //     var $ = layui.jquery,element = layui.element;
+    $("#manage_seal_btn").on('click',function(){
+        $.ajax({
+            url:'/contract/checkAuth',
+            data:{},
+            type:"get",
+            dataType:'json',
+            success:function(res){
+                if(res.success){
+                    location.href = "/contract/sealManage";
+                }else{
+                    alertMsg(res.message);
+                }
+            },fail:function(res){
+                alertMsg(res.message);
+            }
+        })
+    })
+
     $("#manage_contract_btn").on('click',function(){
         $.ajax({
             url:'/contract/checkAuth',
@@ -95,7 +113,7 @@
             dataType:'json',
             success:function(res){
                 if(res.success){
-                    location.href = "/contract/index"
+                    location.href = "/contract/index";
                 }else{
                     alertMsg(res.message);
                 }

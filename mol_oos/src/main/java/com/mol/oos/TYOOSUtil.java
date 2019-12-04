@@ -2,11 +2,8 @@ package com.mol.oos;
 
 import java.io.*;
 import java.util.List;
-import java.util.logging.Logger;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-
 import javax.imageio.stream.FileImageOutputStream;
 
 public class TYOOSUtil {

@@ -1,6 +1,7 @@
 package com.mol.supplier.controller.microApp;
 
 import com.mol.fadada.handler.RegistAndAuthHandler;
+import com.mol.fadada.handler.SignatureHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import com.mol.supplier.entity.MicroApp.Supplier;
@@ -101,7 +102,8 @@ public class ContractManageController {
             example.and().andEqualTo("customerId",customerId).andEqualTo("authenticationType","2");
             AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
             if(authRecord != null){
-                response.sendRedirect(authRecord.getUrl());
+                return "redirect:"+authRecord.getUrl();
+                //response.sendRedirect(authRecord.getUrl());
             }else{
                 return "e_contract_auth";
             }
@@ -124,8 +126,6 @@ public class ContractManageController {
         }else {
             return "e_contract_auth";
         }
-        return "";
-
     }
 
 
@@ -184,7 +184,17 @@ public class ContractManageController {
      * @return
      */
     @RequestMapping("/sealManage")
-    public String sealManage(){
+    public String sealManage(HttpSession session){
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        String customerId = RegistAndAuthHandler.getCustomerIdByOpenId(supplier.getPkSupplier());
+        //查询是否上传过电子签章：
+        ServiceResult sr = SignatureHandler.getSignature(customerId);
+        if(sr.isSuccess()){
+
+        }else{
+
+        }
+
         return "seal_manage";
     }
 
