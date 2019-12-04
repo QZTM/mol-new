@@ -105,6 +105,9 @@ public class MyController {
             user.setMajor(mar.getName());
         }
 
+        //修改认证结果
+//        user=myService.modifyAuthentication(user);
+//        logger.info("修改专家认证结果为中文显示："+user.getAuthentication());
         map.addAttribute("my",user);
         logger.info("method:one describe:回传专家的个人信息  result:"+user);
         return "expert_my";
@@ -237,6 +240,7 @@ public class MyController {
             //查询数据库
             ExpertUser  userNew=myService.getMyInfo(user.getId());
 
+            session.removeAttribute("user");
             session.setAttribute("user",userNew);
             logger.info("method:subMessage    describe:session中更新专家信息  result:"+userNew);
         }
