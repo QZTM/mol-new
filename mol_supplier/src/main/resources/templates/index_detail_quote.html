@@ -23,6 +23,7 @@
 
     <!-- Bootstrap -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script th:src="@{/layui/layui.js}"></script>
 
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery) -->
@@ -69,7 +70,7 @@
             <!--            数量-->
             <span class="col-xs-2 col-md-2 bor" ><input  th:value="${er.count}" readonly="readonly" th:id="co+${in.index}" style="width: 100%;outline: snow;border: none;"/></span>
             <!--            报价-->
-            <span class="col-xs-3 col-md-3 bor"><input class="capital" th:name="${'quotes['+in.index+'].quote'}"  th:id="in+${in.index}" style="width: 100%;border: none;"  onblur="inputBlur(this.id)"  onclick="clic(this.id)" value="0.00"/></span>
+            <span class="col-xs-3 col-md-3 bor"><input class="capital" th:name="${'quotes['+in.index+'].quote'}"  th:id="in+${in.index}" style="width: 100%;border: none;"  onblur="inputBlur(this.id)"  onclick="clic(this.id)" value="请输入"/></span>
             <!--            总计-->
             <span class="col-xs-2 col-md-2 bor"  style="font-size: 12px" th:id="sum+${in.index}"></span>
             <!--            id-->
@@ -112,7 +113,10 @@
 </body>
 <script th:src="@{/js/dingtalk.open.js}"></script>
 <script th:inline="javascript">
-
+    var layer ;
+    layui.use(["layer","form"], function(){
+        layer = layui.layer;
+    });
     function sub () {
         //$("#subBtn").css("disable",)
         dd.device.notification.showPreloader({
@@ -156,7 +160,11 @@
                     success:function (data) {
                         dd.device.notification.hidePreloader({
                             onSuccess:function () {
-                                alert(data.message);
+                                layer.open({
+                                    title: '提示'
+                                    ,content: data.message
+                                });
+                                // alert(data.message);
                                 // window.location.reload()
                                 // location.href="/index/selectOne?id="+_purId;
                                 window.history.go(-2)
@@ -170,7 +178,11 @@
                     fail:function (data) {
                         dd.device.notification.hidePreloader({
                             onSuccess:function () {
-                                alert("出现问题，请联系管理员");
+                                layer.open({
+                                    title: '提示'
+                                    ,content: '出现问题，请联系管理员'
+                                });
+                                // alert("出现问题，请联系管理员");
                             }
                         })
                     }
@@ -192,7 +204,7 @@
         var precapital;
         x[e_num].addEventListener('click', function() {
             console.log("进来"+this.value)
-            if (this.value == '0.00') {
+            if (this.value == '请输入') {
                 this.value = '';
             } else {
                 this.value = this.value.replace(/\.00/, '').replace(/(\.\d)0/,'$1');
@@ -251,8 +263,12 @@
         for (var i=0;i<count;i++){
             var d="in"+i;
             var pri =$("#"+d).val();
-            if (pri=="0.00"){
-                alert("有未报价的内容")
+            if (pri=="请输入"){
+                layer.open({
+                    title: '提示'
+                    ,content: '有未报价的内容'
+                });
+                // alert("有未报价的内容")
                 return false;
                 break;
             }
@@ -264,12 +280,18 @@
     function checkDate() {
         var cyDate=$("#cycle").val();
         if (cyDate==null || cyDate==""){
-            alert("请输入供货周期！");
+            layer.open({
+                title: '提示'
+                ,content: '请输入供货周期'
+            });
             return false;
         }
         var reg=/^[0-9]+.?[0-9]*$/;
         if (!reg.test(cyDate)) {
-            alert("请输入数字");
+            layer.open({
+                title: '提示'
+                ,content: '请输入数字格式'
+            });
             $("#cycle").val("");
             return false;
         }

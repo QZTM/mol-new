@@ -11,9 +11,11 @@ import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.SubObj;
 import com.mol.purchase.service.dingding.purchase.EnquiryPurchaseService;
 import com.mol.purchase.service.token.TokenService;
 //import com.mol.quartz.handler.AddJobHandler;
+import com.mol.purchase.util.FindFirstMarbasclassByMaterialUtils;
 import com.mol.sms.SendMsmHandler;
 import com.mol.sms.XiaoNiuMsm;
 import com.mol.sms.XiaoNiuMsmTemplate;
+import entity.BdMarbasclass;
 import entity.ServiceResult;
 import org.dom4j.DocumentException;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ public class EnquiryPurchaseController {
 
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    FindFirstMarbasclassByMaterialUtils find;
 
 
     @Autowired
@@ -71,9 +75,20 @@ public class EnquiryPurchaseController {
     }
 
     @RequestMapping(value = "/getSupplierNum")
-    public ServiceResult<Integer> getSupplierNumByItemName(@RequestBody SubObj obj){
-        return null;
-        //return shoppingService.getSupplierNum(obj.getPageArray().getPurchaseArray());
+    public ServiceResult getSupplierNumByItemName(String pkMarclassId,String isNorml,String isStrategy){
+        logger.info("需要查询供应商数量的行业："+pkMarclassId+",询价采购："+isNorml+",战略采购："+isStrategy);
+        BdMarbasclass marbasclass=shoppingService.findPkMarclassById(pkMarclassId);
+
+        BdMarbasclass firstMarbasclass = find.getBm(marbasclass);
+        logger.info("获得的首级物料分类："+firstMarbasclass);
+        int count=0;
+        if (isNorml!=null && Integer.parseInt(isNorml)==1){
+            count= shoppingService.getSupplierNum(firstMarbasclass.getPkMarbasclass());
+        }
+        if (isStrategy!=null && Integer.parseInt(isStrategy)==1){
+            count=shoppingService.getStrateSupplierNum(firstMarbasclass.getPkMarbasclass());
+        }
+        return ServiceResult.success(count);
     }
 
 }
