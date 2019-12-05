@@ -1,9 +1,7 @@
 package com.mol.supplier.controller.microApp;
-
 import com.mol.fadada.handler.RegistAndAuthHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.SignResultRecord;
-import com.mol.supplier.config.Constant;
 import com.mol.supplier.entity.MicroApp.PurchaseSupplierContract;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.mapper.microApp.FadadaSignResultRecordMapper;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
 import util.TimeUtil;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -42,35 +39,55 @@ public class FadadaCallBackController {
     @ResponseBody
     public void personRegistCallback(@RequestParam Map paraMap){
         log.info("法大大个人认证异步回调事件：，，返回值："+paraMap.toString());
-        //先根据该customerId查看数据库是否有记录，如果有记录的话则修改字段，如果没有则新建记录
-        Example example = new Example(AuthRecord.class);
-        example.and().andEqualTo("customerId",paraMap.get("customerId"));
-        AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
-        Object statusdescObj = paraMap.get("statusDesc");
-        Object certStatusObj = paraMap.get("certStatus");
-        System.out.println("数据库中查询的认证记录："+authRecord);
-        if(authRecord == null){
-            authRecord = new AuthRecord();
-            authRecord.setId(idWorker.nextId()+"");
-            authRecord.setCustomerId((String)paraMap.get("customerId"));
-            authRecord.setTransactionNo((String)paraMap.get("serialNo"));
-            authRecord.setStatus((String)paraMap.get("status"));
-            if(statusdescObj != null) {
-                authRecord.setStatusDesc((String) statusdescObj);
-            }
-            if(certStatusObj != null) {
-                  authRecord.setCertStatus((String) certStatusObj);
-            }
-            fadadaAuthRecordMapper.insert(authRecord);
-        }else{
-            authRecord = new AuthRecord();
-            authRecord.setTransactionNo((String)paraMap.get("serialNo"));
-            authRecord.setStatus((String)paraMap.get("status"));
-            authRecord.setStatusDesc((String)paraMap.get("statusDesc"));
-            authRecord.setCertStatus((String)paraMap.get("certStatus"));
-            fadadaAuthRecordMapper.updateByExample(authRecord,example);
-        }
+        authCallbackAction(paraMap);
     }
+
+
+    /**
+     * 0：未认证； 1：管理员资料已提 交； 2：企业基本资料(没 有申请表)已提交； 3：已提交待审核；
+     * 4：审核通过； 5：审核不通过； 6 人工初审通过，
+     * @param paraMap
+     */
+    @RequestMapping(value = "/orgAuth",method = RequestMethod.POST)
+    @ResponseBody
+    public void fddCallback(@RequestParam Map paraMap){
+        log.info("法大大企业认证异步回调事件：，，返回值："+paraMap.toString());
+        authCallbackAction(paraMap);
+    }
+
+
+    public void authCallbackAction(Map paraMap){
+        String serialNo = (String)paraMap.get("serialNo");
+        String customerId = (String)paraMap.get("customerId");
+        String status = (String)paraMap.get("status");
+        String statusDesc = "";
+        Object obj = paraMap.get("statusDesc");
+        if(obj != null) {
+            statusDesc = (String) obj;
+        }
+        Object certStatusObj = paraMap.get("certStatus");
+        String certStatus = "";
+        if(certStatusObj != null) {
+            certStatus =(String) certStatusObj;
+        }
+        log.info("customerId:"+customerId);
+        Example example = new Example(AuthRecord.class);
+        example.and().andEqualTo("customerId",customerId).andEqualTo("transactionNo",serialNo);
+        AuthRecord authRecord = new AuthRecord();
+        authRecord.setStatus(status);
+        if(!StringUtils.isEmpty(statusDesc)) {
+            authRecord.setStatusDesc(statusDesc);
+        }
+        if(!StringUtils.isEmpty(certStatus)) {
+            authRecord.setCertStatus(certStatus);
+        }
+        fadadaAuthRecordMapper.updateByExampleSelective(authRecord,example);
+    }
+
+
+
+
+
 
     @RequestMapping(value = "/personAuthTo")
     @ResponseBody
@@ -102,40 +119,11 @@ public class FadadaCallBackController {
             authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
             fadadaAuthRecordMapper.insertSelective(authRecordNew);
         }
-
-
-
         return "/index";
     }
 
 
-    /**
-     * 0：未认证； 1：管理员资料已提 交； 2：企业基本资料(没 有申请表)已提交； 3：已提交待审核；
-     * 4：审核通过； 5：审核不通过； 6 人工初审通过，
-     * @param paraMap
-     */
-    @RequestMapping(value = "/orgAuth")
-    @ResponseBody
-    public void fddCallback(@RequestParam Map paraMap){
-        log.info("法大大企业认证异步回调事件：，，返回值："+paraMap.toString());
-        String serialNo = (String)paraMap.get("serialNo");
-        String customerId = (String)paraMap.get("customerId ");
-        String status = (String)paraMap.get("status");
-        String statusDesc = "";
-        Object obj = paraMap.get("statusDesc");
-        if(obj != null) {
-            statusDesc = (String) obj;
-        }
-            Example example = new Example(AuthRecord.class);
-            example.and().andEqualTo("customerId",customerId);
-            AuthRecord authRecord = new AuthRecord();
-            authRecord.setTransactionNo(serialNo);
-            authRecord.setStatus(status);
-            if(!StringUtils.isEmpty(statusDesc)) {
-                authRecord.setStatusDesc(statusDesc);
-            }
-            fadadaAuthRecordMapper.updateByExampleSelective(authRecord,example);
-    }
+
 
 
     /**
@@ -174,6 +162,8 @@ public class FadadaCallBackController {
         return "forward:/microApp/my/show";
     }
 
+
+
     @RequestMapping("/signTo")
     public String signCallBack(@RequestParam Map paraMap){
         log.info("*****法大大手动签署合同同步通知*****");
@@ -187,8 +177,6 @@ public class FadadaCallBackController {
         log.info("*****法大大手动签署合同异步通知*****");
         this.handlerParaMapToDb(paraMap);
     }
-
-
 
     public void handlerParaMapToDb(Map paraMap){
         System.out.println(paraMap.toString());
@@ -252,7 +240,6 @@ public class FadadaCallBackController {
                     srr.setId(signResultRecordDb.getId());
                     fadadaSignResultRecordMapper.updateByPrimaryKeySelective(srr);
                 }
-
                 PurchaseSupplierContract purchaseSupplierContract = new PurchaseSupplierContract();
                 purchaseSupplierContract.setSignStatus(PurchaseSupplierContract.采购方供应商都已签署);
                 microPurchaseSupplierContractMapper.updateByExampleSelective(purchaseSupplierContract, example1);
@@ -263,5 +250,4 @@ public class FadadaCallBackController {
             }
         }
     }
-
 }

@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
 import util.TimeUtil;
-
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +94,7 @@ public class EContractRegistAndAuthController {
         if ("1".equals(authType)) {
             return RegistAndAuthHandler.getAuthPersonurl(customerId, "", null);
         } else if ("2".equals(authType)) {
-            ServiceResult sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
+            ServiceResult sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, "http://"+Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
             if(sr.isSuccess()) {
                 Map paraMap = (HashMap)sr.getResult();
                 //第一次存入数据库：
