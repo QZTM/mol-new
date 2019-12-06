@@ -46,7 +46,13 @@ public class EContractRegistAndAuthController {
         Salesman salesman = microUserService.getUserFromSession(session);
         //判断该单位是否注册了：
         RegistRecord rr = new RegistRecord();
-        ServiceResult registResult = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(), registType);
+        String openId = "";
+        if("1".equals(registType)) {
+            openId = salesman.getId();
+        }else if("2".equals(registType)){
+            openId = supplier.getPkSupplier();
+        }
+        ServiceResult registResult = RegistAndAuthHandler.checkIfRegisted(openId, registType);
         if (!registResult.isSuccess()) {
             return ServiceResult.failure("没有注册");
         } else {
@@ -67,7 +73,13 @@ public class EContractRegistAndAuthController {
     public ServiceResult toRegistOrg(String registType, HttpSession session) {
         Supplier supplier = microUserService.getSupplierFromSession(session);
         Salesman salesman = microUserService.getUserFromSession(session);
-        return RegistAndAuthHandler.regAccount(supplier.getPkSupplier(), registType);
+        String openId = "";
+        if("1".equals(registType)) {
+            openId = salesman.getId();
+        }else if("2".equals(registType)){
+            openId = supplier.getPkSupplier();
+        }
+        return RegistAndAuthHandler.regAccount(openId, registType);
     }
 
 
@@ -91,30 +103,38 @@ public class EContractRegistAndAuthController {
     public ServiceResult getAuthUrl(String customerId, String authType,HttpSession session) {
         Supplier supplier = microUserService.getSupplierFromSession(session);
         log.info("getAuthUrl:...customerId:"+customerId+",authType:"+authType);
+        ServiceResult sr = new ServiceResult();
         if ("1".equals(authType)) {
-            return RegistAndAuthHandler.getAuthPersonurl(customerId, "", null);
+             sr = RegistAndAuthHandler.getAuthPersonurl(customerId, "http://"+Constant.domain + "/fddCallback/personAuth", "http://"+Constant.domain + "/fddCallback/personAuthTo?customerId="+customerId);
         } else if ("2".equals(authType)) {
-            ServiceResult sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, "http://"+Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
-            if(sr.isSuccess()) {
-                Map paraMap = (HashMap)sr.getResult();
-                //第一次存入数据库：
-                //查询数据库中有没有该单位的认证记录：
-                AuthRecord authRecordNew = new AuthRecord();
-                //如果有记录，则更改状态：
-                    authRecordNew.setId(idWorker.nextId()+"");
-                    authRecordNew.setCustomerId(customerId);
-                    authRecordNew.setTransactionNo((String)paraMap.get("transactionNo"));
-                    authRecordNew.setUrl((String)paraMap.get("url"));
-                    authRecordNew.setStatus("0");
-                    authRecordNew.setAuthenticationType("2");
-                    authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
-                    fadadaAuthRecordMapper.insertSelective(authRecordNew);
-                return ServiceResult.success(paraMap.get("url"));
-            }else {
-                return ServiceResult.failure("获取失败");
-            }
+             sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, "http://"+Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
         }
-        return null;
+        if(sr.isSuccess()) {
+            Map paraMap = (HashMap)sr.getResult();
+            //第一次存入数据库：
+            //查询数据库中有没有该单位的认证记录：
+            try {
+                saveGetedAuthDataToDb(paraMap, customerId, authType);
+            }catch (Exception e) {
+                log.warning(e.getMessage());
+            }
+            return ServiceResult.success(paraMap.get("url"));
+        }else {
+            return ServiceResult.failure("获取失败");
+        }
+    }
+
+    public void saveGetedAuthDataToDb(Map paraMap,String customerId,String authType){
+        AuthRecord authRecordNew = new AuthRecord();
+        //如果有记录，则更改状态：
+        authRecordNew.setId(idWorker.nextId()+"");
+        authRecordNew.setCustomerId(customerId);
+        authRecordNew.setTransactionNo((String)paraMap.get("transactionNo"));
+        authRecordNew.setUrl((String)paraMap.get("url"));
+        authRecordNew.setStatus("0");
+        authRecordNew.setAuthenticationType(authType);
+        authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
+        fadadaAuthRecordMapper.insertSelective(authRecordNew);
     }
 
     @RequestMapping("/showAuthSuccess")

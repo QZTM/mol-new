@@ -171,14 +171,6 @@ public class ContractHandler {
         }
     }
 
-    @Test
-    public void test(){
-        ServiceResult extsign = extsign("3F11ECF5809DDF90C0F06860275F0FEE", "2589631478", "20191204154825412", "1", "http://fyycg88.vaiwan.com/fddCallback/signTo?customerId=3F11ECF5809DDF90C0F06860275F0FEE");
-        System.out.println(extsign.toString());
-
-    }
-
-
 
     /**
      * 实名证书
@@ -188,9 +180,12 @@ public class ContractHandler {
      */
     public static  ServiceResult ApplyCert(String customer_id,String verified_serialno)
     {
+        log.info("****申请实名认证证书****customerId:"+customer_id+",serialno:"+verified_serialno);
+
         try {
             ApplyCert applyCert = new ApplyCert(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
             String result = applyCert.invokeApplyCert(customer_id,verified_serialno);
+            log.info("**申请实名证书结果***"+result);
             JSONObject code=JSONObject.parseObject(result);
             if (code.equals("1"))
             {
@@ -232,5 +227,18 @@ public class ContractHandler {
         {
             return ServiceResult.failure(e.getMessage());
         }
+    }
+
+
+    /**
+     * 合同归档
+     * @param contractId
+     * @return
+     */
+    public static String contractFiling(String contractId){
+        log.info("****合共归档****contractId:"+contractId);
+        String s = clientBase.invokeContractFilling(contractId);
+        log.info("****合共归档返回值****"+s);
+        return s;
     }
 }

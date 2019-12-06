@@ -150,7 +150,7 @@ public class RegistAndAuthHandler {
         GetPersonVerifyUrl personverify = new GetPersonVerifyUrl(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
         String result = personverify.invokePersonVerifyUrl(customerId,verifiedWay,
                 pageModify,notifyUrl,returnUrl,"","",
-                "","","","1","0");
+                "","","","1","1");
         log.info("获取个人实名认证地址api返回：result:"+result);
         String resultCode = JSON.parseObject(result).getString("code");
         if(!StringUtils.isEmpty(resultCode) && "1".equals(resultCode)){
@@ -219,7 +219,7 @@ public class RegistAndAuthHandler {
             resultType = "1";
         }
         if(StringUtils.isEmpty(certFlay) || !certFlay.matches("[1,0]")){
-            certFlay = "0";
+            certFlay = "1";
         }
         GetCompanyVerifyUrl comverify = new GetCompanyVerifyUrl(FddBaseClient.APP_ID,FddBaseClient.APP_SECRET,FddBaseClient.V,FddBaseClient.HOST);
         String result = comverify.invokeCompanyVerifyUrl(companyInfo,bankInfo,legalInfo

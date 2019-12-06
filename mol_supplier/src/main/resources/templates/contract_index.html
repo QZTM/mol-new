@@ -66,7 +66,10 @@
                     <div style="padding-left:60%">
                         <input type="button" th:value="${purAndCarInfo.signStatus == '2'?'确认签署':'查看'}"
                                style="width:90px;height:25px;display:inline-block;border-radius: 7px;color:cornflowerblue;background-color:#fff;border:1px solid"
-                               th:singStatus = "${purAndCarInfo.signStatus}" th:fddContractId = "${purAndCarInfo.fddContractId}" th:purchaseId = "${purAndCarInfo.purchaseId}" id="click_btn">
+                               th:singStatus = "${purAndCarInfo.signStatus}" th:fddContractId = "${purAndCarInfo.fddContractId}" th:purchaseId = "${purAndCarInfo.purchaseId}" id="click_btn" th:viewPdfUrl = "${purAndCarInfo.viewPdfUrl==null}?'':purAndCarInfo.viewPdfUrl">
+<!--                        <input th:if="${purAndCarInfo.signStatus == '2'}" type="button" value="签字"-->
+<!--                               style="width:90px;height:25px;display:inline-block;border-radius: 7px;color:cornflowerblue;background-color:#fff;border:1px solid"-->
+<!--                                th:fddContractId = "${purAndCarInfo.fddContractId}" th:purchaseId = "${purAndCarInfo.purchaseId}" id="click_person_btn" th:viewPdfUrl = "${purAndCarInfo.viewPdfUrl==null}?'':purAndCarInfo.viewPdfUrl">-->
                     </div>
                 </div>
                 <!--动作按钮结束-->
@@ -115,11 +118,34 @@
                             alertMsg(res.message);
                         }
                     })
-                    location.href = '/contract/sign?contractId='+fddContractId;
                }else{
+                    var viewPdfUrl = $(this).attr("viewPdfUrl");
                     //查看合同
-                    location.href = '/contract/review?contractId='+fddContractId;
+                    location.href = viewPdfUrl;
                     }
+            })
+
+            //点击签字
+            $("#click_person_btn").on('click',function(){
+                var fddContractId = $(this).attr('fddContractId');
+                var purchaseId = $(this).attr('purchaseId');
+                    //去签字
+                    $.ajax({
+                        url:'/contract/signPerson',
+                        data:{contractId:fddContractId,purchaseId:purchaseId},
+                        type:'get',
+                        dataType:'json',
+                        success:function(res){
+                            if(res.success){
+                                location.href=res.result;
+                            }else{
+                                alertMsg(res.message);
+                            }
+                        },fail:function(res){
+                            alertMsg(res.message);
+                        }
+                    })
+
             })
 
 

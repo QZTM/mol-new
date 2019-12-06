@@ -1,4 +1,5 @@
 package com.mol.supplier.controller.microApp;
+import com.mol.fadada.handler.ContractHandler;
 import com.mol.fadada.handler.RegistAndAuthHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.SignResultRecord;
@@ -39,7 +40,9 @@ public class FadadaCallBackController {
     @ResponseBody
     public void personRegistCallback(@RequestParam Map paraMap){
         log.info("法大大个人认证异步回调事件：，，返回值："+paraMap.toString());
-        authCallbackAction(paraMap);
+        asynchAuthCallbackAction(paraMap);
+        //申请实名证书：
+        //ContractHandler.ApplyCert(paraMap.get("customerId").toString(),paraMap.get("serialNo").toString());//申请实名证书
     }
 
 
@@ -52,11 +55,17 @@ public class FadadaCallBackController {
     @ResponseBody
     public void fddCallback(@RequestParam Map paraMap){
         log.info("法大大企业认证异步回调事件：，，返回值："+paraMap.toString());
-        authCallbackAction(paraMap);
+        asynchAuthCallbackAction(paraMap);
+        //申请实名证书：
+        //ContractHandler.ApplyCert(paraMap.get("customerId").toString(),paraMap.get("serialNo").toString());//申请实名证书
     }
 
 
-    public void authCallbackAction(Map paraMap){
+    /**
+     * 认证异步回调事件参数处理方法
+     * @param paraMap
+     */
+    public void asynchAuthCallbackAction(Map paraMap){
         String serialNo = (String)paraMap.get("serialNo");
         String customerId = (String)paraMap.get("customerId");
         String status = (String)paraMap.get("status");
@@ -90,36 +99,9 @@ public class FadadaCallBackController {
 
 
     @RequestMapping(value = "/personAuthTo")
-    @ResponseBody
     public String personRegistTo(@RequestParam Map paraMap){
         log.info("法大大个人认证同步回调事件,,,"+paraMap.toString());
-
-        String transactionNo = (String)paraMap.get("transactionNo");
-        String status = (String)paraMap.get("status");
-        String authenticationType = (String)paraMap.get("authenticationType");
-        String customerId = (String)paraMap.get("customerId");
-        //查询数据库中有没有该单位的认证记录：
-        Example example = new Example(AuthRecord.class);
-        example.and().andEqualTo("customerId",customerId);
-        AuthRecord authRecord = fadadaAuthRecordMapper.selectOneByExample(example);
-        AuthRecord authRecordNew = new AuthRecord();
-        //如果有记录，则更改状态：
-        if(authRecord != null) {
-            authRecordNew.setId(authRecord.getId());
-            authRecordNew.setStatus(status);
-            authRecordNew.setTransactionNo(transactionNo);
-            authRecordNew.setLastUpdateTime(TimeUtil.getNowDateTime());
-            fadadaAuthRecordMapper.updateByPrimaryKeySelective(authRecordNew);
-        }else {
-            authRecordNew.setId(idWorker.nextId()+"");
-            authRecordNew.setCustomerId(customerId);
-            authRecordNew.setTransactionNo(transactionNo);
-            authRecordNew.setStatus(status);
-            authRecordNew.setAuthenticationType(authenticationType);
-            authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
-            fadadaAuthRecordMapper.insertSelective(authRecordNew);
-        }
-        return "/index";
+        return synchAuthCallbackAction(paraMap);
     }
 
 
@@ -134,6 +116,15 @@ public class FadadaCallBackController {
     public String fddAuthCallBack(@RequestParam Map paraMap, HttpServletResponse response){
         log.info("法大大企业认证同步回调事件,,,"+paraMap.toString());
         //法大大认证return url,,,{companyName=枣庄星联信息科技有限公司, transactionNo=6300f86ca6e24bfebd15f661d98c8e48, authenticationType=2, status=3, sign=Q0NBRUZBNzlENTFGNkM2QTkwQTAxNEQyRDFEMjE0NkM5RjBFOUZGOA==}
+        return synchAuthCallbackAction(paraMap);
+    }
+
+
+    /**
+     * 认证同步回调事件参数处理方法
+     * @param paraMap
+     */
+    public String synchAuthCallbackAction(Map paraMap){
         String transactionNo = (String)paraMap.get("transactionNo");
         String status = (String)paraMap.get("status");
         String authenticationType = (String)paraMap.get("authenticationType");
@@ -145,6 +136,15 @@ public class FadadaCallBackController {
         AuthRecord authRecordNew = new AuthRecord();
         //如果有记录，则更改状态：
         if(authRecord != null) {
+            if(authRecord.getStatus().equals(status)) {
+                return "forward:/microApp/my/show";
+            }
+
+            if(("2".equals(authenticationType) && "4".equals(status)) ||  ("1".equals(authenticationType) && "2".equals(status))) {
+                //申请实名证书：
+                ContractHandler.ApplyCert(paraMap.get("customerId").toString(),paraMap.get("transactionNo").toString());//申请实名证书
+            }
+
             authRecordNew.setId(authRecord.getId());
             authRecordNew.setStatus(status);
             authRecordNew.setTransactionNo(transactionNo);
@@ -159,8 +159,11 @@ public class FadadaCallBackController {
             authRecordNew.setCreateTime(TimeUtil.getNowDateTime());
             fadadaAuthRecordMapper.insertSelective(authRecordNew);
         }
+        //申请实名证书：
+        //ContractHandler.ApplyCert(paraMap.get("customerId").toString(),paraMap.get("transactionNo").toString());//申请实名证书
         return "forward:/microApp/my/show";
     }
+
 
 
 
@@ -171,11 +174,11 @@ public class FadadaCallBackController {
         return "forward:/contract/index";
     }
 
-    @RequestMapping("/sign")
+    @RequestMapping(value = "/sign",method = RequestMethod.POST)
     @ResponseBody
     public void sign(@RequestParam Map paraMap){
         log.info("*****法大大手动签署合同异步通知*****");
-        this.handlerParaMapToDb(paraMap);
+        //this.handlerParaMapToDb(paraMap);
     }
 
     public void handlerParaMapToDb(Map paraMap){
@@ -190,7 +193,7 @@ public class FadadaCallBackController {
         PurchaseSupplierContract purchaseSupplierContract1 = microPurchaseSupplierContractMapper.selectOneByExample(example1);
         if(purchaseSupplierContract1 != null && PurchaseSupplierContract.合同已归档.equals(purchaseSupplierContract1.getSignStatus())) {
             return ;
-        }else if(PurchaseSupplierContract.采购方供应商都已签署.equals(purchaseSupplierContract1.getSignStatus())) {
+        }else if(purchaseSupplierContract1 != null && PurchaseSupplierContract.采购方供应商都已签署.equals(purchaseSupplierContract1.getSignStatus())) {
             //todo:合同归档
         }else {
             if ("3000".equals(resultCode)) {
@@ -246,7 +249,7 @@ public class FadadaCallBackController {
                 //PurchaseSupplierContract purchaseSupplierContract = microPurchaseSupplierContractMapper.selectOneByExample(example1);
 
             } else {
-
+                log.info("签署失败：");
             }
         }
     }
