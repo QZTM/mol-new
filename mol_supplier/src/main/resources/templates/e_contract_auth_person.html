@@ -41,7 +41,7 @@
             .then(
             )
             .then(function (data) {
-                return checkRegist('2');
+                return checkRegist('1');
             }).then(function (data) {
                                 console.log("second.then...data:");
                                 console.log(data.success);
@@ -93,13 +93,13 @@
 
     function registThen(res){
         Promise.resolve(res).then(function(){
-            return toRegist("2");
+            return toRegist("1");
         }).then(function(res){
             console.log("registThen...res..:");
             console.log(res);
             if(res.success){
                 //注册成功：
-                registthenauth(50,getAuthUrl(res.result,"2",registturnpage));
+                registthenauth(50,getAuthUrl(res.result,"1",registturnpage));
             }else{
                 alertMsg("系统异常，请稍后再试！");
             }
@@ -147,7 +147,7 @@
                 //location.href=res.result;
             }else{
                 //talktoauth(60,checkAuthThen(data.result,'2'));
-                talktoauth(60,getAuthUrl(data.result,'2',getAuthUrlthen));
+                talktoauth(60,getAuthUrl(data.result,'1',getAuthUrlthen));
                 //获取认证链接并提示跳转
                   // return getAuthUrl(data.result,'2');
             }

@@ -8,6 +8,7 @@ import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.entity.dingding.Pay.PuiSupplierDeposit;
 import com.mol.supplier.entity.thirdPlatform.BdMarbasclass;
 import com.mol.supplier.mapper.dingding.Pay.PayMapper;
+import com.mol.supplier.mapper.microApp.MicroSalesmanMapper;
 import com.mol.supplier.mapper.microApp.MicroSupplierMapper;
 import com.mol.supplier.mapper.third.BdMarbasclassMapper;
 import com.mol.supplier.service.microApp.MicroAuthService;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 供应商认证控制器
@@ -64,6 +66,9 @@ public class MicroAuthController {
 
     @Autowired
     private UploadService uploadService;
+
+    @Autowired
+    private MicroSalesmanMapper microSalesmanMapper;
 
     @RequestMapping("/attr")
     public String showAuthChoosePage(HttpSession session) {
@@ -257,6 +262,7 @@ public class MicroAuthController {
     @RequestMapping(value = "/upload/img", method = RequestMethod.POST)
     @ResponseBody
     public ServiceResult saveImage(MultipartFile file, String whichImg, HttpSession session) {
+        log.info("****供应商认证上传图片****，whichImg:"+whichImg);
 //       for(Object obj:map.keySet()){
 ////           System.out.println(obj.toString());
 ////       }
@@ -285,6 +291,13 @@ public class MicroAuthController {
             case Supplier.WHICHIMAGE_LEGALBODYIDFRONTIMG:
                 try {
                     supplier.setLegalbodyCardFrontImg(file.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case Supplier.WHICHIMAGE_LEGALBODYIDBACKIMG:
+                try {
+                    supplier.setLegalbodyCardBackImg(file.getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -438,11 +451,35 @@ public class MicroAuthController {
     }
 
 
-
-    @RequestMapping("/phoneupdate")
-    public String updatephone(HttpSession session,Model model){
+    @RequestMapping("/showPhoneUpdate")
+    public String showPhoneUpdate(HttpSession session,Model model){
         Salesman salesman = microUserService.getUserFromSession(session);
         model.addAttribute("user",salesman);
         return "phone_update";
+    }
+
+
+    @RequestMapping(value = "/phoneupdate",method = RequestMethod.POST)
+    @ResponseBody
+    public ServiceResult updatephone(@RequestBody String phone,HttpSession session){
+//        Object phoneObj = paraMap.get("phone");
+//        if(phoneObj == null) {
+//            return ServiceResult.failureMsg("手机号码不能为空！");
+//        }
+//        String phone = (String)phoneObj;
+        log.info("供应商业务员修改手机号码，phone:"+phone);
+        Salesman salesman = microUserService.getUserFromSession(session);
+        Salesman newS = new Salesman();
+        newS.setId(salesman.getId());
+        newS.setPhone(phone);
+        try {
+            microSalesmanMapper.updateByPrimaryKeySelective(newS);
+            Salesman salesmanNew = microSalesmanMapper.selectByPrimaryKey(salesman);
+            session.setAttribute("user",salesmanNew);
+            return ServiceResult.successMsg("修改成功");
+        }catch(Exception e) {
+            log.warning(e.getMessage());
+            return ServiceResult.failureMsg("修改失败，请稍后再试！");
+        }
     }
 }

@@ -10,6 +10,7 @@ public class PurchasOrderinforben //供应商单个商品报价实体
     private String quote;//报价
     private String pk_supplier_id;//供应商id
     private String sign_status;//供应商的合同签署 签署状态：1：采购员、供应商都未签署   2：采购员已签署，供应商未签署   3：签署完成
+    private String quote_id;//最终确认的quoteid 如果不为空说明已经确认此供应商单个报价
 
     public String getMaterial_name() {
         return material_name;
@@ -73,5 +74,13 @@ public class PurchasOrderinforben //供应商单个商品报价实体
 
     public void setSign_status(String sign_status) {
         this.sign_status = sign_status;
+    }
+
+    public String getQuote_id() {
+        return quote_id;
+    }
+
+    public void setQuote_id(String quote_id) {
+        this.quote_id = quote_id;
     }
 }

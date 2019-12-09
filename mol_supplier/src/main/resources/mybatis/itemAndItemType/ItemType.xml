@@ -10,7 +10,7 @@
 		select pk_marbasclass as id,name,code,creationtime,creator,enablestate,innercode,pk_group,pk_org,pk_parent from bd_marbasclass
 	</select>
 	<select id="selectItemTypeListOfFirst" resultType="com.mol.supplier.entity.itemAndItemType.ItemType">
-		select pk_marbasclass as id,name,pk_parent,'false' as open,(select case when count(*)>0 then 'true' else 'false' end canOpen from bd_marbasclass where pk_parent=a.pk_marbasclass) as canOpen
+		select pk_marbasclass as id,replace(name, '东方怡源', '酒店') as name,pk_parent,'false' as open,(select case when count(*)>0 then 'true' else 'false' end canOpen from bd_marbasclass where pk_parent=a.pk_marbasclass) as canOpen
 		from bd_marbasclass a
 		where pk_parent='~' and enablestate=2
 	</select>

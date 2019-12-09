@@ -1,6 +1,8 @@
 package com.mol.ddmanage.Service.Office;
 
+import com.mol.ddmanage.Ben.PurchasOrderManagement.PurchasOrderinforben;
 import com.mol.ddmanage.Util.DataUtil;
+import com.mol.ddmanage.config.Basic_config;
 import com.mol.ddmanage.mapper.Office.ElectronicContractSigninginforMapper;
 import com.mol.fadada.handler.ContractHandler;
 import com.mol.fadada.handler.RegistAndAuthHandler;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,13 +27,91 @@ public class ElectronicContractSigninginforService
     ElectronicContractSigninginforMapper electronicContractSigninginforMapper;
 
     /**
+     * 获取已经确认的报价物品对应的供应商
+     * @param PurchasId 订单id
+     * @return
+     */
+    public ArrayList<ArrayList<PurchasOrderinforben>> GetConfirmSupplierLogic(String PurchasId)
+    {
+        ArrayList<ArrayList<PurchasOrderinforben>> Orderss=new ArrayList<>();//一个分组
+        ArrayList<PurchasOrderinforben> purchasOrderinforben=electronicContractSigninginforMapper.GetConfirmSupplier(PurchasId);
+
+        Map<String,String> map_corp=new HashMap();
+        for (int n=0;n<purchasOrderinforben.size();n++)//遍历出有多少公司报价
+        {
+            if (purchasOrderinforben.get(n).getCorp_name()!=null)
+            {
+                if (map_corp.get(purchasOrderinforben.get(n).getCorp_name())==null)
+                {
+                    map_corp.put(purchasOrderinforben.get(n).getCorp_name(),purchasOrderinforben.get(n).getCorp_name());
+                }
+            }
+            if (purchasOrderinforben.get(n).getSign_status()!=null)//查看供应商合同状态
+            {
+                if (purchasOrderinforben.get(n).getSign_status().equals("1"))
+                {
+                    purchasOrderinforben.get(n).setSign_status("未签署合同");
+                }
+                else if (purchasOrderinforben.get(n).getSign_status().equals("2"))
+                {
+                    purchasOrderinforben.get(n).setSign_status("等待签署合同");
+                }
+                else if (purchasOrderinforben.get(n).getSign_status().equals("3"))
+                {
+                    purchasOrderinforben.get(n).setSign_status("已签署合同");
+                }
+            }
+            else
+            {
+                purchasOrderinforben.get(n).setSign_status("未上传合同");
+            }
+        }
+
+        for (String value :map_corp.values())//相同公司的报价归为同一组
+        {
+            ArrayList<PurchasOrderinforben> Orders=new ArrayList<>();//一个单列
+            for (int n=0;n< purchasOrderinforben.size();n++)
+            {
+                if (value.equals(purchasOrderinforben.get(n).getCorp_name()) && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字
+                {
+                    Orders.add(purchasOrderinforben.get(n));
+                }
+            }
+            Orderss.add(Orders);
+        }
+
+        ArrayList<PurchasOrderinforben> Orders=new ArrayList<>();//一个单列
+        for (int n=0;n< purchasOrderinforben.size();n++)
+        {
+            if (purchasOrderinforben.get(n).getCorp_name()==null && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字
+            {
+                purchasOrderinforben.get(n).setCorp_name("公司名称未知");
+                Orders.add(purchasOrderinforben.get(n));
+            }
+        }
+        if (Orders.size()!=0)
+        {
+            Orderss.add(Orders);
+        }
+
+        for (int n=0;n<Orderss.size();n++)//为分组添加序号
+        {
+            for (int n_1=0;n_1<Orderss.get(n).size();n_1++)
+            {
+                Orderss.get(n).get(n_1).setNumber(String.valueOf(n_1));
+            }
+        }
+        return Orderss;
+    }
+
+    /**
      * 注册法大大账号
      * @return
      */
      public Map RegisteredAccount()
      {
          Map map =new HashMap();
-         ServiceResult serviceResult=RegistAndAuthHandler.regAccount("1161174896704700416","2");
+         ServiceResult serviceResult=RegistAndAuthHandler.regAccount(Basic_config.open_id,"2");
          map.put("statu",serviceResult.isSuccess());
          return map;
      }
@@ -42,10 +123,10 @@ public class ElectronicContractSigninginforService
      public Map CertificationAccountLogic()
      {
          Map map1=new HashMap();
-         Map map= electronicContractSigninginforMapper.GetCustomer_id("1161174896704700416");
+         Map map= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);
          if (map.get("customer_id")!=null)
          {
-             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),"http://fyycg66.vaiwan.com/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString(),"http://fyycg66.vaiwan.com/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString());
+             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString());
              if (serviceResult.isSuccess()==true)//获取认证url
              {
                  String items=serviceResult.getResult().toString().split(",")[1];
@@ -84,6 +165,20 @@ public class ElectronicContractSigninginforService
     public void AuthAsynchronousNotityLogic(Map map)//认证异步回调地址
     {
         electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
+        ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
+        ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+    }
+
+    /**
+     *  手动签署合同回调
+     * @param map
+     */
+    public void signContractNotityLogic(Map map)
+    {
+        if ( electronicContractSigninginforMapper.Get_fy_purchase_supplier_contract(map.get("contract_id").toString()).get("sign_status").equals("1"))
+        {
+            electronicContractSigninginforMapper.SignContractNotity(map.get("contract_id").toString(),"2");
+        }
     }
     /**
      *上传合同
@@ -95,8 +190,8 @@ public class ElectronicContractSigninginforService
     {
         Map map1=new HashMap();
         try {
-            ServiceResult authResult=RegistAndAuthHandler.checkIfAuthed("1161174896704700416","2");
-            if (RegistAndAuthHandler.checkIfRegisted("1161174896704700416","2").isSuccess()==false)//查询是否注册
+            ServiceResult authResult=RegistAndAuthHandler.checkIfAuthed(Basic_config.open_id,"2");
+            if (RegistAndAuthHandler.checkIfRegisted(Basic_config.open_id,"2").isSuccess()==false)//查询是否注册
             {
                 map1.put("statu","2");//未注册
                 return map1;
@@ -121,12 +216,11 @@ public class ElectronicContractSigninginforService
                  ServiceResult result =ContractHandler.uploadContract(toFile.getName(),toFile);//调用法大上传合同接口上传
                  if(result.isSuccess()==true)
                  {
-                     Map map2= electronicContractSigninginforMapper.GetCustomer_id("1161174896704700416");
+                     Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
+                    // Map map3=electronicContractSigninginforMapper.Setfadada_auth_record(map2.get("customer_id").toString());
                      electronicContractSigninginforMapper.Upload_Contract(String.valueOf(new IdWorker().nextId()) ,result.getResult().toString(), DataUtil.GetNowSytemTime(),map.get("userid").toString());//保存上传合同的信息
-                     ContractHandler.ApplyNumCert(map2.get("customer_id").toString(),"f104f1a60bca43dbb5846e50588b5d1e");//编号证书
-                     //******自动签署接口预留位置****** 客户编号 交易号 合同编号 关键字盖章 文档标题
-                    ContractHandler.ExtsignAuto(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),result.getResult().toString(),"",toFile.getName());
-                     electronicContractSigninginforMapper.Supplier_Contract(String.valueOf(new IdWorker().nextId()),map.get("purchase_id").toString(),map.get("supplier_id").toString(),result.getResult().toString(),"",DataUtil.GetNowSytemTime(),DataUtil.GetNowSytemTime(),"2");
+                     electronicContractSigninginforMapper.Supplier_Contract(String.valueOf(new IdWorker().nextId()),map.get("purchase_id").toString(),map.get("supplier_id").toString(),result.getResult().toString(),"",DataUtil.GetNowSytemTime(),DataUtil.GetNowSytemTime(),"1");//保存订单对应供应商合同的信息
+                   //  ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),result.getResult().toString(),"编写目的","1");//手动签署合同
                  }
                  ins.close();
             }
@@ -138,6 +232,31 @@ public class ElectronicContractSigninginforService
         {
            map1.put("statu","1");
            return map1;
+        }
+    }
+
+    /**
+     *  手动签署合同
+     * @param purchasId 采购单id
+     * @param supplierid 供应商id
+     * @return
+     */
+    public Map signContractLogic(String purchasId,String supplierid)
+    {
+        Map map=new HashMap();
+        try
+        {
+            Map map1=electronicContractSigninginforMapper.GetContractId(purchasId,supplierid);//获取
+            Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
+            ServiceResult serviceResult=ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),map1.get("contract_id").toString(),"编写目的", Basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity?contract_id="+map1.get("contract_id").toString());//手动签署合同
+            map.put("statu",serviceResult.isSuccess());
+            map.put("url",serviceResult.getResult());
+            return map;
+        }
+        catch (Exception e)
+        {
+            map.put("statu",false);
+            return map;
         }
     }
 

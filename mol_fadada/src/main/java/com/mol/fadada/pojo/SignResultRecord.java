@@ -15,6 +15,11 @@ public class SignResultRecord implements Serializable {
 
     @Id
     private String id;
+
+    /**
+     * 法大大客户id
+     */
+    private String customerId;
     /**
      * 交易号
      */

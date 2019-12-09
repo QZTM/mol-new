@@ -42,6 +42,9 @@
     </div>-->
 </div>
 </div>
+<button onclick="return_top()">
+    11111111111
+</button>
 
 
 <script src="/layui/layui.all.js"></script>
@@ -149,6 +152,11 @@
     {
        console.log(e.childNodes[5].innerText);//获取点击人员的id
         //console.log(e.childNodes[3].innerText);//获取点击人员的id
+    }
+    function return_top()//返回上一层
+    {
+        parent.add_peolpe();
+        this.close()
     }
 </script>
 </body>
