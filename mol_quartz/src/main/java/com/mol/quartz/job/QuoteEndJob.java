@@ -1,7 +1,11 @@
 package com.mol.quartz.job;
 
+import com.mol.config.Constant;
+import com.mol.notification.SendNotification;
+import com.mol.quartz.client.ExpertClient;
 import com.mol.quartz.entity.Purchase;
 import com.mol.quartz.handler.AddJobHandler;
+import com.mol.quartz.mapper.ExpertUserMapper;
 import com.mol.quartz.mapper.PurchaseMapper;
 import com.mol.quartz.service.PurchaseService;
 import lombok.extern.java.Log;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Component;
 import util.TimeUtil;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 @PersistJobDataAfterExecution
@@ -34,6 +39,12 @@ public class QuoteEndJob implements Job{
 
 	@Autowired
 	private AddJobHandler addJobHandler;
+
+	@Autowired
+	private ExpertUserMapper expertUserMapper;
+
+	@Autowired
+	private ExpertClient expertClient;
 
 
 	@Override
@@ -105,12 +116,24 @@ public class QuoteEndJob implements Job{
 				updatePurchase.setExpertTime(TimeUtil.getNowDateTime());
 				purchaseMapper.updateByPrimaryKeySelective(updatePurchase);
 				addJobHandler.addExpertReviewEndJob(orderId,AddJobHandler.EXPERTREVIEWDELAY);
+				//todo:给所属行业类别的专家发送通知
+				//1.获取该行业类别
+				//2.查询所属该行业类别的钉钉id list
+				//3.发送通知
+				String marbasClassId = purchase.getPkMarbasclass();
+				List<String> expertIdList = expertUserMapper.getExpertDDIdListByMarId(marbasClassId);
+
+				for(String expertId:expertIdList){
+					SendNotification.getSendNotification().sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,expertClient.getToken());
+				}
+
 
 			}else{
 
 				updatePurchase.setStatus("4");
 				updatePurchase.setBargainingTime(TimeUtil.getNowDateTime());
 				purchaseMapper.updateByPrimaryKeySelective(updatePurchase);
+				//todo :给当前订单发起机构的所属采购类型的议价负责人发送通知
 				return ;
 			}
 		}

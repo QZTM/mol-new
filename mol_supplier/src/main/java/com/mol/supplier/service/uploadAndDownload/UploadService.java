@@ -1,7 +1,11 @@
 package com.mol.supplier.service.uploadAndDownload;
 
+import com.mol.oos.OOSConfig;
+import com.mol.oos.TYOOSUtil;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +18,7 @@ import util.UploadUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +26,9 @@ import java.util.UUID;
 public class UploadService {
 
     private static final Logger logger = LoggerFactory.getLogger(UploadService.class);
+
+    @Autowired
+    private TYOOSUtil tyoosUtil;
 
     //文件上传相关代码
     public String upload(MultipartFile file) {
@@ -66,6 +74,32 @@ public class UploadService {
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("上传文件出错");
+        }
+    }
+
+
+    public void uploadToOOS(MultipartFile multipartFile, String path,String bucketName){
+//获取名字
+        String fileName = multipartFile.getOriginalFilename();
+        //获取后缀
+        String  suffName= fileName.substring(fileName.lastIndexOf("."));
+        //产生一个新名字
+        String name = UUID.randomUUID()+suffName;
+        //获取当前class的路径
+        URL resource = UploadService.class.getResource("");
+        File file=new File(resource.getPath()+File.separator+name);
+        try {
+            //m 转 f
+            FileUtils.copyInputStreamToFile(multipartFile.getInputStream(),file);
+            File newFile=new File(resource.getPath()+File.separator+name);
+            //文件夹
+            tyoosUtil.uploadObjToBucket(bucketName,path+name,newFile);
+
+        } catch (IOException e) {
+            logger.info("合同照片上传异常");
+            e.printStackTrace();
+        }finally {
+            file.delete();
         }
     }
 
