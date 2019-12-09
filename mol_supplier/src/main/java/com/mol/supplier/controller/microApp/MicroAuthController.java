@@ -262,6 +262,7 @@ public class MicroAuthController {
     @RequestMapping(value = "/upload/img", method = RequestMethod.POST)
     @ResponseBody
     public ServiceResult saveImage(MultipartFile file, String whichImg, HttpSession session) {
+        log.info("****供应商认证上传图片****，whichImg:"+whichImg);
 //       for(Object obj:map.keySet()){
 ////           System.out.println(obj.toString());
 ////       }
@@ -290,6 +291,13 @@ public class MicroAuthController {
             case Supplier.WHICHIMAGE_LEGALBODYIDFRONTIMG:
                 try {
                     supplier.setLegalbodyCardFrontImg(file.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case Supplier.WHICHIMAGE_LEGALBODYIDBACKIMG:
+                try {
+                    supplier.setLegalbodyCardBackImg(file.getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
