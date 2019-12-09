@@ -102,9 +102,9 @@
         <div style="margin: 40px 6px 3px 6px ;">
             <span style="margin-left: 6px">公司<text th:text="${ustat.current.key}" style="color: red;"></text>报价</span>
 <!--            <button  th:onclick="openorclose([[${ustat.current.key}]])" >展开</button>-->
-            <img th:id="img+${ustat.current.key}"  src="/img/c.png" width="30px" height="30px"  th:onclick="openorclose([[${ustat.current.key}]])" style="float: right;margin-right: 10px">
+            <img th:id="img+${ustat.current.key}"  src="/img/c.png" th:onclick="openorclose([[${ustat.current.key}]])" style="float: right;margin-right: 10px;width:20px ;height:20px;display: inline-block  ">
         </div>
-        <table th:id="tb+${ustat.current.key}" class="table table-hover" hidden="hidden" style="border-bottom: 1px solid #dddddd" >
+        <table th:id="tb+${ustat.current.key}" class="table table-hover" hidden="hidden" style="border-bottom: 1px solid #dddddd;font-size: 12px" >
             <tr>
                 <td style="width: 13%">序号</td>
                 <td  style="width: 27%;">名称</td>
@@ -127,10 +127,11 @@
 <!--            </tr>-->
 
         </table>
-        <div>
-            <input type="radio" th:id="ra+${ustat.current.key}" name="tuijian" th:value="${ustat.current.key}" title="推荐" onclick="checkradio(this.vlaue)" style="width: 20px;height: 20px;margin-left: 10px;">
-            <span style="margin-left: 10px">推荐</span>
+        <div style="position: relative">
+            <input type="radio" th:id="ra+${ustat.current.key}" name="tuijian" th:value="${ustat.current.key}" title="推荐" onclick="checkradio(this.vlaue)" style="width: 20px;height: 20px;margin-left: 10px;margin-top:15px;float: left">
+            <span style="position: absolute;left: 40px;top: 15px">推荐</span>
         </div>
+
     </div>
 
 
@@ -138,7 +139,7 @@
         <input id="in" style="display: none;" th:value="${quoteMap}">
     </div>
     <!--报价结束-->
-    <div style="border: 1px soild #dddddd;margin-top: 20px">
+    <div style="border: 1px soild #dddddd;padding-top: 20px;clear: both">
         <div style="margin-left: 10px;">
             推荐公司<text id="lastRadio" style="color: red;" ></text>
         </div>
@@ -149,8 +150,8 @@
             <span style="width: 100%;float: left;" th:if="${isRe==true}">
                 <input type="text" id="reason"  class="form-control" disabled="disabled" placeholder="请输入推荐理由" aria-describedby="basic-addon1">
             </span>
-            <span style="width: 14%;float: right">
-                <button  id="basic-addon1" style="background-color: #5B9BD5;text-align: center" onclick="submit()" th:if="${isRe==false}">提交</button>
+            <span style="width: 14%;float: right;margin-top: 6px">
+                <button  id="basic-addon1" style="background-color: #5B9BD5;text-align: center;border: none;color: #FFFFFF" onclick="submit()" th:if="${isRe==false}">提交</button>
             </span>
         </div>
     </div>
@@ -177,12 +178,15 @@
             $("#tb"+e).show();
             // $("#tb"+e).attr("value","收起")
             $("#img"+e).attr("src","/img/open.png")
-            $("#img"+e).attr("height","17px")
+            // $("#img"+e).attr("height","20px")
+            // $("#img"+e).attr("width","20px")
+
 
         }else {
             $("#tb"+e).hide();
             $("#img"+e).attr("src","/img/c.png")
-            $("#img"+e).attr("height","30px")
+            // $("#img"+e).attr("height","20px")
+            // $("#img"+e).attr("width","20px")
         }
     }
     function checkradio(e){
@@ -197,12 +201,12 @@
         $("#basic-addon1").attr("disabled",true);
         //判断是否认证
         var auth=[[${authen}]];
-        if (auth != "2"){
-            console.log("未认证");
-            alert("请移步个人主页认证专家身份...");
-
-            return;
-        }
+        // if (auth != "2"){
+        //     console.log("未认证");
+        //     alert("请移步个人主页认证专家身份...");
+        //
+        //     return;
+        // }
         //判断是否是认证的行业
         //判断是否选中
         var checked="";

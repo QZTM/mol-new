@@ -63,9 +63,9 @@
 <div >
     <!--    <form action="/index/getQuoteFromForm" method="post" id="form1" onsubmit="return checkForm(this.id)">-->
     <form id="form1"  name="form1" onsubmit="return false" >
-        <div th:each="er,in:${purList}" style="height: 130px;" class="each">
+        <div th:each="er,in:${purList}" style="height: 40px;clear: both" class="each">
             <span class="col-xs-1 col-md-1 bor"  th:text="${in.index}+1" >1</span>
-            <span class="col-xs-2 col-md-2 bor"  th:text="${er.itemName}" style="font-size: 12px">名称</span>
+            <span class="col-xs-2 col-md-2 bor"  th:text="${er.itemName}" style="font-size: 10px">名称</span>
             <span class="col-xs-2 col-md-2 bor"  th:text="${er.norms}" style="font-size: 12px">规格</span>
             <!--            数量-->
             <span class="col-xs-2 col-md-2 bor" ><input  th:value="${er.count}" readonly="readonly" th:id="co+${in.index}" style="width: 100%;outline: snow;border: none;"/></span>
@@ -96,7 +96,7 @@
 <!--            <span class="input-group-addon" id="basic-addon1">天</span>-->
 <!--        </div>-->
 
-        <div class="input-group">
+        <div class="input-group" style="clear: both">
             <span class="input-group-addon">供货周期</span>
             <input type="text" id="cycle" class="form-control" placeholder="请输入供货周期" aria-describedby="basic-addon1" th:name="${'quotes[0].supplyCycle'}">
             <span class="input-group-addon">天</span>
@@ -104,7 +104,7 @@
 
 
         <!--        <input type="submit" value="提交">-->
-        <button  class="btn btn-primary" style="margin-left: 42%;margin-top: 12px;" onclick="sub()" id="subBtn">提交</button>
+        <button  class="btn btn-primary" style="margin-left: 42%;margin-top: 12px;clear: both" onclick="sub()" id="subBtn">提交</button>
         <!-- 公司id-->
         <input type="hidden" id="purId"  th:value="${purId}" style="float: right;height: 1px;">
 
@@ -113,6 +113,15 @@
 </body>
 <script th:src="@{/js/dingtalk.open.js}"></script>
 <script th:inline="javascript">
+    window.alert = function(name){
+        var iframe = document.createElement("IFRAME");
+        iframe.style.display="none";
+        iframe.setAttribute("src", 'data:text/plain,');
+        document.documentElement.appendChild(iframe);
+        window.frames[0].window.alert(name);
+        iframe.parentNode.removeChild(iframe);
+    };
+
     var layer ;
     layui.use(["layer","form"], function(){
         layer = layui.layer;
@@ -160,11 +169,9 @@
                     success:function (data) {
                         dd.device.notification.hidePreloader({
                             onSuccess:function () {
-                                layer.open({
-                                    title: '提示'
-                                    ,content: data.message
-                                });
-                                // alert(data.message);
+                                alert(data.message);
+                                //layer.msg(data.message);
+                                // alert();
                                 // window.location.reload()
                                 // location.href="/index/selectOne?id="+_purId;
                                 window.history.go(-2)

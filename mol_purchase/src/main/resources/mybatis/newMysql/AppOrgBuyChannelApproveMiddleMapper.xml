@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mol.purchase.mapper.newMysql.AppOrgBuyChannelApproveMiddleMapper">
+    <select id="findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.AppOrgBuyChannelApproveMiddle">
+        SELECT
+            *
+        FROM
+            `app_org_buy_channel_approve_middle`
+        WHERE
+            app_org_id =#{orgId}
+            AND purchase_approve_id in ( SELECT id FROM app_purchase_approve WHERE purchase_main_person = #{userId} )
+    </select>
+</mapper>

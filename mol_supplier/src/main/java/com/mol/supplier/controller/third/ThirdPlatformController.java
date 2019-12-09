@@ -521,13 +521,13 @@ public class ThirdPlatformController {
         }
 
         fyPurchase purchase = platformService.selectOneById(id);
-        if (purchase.getBuyChannelId().equals(BuyChannelResource.STRATEGY)) {
+        if (Integer.parseInt(BuyChannelResource.STRATEGY)==purchase.getBuyChannelId()) {
             //判断供应商是不是战略供应商，不是则跳转报错页面；
             if (su.getIfAttrStrategy()!=1){
                 return "error_quote";
             }
         }
-        if (purchase.getBuyChannelId().equals(BuyChannelResource.SINGLESOURCE)) {
+        if (Integer.parseInt(BuyChannelResource.SINGLESOURCE)==purchase.getBuyChannelId()) {
             //判断供应商是不是单一供应商，不是则跳转；
             String pkSupplier = purchase.getPkSupplier();
             if (pkSupplier==null || !pkSupplier.equals(supplierId)){

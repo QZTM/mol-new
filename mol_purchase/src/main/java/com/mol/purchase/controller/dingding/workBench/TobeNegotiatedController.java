@@ -1,8 +1,8 @@
 package com.mol.purchase.controller.dingding.workBench;
 
-import com.mol.purchase.entity.ExpertRecommend;
-import com.mol.purchase.entity.ExpertUser;
-import com.mol.purchase.entity.FyQuote;
+import com.mol.purchase.entity.*;
+import com.mol.purchase.entity.activiti.ActHiProcinst;
+import com.mol.purchase.entity.activiti.ActReProcdef;
 import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
@@ -50,28 +50,50 @@ public class TobeNegotiatedController {
      * @return
      */
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
-    public List<fyPurchase> getList(String orgId,String status,String secondStatus,String userId ,int pageNum,int pageSize){
+    public List<fyPurchase> getNetoList(String orgId,String status,String secondStatus,String userId ,int pageNum,int pageSize){
 
         List<fyPurchase> list = new ArrayList<>();
-
-        //判断userid 是否是管理员，
+        //通过组织id 查询登录人的组织信息
         AppAuthOrg appAuthOrg=loginService.AppAuthOrgByOrgId(orgId);
-        String mainPersonId = appAuthOrg.getPurchaseMainPerson();
+        log.info("通过组织id 查询登录人的组织信息："+appAuthOrg);
+        //通过公司id，查询所有采购的议价负责人员list
+        List<AppOrgBuyChannelApproveMiddle> appOrgMidList=loginService.findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(orgId,userId);
+        //在list中查询当前登录人负责的内容list
+        //String mainPersonId = appAuthOrg.getPurchaseMainPerson();
+        //议价人员信息
+        //AppUser appUser = loginService.one(mainPersonId);
 
-        AppUser appUser = loginService.one(mainPersonId);//不测试可删除
-
-
-        if (userId.equals(appUser.getId())){
-            log.info("登录信息属于采购负责人:"+appUser.getUserName());
+        if (appOrgMidList!=null && appOrgMidList.size()>0){
+            log.info("登录信息属于采购负责人");
             //是 展示所有状态，公司符合的order
-            list=negotiatedService.findListByOrgId(orgId,status,secondStatus,pageNum,pageSize);
+            //list=negotiatedService.findListByOrgId(orgId,status,secondStatus,pageNum,pageSize);
+            //获取负责的采购途径buychannelId
+            List<String > buyChannelList=loginService.getBuyChannelIdArrFromAppOrgMidList(appOrgMidList);
+            log.info("当前登录人负责议价的采购途径:"+buyChannelList);
+            list=negotiatedService.findListByOrgIdAndBuychannelAndStatus(orgId,status,buyChannelList,pageNum,pageSize);
+            if (pageNum==1){
+                //首页添加
+                List<fyPurchase> listIfOk = negotiatedService.findListIfOk(orgId, status, secondStatus, userId, pageNum, pageSize);
+                list.addAll(listIfOk);
+            }
         }else {
-            log.info("登录信息属于不采购负责人:"+appUser.getUserName());
+            log.info("登录信息属于不采购负责人");
             //查询全部，遍历
             list=negotiatedService.findListIfOk(orgId,status,secondStatus,userId,pageNum,pageSize);
         }
          return list;
     }
+
+    /**
+     * -- 1.如果是议价负责人
+     * -- 1.1
+     * 	select * from fy_purchase where buy_channel_id ='4' ORDER BY create_time desc
+     * -- 1.2 在加上 参与 议价的数量
+     * 	select * from fy_purchase where negotiate_person is not null and id not in ( select id from fy_purchase where buy_channel_id ='4' )
+     *
+     * -- 	2.不是任何一个议价负责人
+     * 		select * from fy_purchase where negotiate_person is not null
+     */
 
     /**
      * 待审批List
@@ -111,34 +133,67 @@ public class TobeNegotiatedController {
         Map<String, List> quoteMap = negotiatedService.findQuoteById(id);
         map.put("map",quoteMap);
 
+        List<Supplier> supplierList = new ArrayList<>();
         //查询订单详情表中具体物料选中的具体公司
         List<PurchaseDetail> detailList=negotiatedService.findFyPurchaseDetailById(id);
         for (PurchaseDetail purchaseDetail : detailList) {//查看是否完成议价
             if (purchaseDetail.getQuoteId()!=null&&purchaseDetail.getQuoteId()!=""){
                 map.put("detailList",detailList);
+                //查询对应的供应商信息
+                Supplier sl=negotiatedService.findSupplierByQuoteId(purchaseDetail.getQuoteId());
+                supplierList.add(sl);
                 break;
             }
         }
+        map.put("supplier",supplierList);
         return map;
 
     }
 
     /**
-     * 通过企业id查询企业负责人列表
+     * 查询拥有提交议价结果的权限人员
      * @param orgId
      * @return
      */
     @RequestMapping(value = "/getAppUser",method = RequestMethod.GET)
-    public ServiceResult getAppUserByOrgId(String orgId){
+    public ServiceResult getAppUserByOrgId(String orgId,String buyChannelId){
 
         //查询企业信息
-        AppAuthOrg appAuthOrg=loginService.AppAuthOrgByOrgId(orgId);
-        String purchaseMainPerson = appAuthOrg.getPurchaseMainPerson();
-        AppUser appUser=loginService.one(purchaseMainPerson);
+        //AppAuthOrg appAuthOrg=loginService.AppAuthOrgByOrgId(orgId);
+        //String purchaseMainPerson = appAuthOrg.getPurchaseMainPerson();
+        //AppUser appUser=loginService.one(purchaseMainPerson);
         //AppUser appUser = loginService.one(purchaseMainPerson.getId());
-        return ServiceResult.success(appUser);
+
+        AppOrgBuyChannelApproveMiddle apcam=loginService.findAppOrgBuyChannelApproveMiddleByOrgIdAndBuychannelId(orgId,buyChannelId);
+        if (apcam!=null){
+            AppPurchaseApprove apa=loginService.findAppPurchaseApproveById(apcam.getId());
+            AppUser appUser=loginService.one(apa.getPurchaseMainPerson());
+            return ServiceResult.success(appUser);
+        }
+        return ServiceResult.successMsg("没有查询到相关的议价负责人");
     }
 
+
+    @GetMapping("/findMainPerson")
+    public ServiceResult findPurMainPersonId(String purId){
+        //根据业务id在历史流程实例表（act_hi_procinst）中查询流程定义id
+        ActHiProcinst actHiProcinst =negotiatedService.findActHiProcinstByPurId(purId);
+        log.info("根据业务id在历史流程实例表（act_hi_procinst）中查询流程定义:"+actHiProcinst);
+        //流程定义id在流程定义数据表（act_re_procdef）中查询key
+        ActReProcdef arp=negotiatedService.findActReProcdefByActId(actHiProcinst.getProcDefId());
+        log.info("流程定义id在流程定义数据表（act_re_procdef）中查询key"+arp);
+        //拿key在app_purchase_approve 中查询purchasemainperson
+        AppPurchaseApprove apa=negotiatedService.findAppPurchaseApproveByKey(arp.getKey());
+        log.info("拿key在app_purchase_approve 中查询purchasemainperson:"+apa);
+        //拿purchasemainperson 在appuser中查询数据
+        if (apa!=null){
+            AppUser appUser=negotiatedService.findAppUserById(apa.getPurchaseMainPerson());
+            log.info("拿purchasemainperson 在appuser中查询数据:"+appUser);
+            return ServiceResult.success(appUser);
+        }
+        return ServiceResult.successMsg("查询失败");
+
+    }
 
     /**
      * 在议价页面发起电话动作，将相关人员（除了管理人员）保存到 订单表中
@@ -172,16 +227,6 @@ public class TobeNegotiatedController {
      */
     @RequestMapping(value = "/getBigDate",method = RequestMethod.GET)
     public ServiceResult getBigDate(String supplierId,String pkMaterialId){
-
-        //测试  可删
-//        if (supplierId!=null){
-//            supplierId="1001A110000000002857";
-//        }
-//        if (pkMaterialId!=null){
-//            pkMaterialId="1001A11000000000AIOH";
-//        }
-        //测试
-
         Ucharts u=negotiatedService.getBigData(supplierId,pkMaterialId);
         return ServiceResult.success(u);
     }
@@ -254,6 +299,7 @@ public class TobeNegotiatedController {
         negotiatedService.saveApproverProlosalAndStatus(purId,passOrNot,approverProposal);
         return ServiceResult.success("成功");
     }
+
 
 
 }

@@ -16,6 +16,7 @@ import com.mol.supplier.service.microApp.MicroAlipayService;
 import com.mol.supplier.service.microApp.MicroUserService;
 import entity.ServiceResult;
 import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,7 +54,7 @@ public class MicroAlipayController {
 
 
 
-    private static final String payCallBackUrl = "http://"+Constant.domain+"/pay/alipay/callback";
+    private static final String PAY_CALLBACK_URL = "http://"+Constant.domain+"/pay/alipay/callback";
 
 
     /**
@@ -66,11 +67,15 @@ public class MicroAlipayController {
     @RequestMapping("/getCreateInfo")
     @ResponseBody
     public ServiceResult getAlipayInfo(@RequestParam Map paramap, HttpServletRequest request,HttpSession session){
+        log.info("****getCreateInfo****paraMap:"+paramap.toString());
         Supplier supplier = microUserService.getSupplierFromSession(session);
-
-        log.info("/getCreateInfo....");
         System.out.println(paramap.toString());
         String payFor = (String)paramap.get("payfor");
+        Object moneyObj = paramap.get("money");
+        String money = "";
+        if(moneyObj != null){
+            money = (String)moneyObj;
+        }
         AlipayCreateInfo createPayInfo = null;
         //根据前端传过来的参数确定支付订单模板
         //验证是否已经支付过：
@@ -101,8 +106,13 @@ public class MicroAlipayController {
                 }
                 createPayInfo = AlipayTemplates.TemplateOfExpertReviewAndContractService(supplier.getPkSupplier(),(String)paramap.get("purchaseId"));
                 break;
+            default:
+                break;
         }
-        createPayInfo.setCallbackUrl(payCallBackUrl);
+        if(!StringUtils.isEmpty(money)){
+            createPayInfo.setTotalAmount(money);
+        }
+        createPayInfo.setCallbackUrl(PAY_CALLBACK_URL);
         try {
             Map payInfoMap = microAlipayService.getAlipayInfo(createPayInfo).get();
             log.info("/getCreateInfo:"+payInfoMap.get(Alipay.MAPKEY_PAYINFO));
@@ -240,6 +250,10 @@ public class MicroAlipayController {
                     example1.and().andEqualTo("purchaseId",(String)paraMap.get("purchaseId")).andEqualTo("supplierId",supplierId);
                     int updateResult = quotePayresultMapper.updateByExampleSelective(quotePayresult,example1);
                     log.info("支付专家审核和合同费用的回调事件，，，，，supplierId:"+supplierId+",,,purchaseId:"+(String)paraMap.get("purchaseId")+",,sql执行结果："+updateResult);
+                    break;
+                default:
+                    log.info("未设置的支付目的：payFor:"+payFor);
+                    break;
             }
         }
         System.out.println("success");

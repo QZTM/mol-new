@@ -36,10 +36,11 @@
             /*padding-bottom: 10px;*/
         }
         .list{
-            height: 101px;
+            /*height: 101px;*/
             border-bottom: 1px solid #eeeeee;
             padding-left: 20px;
             margin-top: 15px;
+            padding-bottom: 10px;
         }
         .list_down{
             width: 50%;
@@ -92,15 +93,15 @@
             </select>
         </div>
 
-        <div class="col-md-4 col-xs-4" >
+        <div class="col-md-5 col-xs-5" >
             <select class="js-example-basic-single js-states form-control " id="selectss" >
                 <option   style="font-size: 12px" value="">--请选择行业类别--</option>
                 <option th:each="er,in:${marList}" th:text="${er.name}" th:value="${er.pkMarbasclass}"></option>
             </select>
 
         </div>
-        <div  class="col-md-3 col-xs-3">
-            <p style="margin-top: 5px;font-size: 12px">共<font style="color: red" th:text="${count}" id="count">132</font>条数据</p>
+        <div  class="col-md-2 col-xs-2">
+            <p style="margin-top: 5px;font-size: 12px">共<font style="color: red" th:text="${count}" id="count">132</font>条</p>
         </div>
     </div>
 
@@ -118,7 +119,9 @@
         <a th:href="@{'/index/selectOne?id='+${er.id}}" style="text-decoration: none;color: black;">
             <p style="font-size: 16px;font-weight: bold;" th:text="${er.applyCause}"></p>
             <span style="float: right;margin-right: 6px" th:if="${er.expertReview=='true'}">需支付评审奖励<text th:text="${er.expertReward}" style="color: red;"></text>元</span>
-            <div style="clear: both" th:switch="${er.buyChannelId}">单号:<span th:text="${er.orderNumber}">0000001</span>&nbsp;类型:&nbsp;<span th:case="3">单一来源</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span>&nbsp;供应商:<span th:text="${er.pkSupplier}"></span></div>
+<!--            <div style="clear: both" th:switch="${er.buyChannelId}">单号:<span th:text="${er.orderNumber}">0000001</span>&nbsp;&nbsp;&nbsp;类型:&nbsp;<span th:case="3">单一来源</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span>&nbsp;供应商:<span th:text="${er.pkSupplier}"></span></div>-->
+            <div style="clear: both" th:switch="${er.buyChannelId}">单号:<span th:text="${er.orderNumber}">0000001</span>&nbsp;&nbsp;&nbsp;类型:&nbsp;<span th:case="3">单一来源</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span></div>
+            <p>供应商:<span th:text="${er.pkSupplier}"></span></p>
             <span class="label label-primary " th:text="${er.goodsType}"></span>
             <span class="label label-warning " th:text="${er.status}"></span>
             <span style="float: right;margin-right: 18px" class="glyphicon-time list_down" aria-hidden="true" th:text="${er.createTime}"></span>

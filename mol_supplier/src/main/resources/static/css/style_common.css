@@ -36,6 +36,9 @@
  *index页面使用：
  */
 .companyName{
+    /*position: relative;*/
+    /*left: 20px;*/
+    /*top: -6px;*/
     font-size: 15px;
     text-align: center;
     color: #d58512;
@@ -45,6 +48,7 @@
     height: 222px;
 }
 .paiban{
+    /*position: absolute;*/
 }
 .tt{
     /*width: 50%;*/
