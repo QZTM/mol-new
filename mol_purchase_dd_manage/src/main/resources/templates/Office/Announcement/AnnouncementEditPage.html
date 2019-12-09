@@ -26,7 +26,7 @@
         <div style="float:left;width: 100px; height: 30px;background-color:#2D93CA;border-radius: 6px;font-size: 16px;text-align:center;color:#fbfbfb;">
             <p style="margin: 4px">分 类</p>
         </div>
-        <select id="MessageType" style=" margin-left: 24px;font-size: 20px;width:35% ; height: 30px;border-radius: 3px" >
+        <select id="MessageType" style=" margin-left: 24px;font-size: 20px;width:35% ; height: 30px;border-radius: 3px" onchange="select_change(this)" >
             <option value =1>消息通知</option>
             <option value=2>任务安排</option>
             <option value=3>公司新闻</option>
@@ -95,9 +95,25 @@
         addDepartment(null);
        // GetPositionPeolpe()
     }
+
+    var select=0;
+    function select_change(e)
+    {
+        if (e.selectedIndex==0)//战略采购
+        {
+            select=0;
+        }
+        else if (e.selectedIndex==1)
+        {
+            select=1;
+        }
+        else if (e.selectedIndex==2)
+        {
+            select=2;
+        }
+    }
     function alluser(e)
     {
-        console.log(e.value)
         if (e.value==='0')
         {   console.log(2)
             document.getElementById("Employee").style.display='block'
@@ -243,6 +259,7 @@
     function SubmitMessage()//发送消息
     {
         layer.confirm('是否发布公告', function(index){
+
             var PeolpeItems=document.getElementsByClassName("PeolpeItems");//获取已经选中的人员
             var ids=''
             for (var n=0;n<PeolpeItems.length;n++)
@@ -258,6 +275,7 @@
 
             }
 
+
             jsons={};
             jsons["titl"]=document.getElementById("titl").value;
 
@@ -269,27 +287,59 @@
             jsons["creaduserid"]=[[${session.userid}]]
             var json=JSON.stringify(jsons);
 
-            $.ajax({
-                type: 'POST',
-                url: '/AnnouncementEditPageController/AnnouncementList',
-                dataType: 'json',
-                data:json,//,characterName:document.getElementById("characterName").value
-                headers:{'Content-type':'application/json'},
-                success: function (data) {
-                    if (data.statu==true)
-                    {
-                        alert("角色保存成功")
-                        return_top()
+            if (select===0)//钉钉通知
+            {
+                $.ajax({
+                    type: 'POST',
+                    url: '/AnnouncementEditPageController/AnnouncementList',
+                    dataType: 'json',
+                    data:json,//,characterName:document.getElementById("characterName").value
+                    headers:{'Content-type':'application/json'},
+                    success: function (data) {
+                        if (data.statu==true)
+                        {
+                            alert("角色保存成功")
+                            return_top()
+                        }
+                        else
+                        {
+                            alert("提交失败！")
+                        }
+                    },
+                    error: function (data) {
+                        alert("获取审核议价信息失败")
                     }
-                    else
-                    {
-                        alert("提交失败！")
+                });
+            }
+            else if (select===1)
+            {
+
+            }
+            else if (select===2)//新闻
+            {
+                $.ajax({
+                    type: 'POST',
+                    url: '/AnnouncementEditPageController/AddNews',
+                    dataType: 'json',
+                    data:json,//,characterName:document.getElementById("characterName").value
+                    headers:{'Content-type':'application/json'},
+                    success: function (data) {
+                        if (data.statu==true)
+                        {
+                            alert("公告发布成功")
+                            return_top()
+                        }
+                        else
+                        {
+                            alert("提交失败！")
+                        }
+                    },
+                    error: function (data) {
+                        alert("获取审核议价信息失败")
                     }
-                },
-                error: function (data) {
-                    alert("获取审核议价信息失败")
-                }
-            });
+                });
+            }
+
             layer.close(index);
         });
 

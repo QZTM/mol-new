@@ -68,7 +68,7 @@ public class auth4fadada {
     /*=============法大大实名测试=============*/
     @Test
     public void Test1(){
-      regAccount();//1注册账号 "0BFA0775E0497B13D826976150E0CD1F"4EFECA0FEF28EB0958CBBFD022D58573
+      //regAccount();//1注册账号 "0BFA0775E0497B13D826976150E0CD1F"4EFECA0FEF28EB0958CBBFD022D58573
        //getAuthCompanyurl();//2获取企业实名认证地址
         //getAuthPersonurl();//3获取个人实名认证地址
 //        findPersonCertInfo();//17 查询个人实名认证信息
@@ -76,7 +76,7 @@ public class auth4fadada {
 //        GetFileForUUID();//19 通过uuid下载文件
 //        ApplyCert();//4实名证书申请
 //        ApplyNumCert();//5编号证书申请
-//        addSignature1();//6印章上传
+        addSignature1();//6印章上传
 //        addSignature2();//6印章上传
 //        customSignature();//7自定义印章
 
@@ -233,8 +233,8 @@ public class auth4fadada {
     public void addSignature1(){
         response.append("\n").append("印章上传:");
         FddClientBase base = new FddClientBase(APP_ID,APP_SECRET,V,HOST);
-        File imgfile = new File("");
-        String result = base.invokeaddSignature("",imgfile,"");
+        File imgfile = new File("C:\\Users\\41419\\Desktop\\后台需求\\微信图片_20191209231757.png");
+        String result = base.invokeaddSignature("B5FBFE6B13F18E896569F781991CFD02",imgfile,"");
         response.append("\n").append(result);
     }
     public void addSignature2(){

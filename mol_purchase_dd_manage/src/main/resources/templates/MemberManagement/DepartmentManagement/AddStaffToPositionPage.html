@@ -219,7 +219,11 @@
     }
     function RemoveHTML(e) //移除岗位里的员工
     {
+        layer.confirm('是否移除此员工', function(){
             e.remove()
+            layer.close(layer.index)
+        });
+
     }
     function Submits()
     {

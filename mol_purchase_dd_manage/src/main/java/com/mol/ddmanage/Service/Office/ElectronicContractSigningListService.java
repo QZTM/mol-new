@@ -15,9 +15,9 @@ public class ElectronicContractSigningListService
 {
     @Resource
     ElectronicContractSigningListMapper electronicContractSigningListMapper;
-    public ArrayList<ElectronicContractSigningListben>GetElectronicContractSigningListLogic(String Contract_statu)
+    public ArrayList<ElectronicContractSigningListben>GetElectronicContractSigningListLogic(String Contract_statu,String electronic_contract)
     {
-        ArrayList<ElectronicContractSigningListben> contractSigningListbens=electronicContractSigningListMapper.GetElectronicContractSigningList();
+        ArrayList<ElectronicContractSigningListben> contractSigningListbens=electronicContractSigningListMapper.GetElectronicContractSigningList( electronic_contract);
         ArrayList<ElectronicContractSigningListben> contractSigningListbenss=new ArrayList<>();
 
         for (int n=0;n<contractSigningListbens.size();n++)//筛选签署状态

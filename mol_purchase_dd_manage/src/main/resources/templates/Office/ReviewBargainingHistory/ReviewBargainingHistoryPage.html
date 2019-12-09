@@ -35,7 +35,7 @@
 
             <div style="width: 96%; float: left;margin-top: 5px;text-align: center;color: #FBFBFB; font-size: 15px;"><!--width: 730px;-->
               <div style="float: left;margin: 10px;">
-                <font th:text="${quoteSellerNum}">已报价商家</font>
+                <font id="Merchant_number">已报价商家</font>
               </div>
               <div>
                 <font style="float:right;margin-right: 1px;margin-top: 12px"  color="#FBFBFB" th:text="${create_time}">发布日期:2019年07月21 09:12</font>
@@ -68,7 +68,7 @@
             <div style="margin: 24px" id="approval_view"><!--审批流程视图-->
 
             </div>
-        <div style="margin-top: 48px">
+        <div style="margin-top: 48px;display: none">
             <div style="width: 100px;background-color: #2D93CA;padding: 6px;border-radius: 4px;font-size: 16px;margin: 24px;text-align: center;color:#fbfbfb;">
                 <p>抄送人</p>
             </div>
@@ -271,6 +271,8 @@
         window.print();
     }
 
+    var materials_names=new Array()
+    var materials_quantity=new Array()
     layui.use('table', function(){
         //计划采购单
         $.ajax({
@@ -281,8 +283,15 @@
             // headers:{  'eticket': app.globalData.eticket},
             success: function (data)
             {
+                for (var n=0;n<data.length;n++)//拿出来对应的物料需要采购的数量
+                {
+                    materials_names[n]=data[n].name
+                    materials_quantity[n]=data[n].goods_quantity;
+                }
+
                 var table = layui.table;
                 var Data = data;
+
                 table.render({
                     elem: '#test1'
                     // ,url:'/demo/table/user/'
@@ -300,6 +309,22 @@
                     ,page: true
                 });
 
+                $.ajax({
+                    type: 'POST',
+                    url: '/PurchasOrderinfor/OrderDetailedinfor',
+                    dataType: 'json',
+                    data:{PurchasId:document.getElementById("Order").innerText.split(':')[1]},
+                    // headers:{  'eticket': app.globalData.eticket},
+                    success: function (data) {
+                        Add_data_table("SupplerQuoteTable",data)
+                        document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
+                    },
+                    error: function (data) {
+                        alert("获取审核议价信息失败")
+                    }
+                });
+
+
             },
             error: function (data) {
                 alert("获取审核议价信息失败")
@@ -311,24 +336,10 @@
 
 
 
-    $.ajax({
-        type: 'POST',
-        url: '/PurchasOrderinfor/OrderDetailedinfor',
-        dataType: 'json',
-        data:{PurchasId:document.getElementById("Order").innerText.split(':')[1]},
-        // headers:{  'eticket': app.globalData.eticket},
-        success: function (data) {
-            Add_data_table("SupplerQuoteTable",data)
-            document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
-        },
-        error: function (data) {
-            alert("获取审核议价信息失败")
-        }
-    });
-
 
     function Add_data_table(list_name,Data)//生成商家报价 专家审核等表单 参数 对应日期框的div的id 和多个公司数据
     {
+
 
         if (Data.length==0)
         {
@@ -352,13 +363,26 @@
 
             //报价的厂家名
             var Company_quote=document.createElement('div');//创建一个表头
+
+
+            var allMoney=0.0;
+            for (var n_1=0;n_1<Data[n].length;n_1++)//遍历供应商报价的物料
+            {
+                for (var n_2=0;n_2<materials_names.length;n_2++)//采购单物料遍历
+                {
+                    if (materials_names[n_2]===Data[n][n_1].material_name) //报价的物料在采购名单中，则拿出采购名单中的采购数量
+                    {
+                       allMoney=allMoney+parseFloat(materials_quantity[n_2])*parseFloat(Data[n][n_1].quote)
+                    }
+                }
+            }
             Company_quote.innerHTML=
                 '<div style="width:16%;margin-top: 12px;margin-left:6px;padding: 6px;background-color: #2D93CA;color: #fbfbfb;font-size: 16px;border-radius: 6px;display: inline-block;text-align: center">'+
                 ' <label >'+Data[n][0].corp_name+'</label>'+
                 '</div>'+
 
                 '<div style="width:auto;margin-right: 6px;margin-top: 12px;padding: 6px;background-color:#eb7350;color: #fbfbfb;font-size: 16px;border-radius: 6px;display: inline-block;float: right;text-align: center;cursor:pointer">'+
-                ' <label>总计:100000元</label>'+
+                ' <label>总计:'+allMoney+'元</label>'+
                 '</div>'
             document.getElementById('div_table'+list_name+n.toString()).appendChild(Company_quote);
             var table=document.createElement('table');//创建一个表

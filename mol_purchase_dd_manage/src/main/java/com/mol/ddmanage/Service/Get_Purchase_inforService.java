@@ -124,4 +124,6 @@ public class Get_Purchase_inforService
 
       return integers;
     }
+
+
 }

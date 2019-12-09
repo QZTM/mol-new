@@ -380,8 +380,9 @@ public class ControllerPages {
     }
 
     @RequestMapping("/ApprovalProcessinforPage")//审批流程信息编辑
-    public String ApprovalProcessinforPage()
+    public String ApprovalProcessinforPage(@RequestParam Map map,Model model)
     {
+        model.addAttribute("id",map.get("id").toString());//审批中间表id
         return "Toots/ApprovalProcessSetting/ApprovalProcessinforPage";
     }
 
