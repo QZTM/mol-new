@@ -12,8 +12,12 @@ import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.dingtalk.api.response.OapiUserListbypageResponse;
 import com.mol.purchase.config.Constant;
+import com.mol.purchase.entity.AppOrgBuyChannelApproveMiddle;
+import com.mol.purchase.entity.AppPurchaseApprove;
 import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.login.AppUser;
+import com.mol.purchase.mapper.newMysql.AppOrgBuyChannelApproveMiddleMapper;
+import com.mol.purchase.mapper.newMysql.AppPurchaseApproveMapper;
 import com.mol.purchase.service.token.TokenService;
 import com.taobao.api.ApiException;
 import com.mol.purchase.config.URLConstant;
@@ -48,15 +52,16 @@ public class LoginService {
 
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private AppOrgMapper appOrgMapper;
-
     @Autowired
     private AppUserMapper appUserMapper;
-
     @Autowired
     private IdWorker idWorker;
+    @Autowired
+    private AppOrgBuyChannelApproveMiddleMapper appOrgBuyChannelApproveMiddleMapper;
+    @Autowired
+    private AppPurchaseApproveMapper appPurchaseApproveMapper;
 
     /**
      * 登陆
@@ -326,4 +331,37 @@ public class LoginService {
     }
 
 
+    public List<AppOrgBuyChannelApproveMiddle> findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(String orgId, String userId) {
+        List<AppOrgBuyChannelApproveMiddle> list =new ArrayList<>();
+        if (orgId!=null && userId!=null){
+            list= appOrgBuyChannelApproveMiddleMapper.findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(orgId,userId);
+        }
+        return list;
+    }
+
+    public List<String> getBuyChannelIdArrFromAppOrgMidList(List<AppOrgBuyChannelApproveMiddle> appOrgMidList) {
+        List<String> list =new ArrayList<>();
+        if (appOrgMidList.size()>0){
+            for (AppOrgBuyChannelApproveMiddle appOrgBuyChannelApproveMiddle : appOrgMidList) {
+                list.add(appOrgBuyChannelApproveMiddle.getBuyChannelId());
+            }
+        }
+        return list;
+    }
+
+    public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndBuychannelId(String orgId, String buyChannelId) {
+        if (orgId==null || buyChannelId==null){
+            return null;
+        }
+        AppOrgBuyChannelApproveMiddle t =new AppOrgBuyChannelApproveMiddle();
+        t.setAppOrgId(orgId);
+        t.setBuyChannelId(buyChannelId);
+        return appOrgBuyChannelApproveMiddleMapper.selectOne(t);
+    }
+
+    public AppPurchaseApprove findAppPurchaseApproveById(String  id) {
+        AppPurchaseApprove t =new AppPurchaseApprove();
+        t.setId(id);
+        return appPurchaseApproveMapper.selectOne(t);
+    }
 }

@@ -17,9 +17,14 @@ public class MicroAttr {
 //    public static final String AGENTID = "277589845";
 
 
-    public static final String APP_KEY = "dingahkyew1sw286fzdb";
-    public static final String APP_SECRET = "8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr";
-    public static final String AGENTID = "280301722";
+//    public static final String APP_KEY = "dingahkyew1sw286fzdb";
+//    public static final String APP_SECRET = "8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr";
+//    public static final String AGENTID = "280301722";
+//
+//
+    public static final String APP_KEY = "ding8y9wfet5dxnobbpm";
+    public static final String APP_SECRET = "qrbdorINEMrMLTiflvQFQ57i2qQfx8Akm6aw-0rsbpbTCoedHs60cpNZjGq4EWGH";
+    public static final String AGENTID = "280740196";
 
 
     //服务器上测试版本使用：

@@ -15,7 +15,6 @@ import java.util.Date;
  */
 @Data
 public class ActHiProcinst {
-    @Id
     private String id;
     private String procInstId;
     private String businessKey;

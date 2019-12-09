@@ -127,4 +127,11 @@
     <update id="updataApprovalEndTime" parameterType="java.lang.String">
         UPDATE fy_purchase set approval_end_time =#{time} where  id =#{purId}
     </update>
+    <select id="findListByOrgIdAndBuychannelAndStatus" resultType="com.mol.purchase.entity.dingding.solr.fyPurchase">
+        	select * from fy_purchase where org_id =#{orgId} and status =#{status} and buy_channel_id in
+        	<foreach collection="list" open="(" close=")" index="index" item="item" separator=",">
+                #{item}
+            </foreach>
+        order by create_time desc
+    </select>
 </mapper>

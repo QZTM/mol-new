@@ -57,6 +57,14 @@
 		<!-- 个人信息 -->
 		<div id="1" style="float: left;margin:35px 0px 5px 15px ;font-size: 16px;">
 			<div th:text="${my.name}">王茜茜</div>
+<!--			<div style="float: left;" th:if="${my.authentication!='未认证'}">-->
+<!--				<span th:text="${my.authentication}"></span>-->
+<!--			</div>-->
+<!--			<div style="float: left;"  th:if="${my.authentication=='未认证'}">-->
+<!--				<span th:text="${my.authentication}"></span>-->
+<!--				<a href="/my/authenticate">认证</a>-->
+<!--			</div>-->
+
 			<div style="float: left;" th:if="${my.authentication=='0'}">
 				<span>未认证</span>
 				<a href="/my/authenticate">认证</a>

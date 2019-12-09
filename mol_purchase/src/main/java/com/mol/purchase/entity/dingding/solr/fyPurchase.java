@@ -4,6 +4,7 @@ import lombok.Data;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.solr.core.mapping.Dynamic;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -76,4 +77,7 @@ public class fyPurchase implements Serializable {
     private String approvalEndTime;
     //是否启用电子合同
     private String electronicContract;
+
+    @Transient
+    private Integer passSupplierCount;
 }

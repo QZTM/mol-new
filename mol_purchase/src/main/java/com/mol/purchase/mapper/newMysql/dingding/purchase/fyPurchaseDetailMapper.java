@@ -10,7 +10,6 @@ import java.util.List;
 @Mapper
 public interface fyPurchaseDetailMapper extends BaseMapper<PurchaseDetail> {
 
-
     int insert(PurchaseDetail pd);
 
     List<PurchaseDetail> getFyPurchaseDetailListByMarbasClassList(List<BdMarbasclass> marList);
@@ -20,4 +19,6 @@ public interface fyPurchaseDetailMapper extends BaseMapper<PurchaseDetail> {
     List<PurchaseDetail> findPurchaseDetailList(String id);
 
     PurchaseDetail findPurchaseDetailByPurIdAndQuoteId(String id, String quoteId);
+
+    int findPassSupplierOfPassPurByPurId(String id);
 }

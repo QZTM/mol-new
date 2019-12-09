@@ -5,10 +5,7 @@ import com.mol.config.Constant;
 import com.mol.notification.SendNotification;
 import com.mol.purchase.config.ExecutorConfig;
 import com.mol.purchase.config.OrderStatus;
-import com.mol.purchase.entity.ExpertUser;
-import com.mol.purchase.entity.FyQuote;
-import com.mol.purchase.entity.QuotePayresult;
-import com.mol.purchase.entity.SupplierSalesman;
+import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiProcinst;
 import com.mol.purchase.entity.activiti.TaskDTO;
 import com.mol.purchase.entity.dingding.login.AppAuthOrg;
@@ -105,6 +102,10 @@ public class ActService {
     private TokenService tokenService;
     @Autowired
     private QuotePayresultMapper quotePayresultMapper;
+    @Autowired
+    AppOrgBuyChannelApproveMiddleMapper appOrgBuyChannelApproveMiddleMapper;
+    @Autowired
+    AppPurchaseApproveMapper appPurchaseApproveMapper;
 
 
 
@@ -669,5 +670,55 @@ public class ActService {
         actLogger.info("审批结束时间设定");
         String nowDateTime = TimeUtil.getNowDateTime();
         purchaseMapper.updataApprovalEndTime(purId,nowDateTime);
+    }
+
+    public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(String orgId, String buyChannelId) {
+        if (orgId!=null && buyChannelId!=null){
+            AppOrgBuyChannelApproveMiddle t = new AppOrgBuyChannelApproveMiddle();
+            t.setAppOrgId(orgId);
+            t.setBuyChannelId(buyChannelId);
+            return appOrgBuyChannelApproveMiddleMapper.selectOne(t);
+        }
+        return null;
+    }
+
+    public AppPurchaseApprove findAppPurchaseApproveByIdAndPurchaseMainPerson(String id, String userId) {
+        AppPurchaseApprove t = new AppPurchaseApprove();
+        t.setId(id);
+        t.setPurchaseMainPerson(userId);
+        return appPurchaseApproveMapper.selectOne(t);
+    }
+
+    public AppPurchaseApprove findAppPurchaseApproveById(String id) {
+        AppPurchaseApprove t = new AppPurchaseApprove();
+        t.setId(id);
+        return appPurchaseApproveMapper.selectOne(t);
+    }
+
+
+    public String insertAppPurchaseApprove(AppPurchaseApprove appPurchaseApprove,String processId) {
+        AppPurchaseApprove apa=new AppPurchaseApprove();
+        apa.setId(new IdWorker(1, 1).nextId()+"");
+        apa.setPurchaseMainPerson(appPurchaseApprove.getPurchaseMainPerson());
+        apa.setPurchaseApproveLeader(appPurchaseApprove.getPurchaseApproveLeader());
+        apa.setPurchaseApproveList(appPurchaseApprove.getPurchaseApproveList());
+        apa.setPurchaseActiveKey(processId);
+        appPurchaseApproveMapper.insert(apa);
+        return apa.getId();
+    }
+
+    public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApprovMiddleByAppIdAndBuychannelId(String orgId, String buyChannelId) {
+        AppOrgBuyChannelApproveMiddle t = new AppOrgBuyChannelApproveMiddle();
+        t.setAppOrgId(orgId);
+        t.setBuyChannelId(buyChannelId);
+        return appOrgBuyChannelApproveMiddleMapper.selectOne(t);
+    }
+
+    public int updataAppOrgBuyChannelApprovMiddleByAppIdAndBuychannelId(AppOrgBuyChannelApproveMiddle appOrgBuyChannelApproveMiddle, String id) {
+
+        AppOrgBuyChannelApproveMiddle t = new AppOrgBuyChannelApproveMiddle();
+        t.setId(appOrgBuyChannelApproveMiddle.getId());
+        t.setPurchaseApproveId(id+"");
+        return appOrgBuyChannelApproveMiddleMapper.updateByPrimaryKeySelective(t);
     }
 }

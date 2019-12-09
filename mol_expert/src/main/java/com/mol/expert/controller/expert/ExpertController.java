@@ -2,6 +2,7 @@ package com.mol.expert.controller.expert;
 
 import com.alibaba.fastjson.JSON;
 import com.mol.expert.config.BuyChannelResource;
+import com.mol.expert.config.ExpertStatus;
 import com.mol.expert.config.OrderStatus;
 import com.mol.expert.entity.dingding.login.AppAuthOrg;
 import com.mol.expert.entity.dingding.purchase.enquiryPurchaseEntity.PageArray;
@@ -208,7 +209,10 @@ public class ExpertController {
     public ServiceResult save(ExpertRecommend er, HttpSession session){
         ExpertUser user = (ExpertUser) session.getAttribute("user");
         logger.info("method:save describe:session中获取专家信息  result:"+user);
-
+        if (Integer.parseInt(user.getAuthentication())!= ExpertStatus.EXPERT_CERTIFIED){
+            logger.info("method:save describe:专家状态为未认证，阻止提交推荐  result:"+user);
+            return ServiceResult.failureMsg("请先认证后推荐");
+        }
         String purId = er.getPurchaseId();
         fyPurchase pur = es.findPurById(purId);
         String status = pur.getStatus();

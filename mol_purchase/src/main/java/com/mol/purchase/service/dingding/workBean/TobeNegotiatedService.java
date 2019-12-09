@@ -5,9 +5,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.mol.purchase.config.OrderStatus;
-import com.mol.purchase.entity.ExpertRecommend;
-import com.mol.purchase.entity.ExpertUser;
-import com.mol.purchase.entity.FyQuote;
+import com.mol.purchase.entity.*;
+import com.mol.purchase.entity.activiti.ActHiProcinst;
+import com.mol.purchase.entity.activiti.ActReProcdef;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.purchase.entity.dingding.purchase.workBench.BigDataStar;
@@ -17,9 +17,12 @@ import com.mol.purchase.entity.dingding.purchase.workBench.toBeNegotiated.MaterI
 import com.mol.purchase.entity.dingding.purchase.workBench.toBeNegotiated.NegotiatIng;
 import com.mol.purchase.entity.dingding.purchase.workBench.toBeNegotiated.SupplierIdToExpertId;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
+import com.mol.purchase.mapper.newMysql.AppPurchaseApproveMapper;
 import com.mol.purchase.mapper.newMysql.ExpertRecommendMapper;
 import com.mol.purchase.mapper.newMysql.ExpertUserMapper;
 import com.mol.purchase.mapper.newMysql.FyQuoteMapper;
+import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiProcinstMapper;
+import com.mol.purchase.mapper.newMysql.dingding.activiti.ActReProcdefMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.BdSupplierMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.fyPurchaseDetailMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.fyPurchaseMapper;
@@ -52,27 +55,26 @@ public class TobeNegotiatedService {
 
     @Autowired
     private fyPurchaseMapper fyPurchaseMapper;
-
     @Autowired
     private FyQuoteMapper fyQuoteMapper;
-
     @Autowired
     private BdSupplierMapper bdSupplierMapper;
-
     @Autowired
     private fyPurchaseDetailMapper fyPurchaseDetailMapper;
-
     @Autowired
     private AppUserMapper appUserMapper;
-
     @Autowired
     private PoOrderMapper poOrderMapper;
-
     @Autowired
     private ExpertRecommendMapper expertRecommendMapper;
-
     @Autowired
     private ExpertUserMapper expertUserMapper;
+    @Autowired
+    private ActHiProcinstMapper actHiProcinstMapper;
+    @Autowired
+    private ActReProcdefMapper actProRecdefMapper;
+    @Autowired
+    private AppPurchaseApproveMapper appPurchaseApproveMapper;
 
 
     public List<String> getListBelongsSupplier(String supplierId) {
@@ -86,7 +88,7 @@ public class TobeNegotiatedService {
     public List<fyPurchase> findListByOrgId(String orgId, String status,String secondStatus,int pageNum,int pageSize) {
 
         PageHelper.startPage(pageNum,pageSize);
-         return fyPurchaseMapper.findListByOrgIdAndStatus(orgId,status,secondStatus);
+        return fyPurchaseMapper.findListByOrgIdAndStatus(orgId,status,secondStatus);
     }
 
     public fyPurchase findFypurchaseById(String id) {
@@ -303,5 +305,38 @@ public class TobeNegotiatedService {
             return pd;
         }
         return pd;
+    }
+
+
+    public List<fyPurchase> findListByOrgIdAndBuychannelAndStatus(String orgId, String status, List<String> buyChannelList,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return fyPurchaseMapper.findListByOrgIdAndBuychannelAndStatus(orgId,status,buyChannelList);
+    }
+
+    public ActHiProcinst findActHiProcinstByPurId(String purId) {
+        return actHiProcinstMapper.getProByPurId(purId);
+    }
+
+    public ActReProcdef findActReProcdefByActId(String procDefId) {
+        return actProRecdefMapper.findActReProcdefByActId(procDefId);
+    }
+
+    public AppPurchaseApprove findAppPurchaseApproveByKey(String key) {
+        AppPurchaseApprove t =new AppPurchaseApprove();
+        t.setPurchaseActiveKey(key);
+        return appPurchaseApproveMapper.selectOne(t);
+    }
+
+    public AppUser findAppUserById(String appUserId) {
+        AppUser t = new AppUser();
+        t.setId(appUserId);
+        return appUserMapper.selectOne(t);
+    }
+
+    public Supplier findSupplierByQuoteId(String quoteId) {
+        if (quoteId!=null){
+            return bdSupplierMapper.findSupplierByQuoteId(quoteId);
+        }
+        return null;
     }
 }

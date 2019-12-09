@@ -16,4 +16,5 @@ public interface BdSupplierMapper extends BaseMapper<Supplier> {
 
     String  getSupplierId(@Param("map") Map<String, String> map);
 
+    Supplier findSupplierByQuoteId(String quoteId);
 }

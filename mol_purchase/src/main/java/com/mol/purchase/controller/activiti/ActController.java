@@ -3,10 +3,7 @@ package com.mol.purchase.controller.activiti;
 import com.mol.config.Constant;
 import com.mol.notification.SendNotification;
 import com.mol.notification.SendNotificationImp;
-import com.mol.purchase.entity.ExpertUser;
-import com.mol.purchase.entity.FyQuote;
-import com.mol.purchase.entity.Supplier;
-import com.mol.purchase.entity.SupplierSalesman;
+import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiProcinst;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
@@ -72,15 +69,17 @@ ActController {
      */
     @RequestMapping(value = "/deploy",method = RequestMethod.GET)
     @ResponseBody
-    public ServiceResult deploy(String name, String processId, String processName, String orgId){
+    public ServiceResult deploy(String name, String processId, String processName, String orgId,String buyChannelId){
         //数据库查询出审核人员，用来构建bpmnMode对象
-        if (orgId == null){
-            return ServiceResult.failure("公司不得为空");
+        if (orgId == null || buyChannelId==null){
+            return ServiceResult.failure("公司或采购方式不得为空");
         }
-        AppAuthOrg org=actService.findappAuthOrgByOrgId(orgId);
+        //AppAuthOrg org=actService.findappAuthOrgByOrgId(orgId);
 
         List<String> list= new ArrayList<>();
-        String aproveString = org.getPurchaseApproveList();
+        AppOrgBuyChannelApproveMiddle abm = actService.findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(orgId, buyChannelId);
+        AppPurchaseApprove apa=actService.findAppPurchaseApproveById(abm.getPurchaseApproveId());
+        String aproveString = apa.getPurchaseApproveList();
         if (aproveString!=null){
             String[] split = aproveString.split(",");
             for (String s : split) {
@@ -93,7 +92,43 @@ ActController {
 
         //addBpmnModel方式部署工作流
         actService.deployByModel(model,name);
-        return ServiceResult.success("流程实例已部署");
+        //将Key存到表中
+        //插入一条新数据app_purchase_approve
+        String id = actService.insertAppPurchaseApprove(apa, processId);
+        logger.info("部署流程  app_purchase_approve表中返回的id值："+id);
+        //将新插入数据的id 存到表app_org_buy_channel_approve_middle中
+        AppOrgBuyChannelApproveMiddle abam = actService.findAppOrgBuyChannelApprovMiddleByAppIdAndBuychannelId(orgId, buyChannelId);
+        logger.info("部署流程  查询到需要修改关联app_purchase_approve表id 的数据："+abam);
+        int result= actService.updataAppOrgBuyChannelApprovMiddleByAppIdAndBuychannelId(abam,id);
+        logger.info("部署流程   更新关联app_purchase_approve表id的结果："+result);
+        if (result==1){
+            logger.info("流程实例已部署");
+            return ServiceResult.success("流程实例已部署");
+        }else{
+            logger.info("流程实例部署失败，请稍后重试");
+            return ServiceResult.failureMsg("流程实例部署失败，请稍后重试");
+        }
+    }
+
+    @GetMapping("/getActKey")
+    public ServiceResult getActKey(String orgId,String buyChannelId,String userId){
+        if (orgId==null || buyChannelId ==null || userId==null){
+            return ServiceResult.failureMsg("审批实例查询失败，请稍后重试");
+        }
+        //先查询公司的
+        AppOrgBuyChannelApproveMiddle appOrgBuyChannelApproveMiddle=actService.findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(orgId,buyChannelId);
+        if (appOrgBuyChannelApproveMiddle!=null){
+            AppPurchaseApprove appPurchaseApprove=actService.findAppPurchaseApproveByIdAndPurchaseMainPerson(appOrgBuyChannelApproveMiddle.getPurchaseApproveId(),userId);
+            //查询
+            if (appPurchaseApprove!=null){
+                return ServiceResult.success(appPurchaseApprove);
+            }else {
+                return ServiceResult.failureMsg("审批实例查询失败，请稍后重试");
+            }
+        }else {
+            return ServiceResult.failureMsg("审批实例查询失败，请稍后重试");
+        }
+
     }
 
     /**

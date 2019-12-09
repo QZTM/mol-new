@@ -38,4 +38,8 @@
     <select id="getSupplierNameById" resultType="java.lang.String" parameterType="java.lang.String">
         SELECT name  FROM `bd_supplier` where pk_supplier=#{id}
     </select>
+
+    <select id="findSupplierByQuoteId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.Supplier">
+        select * from bd_supplier where pk_supplier =(SELECT pk_supplier_id FROM fy_quote  where id =#{quoteId})
+    </select>
 </mapper>

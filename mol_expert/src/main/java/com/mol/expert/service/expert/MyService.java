@@ -1,5 +1,6 @@
 package com.mol.expert.service.expert;
 
+import com.mol.expert.config.ExpertStatus;
 import com.mol.expert.entity.dingding.solr.fyPurchase;
 import com.mol.expert.entity.expert.ExpertRecommend;
 import com.mol.expert.entity.expert.ExpertUser;
@@ -109,5 +110,21 @@ public class MyService {
         BdMarbasclass t =new BdMarbasclass();
         t.setPkMarbasclass(marId);
         return bdMarbasclassMapper.selectOne(t);
+    }
+
+    public ExpertUser modifyAuthentication(ExpertUser user) {
+        if (user!=null){
+
+            if ( ExpertStatus.EXPERT_UNCERTIFIED==Integer.parseInt(user.getAuthentication())){
+                user.setAuthentication("未认证");
+            }
+            if (ExpertStatus.EXPERT_INAUDIT==Integer.parseInt(user.getAuthentication())){
+                user.setAuthentication("审核中");
+            }
+            if (ExpertStatus.EXPERT_CERTIFIED==Integer.parseInt(user.getAuthentication())){
+                user.setAuthentication("已认证");
+            }
+        }
+        return user;
     }
 }

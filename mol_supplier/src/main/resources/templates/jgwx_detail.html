@@ -68,7 +68,7 @@
             <p style="color: blue;">&nbsp;状态:<span th:text="${pur.status}" style="color: black;"></span></p>
         </span>
 
-        <span style="font-size: 12px;float: left;width: 24%" >
+        <span style="font-size: 12px;float: left;width: 26%" >
             <p style="color: blue;">&nbsp;付款方式:<span th:text="${payMent}" style="color: black;"></span></p>
         </span>
 
@@ -99,16 +99,16 @@
         <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
             <tr>
                 <td style="width: 12%">序号</td>
-                <td  style="width: 32%;">名称</td>
-                <td  style="width: 32%;">规格</td>
-                <td style="width: 12%">单位</td>
-                <td style="width: 12%">数量</td>
+                <td  style="width: 30%;">名称</td>
+                <td  style="width: 30%;">规格</td>
+                <td style="width: 14%">单位</td>
+                <td style="width: 14%">数量</td>
             </tr>
             <tr th:each="en,f:${purList}">
                 <td th:text="${f.index+1}" style="width: 12%">序号</td>
-                <td th:text="${en.itemName}" style="width: 32%;">名称</td>
-                <td th:text="${en.norms}"  style="width: 32%;">规格</td>
-                <td th:text="${en.unit}" style="width: 12%">单位</td>
+                <td th:text="${en.itemName}" style="width: 30%;">名称</td>
+                <td th:text="${en.norms}"  style="width: 30%;">规格</td>
+                <td th:text="${en.unit}" style="width: 16%">单位</td>
                 <td th:text="${en.count}" style="width: 12%">数量</td>
             </tr>
 
