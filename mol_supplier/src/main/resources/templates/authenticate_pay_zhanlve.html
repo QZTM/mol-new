@@ -36,7 +36,8 @@
 		</div>
 
 		<div style="text-align: center;font-size: 22px;font-weight: bold;margin-top: 30px">
-			<span th:text="${cost}"></span>
+<!--			<span id="cost_span">20.8</span>-->
+			<span th:text="${cost}" id="cost_span"></span>
 			<span>元</span>
 		</div>
 	</div>
@@ -83,7 +84,8 @@
             //支付1.去后端获取支付信息     2，带着支付信息调用钉钉微应用的支付接口
             //禁用支付，防止多次支付
             $("#pay-btn").attr('disabled','disable');
-            var paraData = {'payfor':'1'};
+            var money = $("#cost_span").text().trim();
+            var paraData = {'payfor':'1','money':money};
             dd.ready(function(){
                 getPayInfo(paraData).then(function(res){
                     console.log("getPayInfo...then:");

@@ -4,6 +4,7 @@ import com.mol.purchase.entity.dingding.purchase.onlinePurchaseEntity.SellerArra
 import com.mol.purchase.service.dingding.reptile.ReptileService;
 import com.mol.purchase.util.robot.*;
 import entity.ServiceResult;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@Log
 public class ReptileController {
 
     @Autowired
@@ -30,11 +32,15 @@ public class ReptileController {
      */
     @RequestMapping(value = "/getNetItemList")
     public ServiceResult getNetItemList(String goodsName, String itemType, String orderRule, int count) throws Exception {
+        log.info("***线上采购搜索商品***，goodsName:"+goodsName+",itemType:"+itemType+",orderRule:"+orderRule);
         List<SellerArray> goodsList = new ArrayList<>();
         //开启多线程获取多渠道商品：
         List<SellerArray> tianMaoList = reptileService.getNetGoods(goodsName,itemType,orderRule,count,ReptileService.dataFromTianMao).get();
         List<SellerArray> jdList = reptileService.getNetGoods(goodsName,itemType,orderRule,count,ReptileService.dataFromJD).get();
         List<SellerArray> pinDuoDuoList = reptileService.getNetGoods(goodsName,itemType,orderRule,count,ReptileService.dataFromPinDuoDuo).get();
+        log.info("天猫获取到的："+tianMaoList.toString());
+        log.info("京东获取到的："+jdList.toString());
+        log.info("拼多多获取到的："+pinDuoDuoList.toString());
         if(tianMaoList != null){
             goodsList.addAll(tianMaoList);
         }
