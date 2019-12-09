@@ -137,10 +137,7 @@
 		//监听单元格事件
 		table.on('tool(test)', function(obj){//显示详情页
 			var data = obj.data;
-			//console.log(data);
-			console.log(obj.event);
 			if(obj.event === 'setTitl'){
-				console.log(data.type);
 				// layer.prompt({
 				// 	formType: 2
 				// 	,title: '修改 ID 为 ['+ data.id +'] 的用户签名'

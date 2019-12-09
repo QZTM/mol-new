@@ -45,7 +45,7 @@
 
 
 	<script type="text/html" id="barDemo">
-		<!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+		<a class="layui-btn layui-btn-xs" lay-event="edit">查看</a>
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 	</script>
 
@@ -75,23 +75,38 @@
 		$("#Details").animate({width:"50%"}, 0);//收起
 		layui.use('table', function(){
 			var table = layui.table;
-			var Data = [{"l1":"1","l2":"询价","l3":"计算机采购","l4":"2019080711","l5":"山东XXX有限公司","l6":"2019-08-06","l7":"王XX","l8":"查看"}]
-			table.render({
-				elem: '#test1'
-				, data:Data
-				,cols: [
-					[
-						{field:'l1', width:80, title: 'DI', sort: true}
-						,{field:'l2', width:150, title: '类型'}
-						,{field:'l3', width:200, title: '对应标题', sort: true}
-						,{field:'l4', width:150, title: '订单编号'}
-						,{field:'l5', width:280,event: 'setEve4',title: '确认供应商', minWidth: 150,style:'cursor: pointer;color: #1E9FFF;'}
-						,{field:'l6', width:150, title: '日期', sort: true}
-						,{field:'l7', width:120, title: '申请人', sort: true}
-						,{field:'l8', width:120,event: 'setl8', title: '操作',style:'cursor: pointer;color: #1E9FFF;'}
-					]
-				]
-				,page: true
+
+			$.ajax({
+				type: 'POST',
+				url: '/ElectronicContractSigningListController/GetElectronicContractSigningList',
+				dataType: 'json',
+				data:{Contract_statu:0,electronic_contract:'false'},
+				// headers:{  'eticket': app.globalData.eticket},
+				success: function (data) {
+
+					var Data = data
+					table.render({
+						elem: '#test1'
+						, data:Data
+						,cols: [
+							[
+								{field:'number', width:80, title: '序号', sort: true}
+								,{field:'buy_channel_id', width:150, title: '采购类型'}
+								,{field:'goods_name', width:200, title: '对应标题', sort: true}
+								,{field:'id', width:150, title: '订单编号'}
+								,{field:'suplier_name', width:280,event: 'setEve4',title: '确认供应商', minWidth: 150,style:'cursor: pointer;color: #1E9FFF;'}
+								,{field:'create_time', width:150, title: '日期', sort: true}
+								,{field:'user_name', width:120, title: '申请人', sort: true}
+								,{field:'l8', width:120,event: 'setl8', title: '操作',toolbar: '#barDemo',style:'cursor: pointer;color: #1E9FFF;'}
+							]
+						]
+						,page: true
+					});
+				},
+				error: function (data)
+				{
+					alert("获取电子合同信息失败")
+				}
 			});
 
 

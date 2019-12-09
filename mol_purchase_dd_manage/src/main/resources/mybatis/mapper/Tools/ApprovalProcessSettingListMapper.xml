@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mol.ddmanage.mapper.Tools.ApprovalProcessSettingListMapper">
+
+    <select id="SetapprovalList" resultType="com.mol.ddmanage.Ben.Tools.ApprovalProcessSettingListben">
+        select  aobcam.id,fbc.name,(fbc.state)status,b.username as approval
+        from app_org_buy_channel_approve_middle aobcam
+        left join app_auth_org aao on aao.id=aobcam.app_org_id
+        left join fy_buy_channel fbc on fbc.id=aobcam.buy_channel_id
+        left join app_purchase_approve apa on apa.id=aobcam.purchase_approve_id
+        left join (select GROUP_CONCAT(a.user_name order by tid) as username,a.zid as app_purchase_approve_id from (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(z.purchase_approve_list,',',t.help_topic_id+1),',',-1) AS num,au.user_name,au.id,z.id as zid,t.help_topic_id+1 as tid
+        FROM zkfy.app_purchase_approve z
+        join mysql.help_topic t
+        join zkfy.app_user au
+        WHERE   (LENGTH(z.purchase_approve_list)-LENGTH(REPLACE(z.purchase_approve_list,',',''))+1) > t.help_topic_id
+        having au.id=num) a) b on b.app_purchase_approve_id = apa.id
+        where app_org_id='1204069409234190336'
+    </select>
+</mapper>

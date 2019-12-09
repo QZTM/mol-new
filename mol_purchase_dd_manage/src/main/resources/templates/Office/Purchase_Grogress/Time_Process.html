@@ -97,9 +97,10 @@
  <script src="/layui/layui.all.js"></script>
  <script>
 
+     var materials_names=new Array()//
+     var materials_quantity=new Array()
      function landing_star()
      {
-
          var table=document.createElement('table');//创建一个表
          table.id='list1table1';
          table.class='layui-hide';
@@ -115,6 +116,13 @@
                  data:{PurchasId:document.getElementById("PurchasId").innerText.split(":")[1]},
                  // headers:{  'eticket': app.globalData.eticket},
                  success: function (data) {
+
+                     for (var n=0;n<data.length;n++)//拿出来对应的物料需要采购的数量
+                     {
+                         materials_names[n]=data[n].name
+                         materials_quantity[n]=data[n].goods_quantity;
+                     }
+
                      var Data=data
                      table.render({
                          elem: '#list1table1'
@@ -131,6 +139,8 @@
                          ]
                          ,page: true
                      });
+
+                     Process()//专家审核 采购部议价等流程
                  },
                  error: function (data) {
                      alert("获取审核议价信息失败")
@@ -140,67 +150,71 @@
 
 
 
-         //获取供应商报价
-         $.ajax({
-             type: 'POST',
-             url: '/PurchasOrderinfor/OrderDetailedinfor',
-             dataType: 'json',
-             data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
-             // headers:{  'eticket': app.globalData.eticket},
-             success: function (data) {
-                 Add_data_table("list2",data)
-                 document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
-             },
-             error: function (data) {
-                 alert("获取审核议价信息失败")
-             }
-         });
+         function Process()
+         {
+             //获取供应商报价
+             $.ajax({
+                 type: 'POST',
+                 url: '/PurchasOrderinfor/OrderDetailedinfor',
+                 dataType: 'json',
+                 data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
+                 // headers:{  'eticket': app.globalData.eticket},
+                 success: function (data) {
+                     Add_data_table("list2",data)
+                     document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
+                 },
+                 error: function (data) {
+                     alert("获取审核议价信息失败")
+                 }
+             });
 
-         //专家评审区域
-         $.ajax({
-             type: 'POST',
-             url: '/PurchasOrderinfor/OrderDetailedinfor',
-             dataType: 'json',
-             data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
-             // headers:{  'eticket': app.globalData.eticket},
-             success: function (data) {
-                 Add_data_table("list3",data)
-             },
-             error: function (data) {
-                 alert("获取审核议价信息失败")
-             }
-         });
+             //专家评审区域
+             $.ajax({
+                 type: 'POST',
+                 url: '/PurchasOrderinfor/OrderDetailedinfor',
+                 dataType: 'json',
+                 data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
+                 // headers:{  'eticket': app.globalData.eticket},
+                 success: function (data) {
+                     Add_data_table("list3",data)
+                 },
+                 error: function (data) {
+                     alert("获取审核议价信息失败")
+                 }
+             });
 
 
-         //采购部议价区域
-         $.ajax({
-             type: 'POST',
-             url: '/TimeProcessController/SupperlierQuoteFinally',
-             dataType: 'json',
-             data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
-             // headers:{  'eticket': app.globalData.eticket},
-             success: function (data) {
-                 Add_data_table("list4",data)
-             },
-             error: function (data) {
-                 alert("获取审核议价信息失败")
-             }
-         });
+             //采购部议价区域
+             $.ajax({
+                 type: 'POST',
+                 url: '/TimeProcessController/SupperlierQuoteFinally',
+                 dataType: 'json',
+                 data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
+                 // headers:{  'eticket': app.globalData.eticket},
+                 success: function (data) {
+                     Add_data_table("list4",data)
+                 },
+                 error: function (data) {
+                     alert("获取审核议价信息失败")
+                 }
+             });
 
-         //采购通过
-         $.ajax({
-             type: 'POST',
-             url: '/TimeProcessController/PurchasOver',
-             dataType: 'json',
-             data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
-             // headers:{  'eticket': app.globalData.eticket},
-             success: function (data) {
-                 Add_data_table("list5",data)
-             },
-             error: function (data) {
-                 alert("获取审核议价信息失败")
-             }
-         });
+             //采购通过
+             $.ajax({
+                 type: 'POST',
+                 url: '/TimeProcessController/PurchasOver',
+                 dataType: 'json',
+                 data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
+                 // headers:{  'eticket': app.globalData.eticket},
+                 success: function (data) {
+                     Add_data_table("list5",data)
+                 },
+                 error: function (data) {
+                     alert("获取审核议价信息失败")
+                 }
+             });
+         }
+
 
 
 
@@ -230,13 +244,24 @@
      var table_number=0;
      function Add_data_table(list_name,Data)//生成商家报价 专家审核等表单 参数 对应日期框的div的id 和多个公司数据
      {
-
          if (Data.length==0)
          {
            document.getElementById(list_name).style.display='none'
          }
          for (var n=0;n<Data.length;n++)//循环一次代表一个公司的表单被生成
          {
+             var allMoney=0.0;
+             for (var n_1=0;n_1<Data[n].length;n_1++)//遍历供应商报价的物料
+             {
+                 for (var n_2=0;n_2<materials_names.length;n_2++)//采购单物料遍历
+                 {
+                     if (materials_names[n_2]===Data[n][n_1].material_name) //报价的物料在采购名单中，则拿出采购名单中的采购数量
+                     {
+                         allMoney=allMoney+parseFloat(materials_quantity[n_2])*parseFloat(Data[n][n_1].quote)
+                     }
+                 }
+             }
+
              if (n>0)//报价公司大于1家时加一个分界线
              {
                  var line=document.createElement('div');
@@ -261,7 +286,7 @@
              ' <label style=";cursor:pointer" onclick="Table_visible(this)">收起</label>'+
              '</div>'+
              '<div style="width:auto;margin-right: 6px;margin-top: 12px;padding: 6px;background-color:#eb7350;color: #fbfbfb;font-size: 16px;border-radius: 6px;display: inline-block;float: right;text-align: center;cursor:pointer">'+
-             ' <label>总计:100000元</label>'+
+             ' <label>总计:'+allMoney+'元</label>'+
              '</div>'
              document.getElementById('div_table'+list_name+n.toString()).appendChild(Company_quote);
              var table=document.createElement('table');//创建一个表

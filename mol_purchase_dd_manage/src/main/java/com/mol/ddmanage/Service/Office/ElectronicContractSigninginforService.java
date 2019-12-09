@@ -72,7 +72,7 @@ public class ElectronicContractSigninginforService
             ArrayList<PurchasOrderinforben> Orders=new ArrayList<>();//一个单列
             for (int n=0;n< purchasOrderinforben.size();n++)
             {
-                if (value.equals(purchasOrderinforben.get(n).getCorp_name()) && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字
+                if (value.equals(purchasOrderinforben.get(n).getCorp_name()) && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字 并且quote_id不为空代表是已经确定采购这个物品
                 {
                     Orders.add(purchasOrderinforben.get(n));
                 }

@@ -4,4 +4,8 @@
     <insert id="Announcement" parameterType="com.mol.ddmanage.Ben.Office.AnnouncementEditPageben">
         insert into bac_announcemen(announcemenId,userids,alluser,htmltext,text,titl,creadtime,creaduserid) values (#{announcemenId},#{userids},#{alluser},#{htmltext},#{text},#{titl},#{creadtime},#{creaduserid})
     </insert>
+
+    <insert id="AddNews">
+        insert into supp_news(id,title,introduction,main_text,creation_time,img) values (#{id},#{title},#{introduction},#{main_text},#{creation_time},#{img})
+    </insert>
 </mapper>

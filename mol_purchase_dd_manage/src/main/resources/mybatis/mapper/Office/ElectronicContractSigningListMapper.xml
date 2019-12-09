@@ -11,7 +11,7 @@ fy_purchase.*
 FROM fy_purchase_supplier_contract,fy_purchase
 LEFT JOIN fy_purchase_detail ON
 fy_purchase.id=fy_purchase_detail.fy_purchase_id
-WHERE  fy_purchase.buy_channel_id!=1 AND fy_purchase.buy_channel_id!=2 AND fy_purchase.`status`=7
+WHERE  fy_purchase.buy_channel_id!=1 AND fy_purchase.buy_channel_id!=2 AND fy_purchase.`status`=7 and electronic_contract=#{electronic_contract}
 GROUP BY fy_purchase.id
      </select>
 </mapper>

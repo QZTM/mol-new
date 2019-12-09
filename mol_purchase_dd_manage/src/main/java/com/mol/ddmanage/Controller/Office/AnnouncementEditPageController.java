@@ -17,8 +17,14 @@ public class AnnouncementEditPageController
     @Resource
     AnnouncementEditPageService announcementEditPageService;
     @RequestMapping("/AnnouncementList")
-    public Map AnnouncementList(@RequestBody AnnouncementEditPageben json)
+    public Map AnnouncementList(@RequestBody AnnouncementEditPageben json)//钉钉的公告
     {
           return  announcementEditPageService.AnnouncementListLogic(json);
+    }
+
+    @RequestMapping("/AddNews")
+    public Map AddNews(@RequestBody AnnouncementEditPageben json)//添加新闻
+    {
+         return announcementEditPageService.AddNewsLogic(json);
     }
 }

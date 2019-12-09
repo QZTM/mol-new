@@ -1,10 +1,11 @@
 package com.mol.oos;
 
-import java.io.*;
-import java.util.List;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+
 import javax.imageio.stream.FileImageOutputStream;
+import java.io.*;
+import java.util.List;
 
 public class TYOOSUtil {
 
@@ -99,7 +100,7 @@ public class TYOOSUtil {
      * @param destinationBucketName
      * @param destinationKey
      */
-    public void copy(String bucketName,String key,String destinationBucketName,String destinationKey){
+    public void copy(String bucketName,String key,String destinationBucketName,String destinationKey) {
         /* 拷贝 object */
 //        String destinationBucketName = "my-copy-oos-bucket";
 //        String destinationKey = "MyCopyKey";

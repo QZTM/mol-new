@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,14 +7,17 @@
 <link rel="stylesheet" href="/layui/css/layui.css">
 <script src="/echarts.min.js"></script>
 <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
-<body>
+<body onload="landing_star()">
 <div style="padding: 24px;">
    <div>
        <p  onclick="show_from()" style="font-size: 26px">
            合同订单
        </p>
    </div>
-    <div style="width: 100% ;height: 60px;">
+    <div style="margin-top: 24px">
+        <hr class="layui-bg-green">
+    </div>
+    <div style="margin-top: 12px;width: 100% ;height: 60px;">
         <div style="float: left">
             <div style="display: inline-block">
                 <p>
@@ -23,7 +26,7 @@
             </div>
             <div style="display: inline-block">
                 <input id="d1" name="Fruit1" type="radio" value="1" />是
-                <input id="d2" name="Fruit1" type="radio" value="2" />否
+                <input id="d2" name="Fruit1" type="radio" value="0" />否
             </div>
         </div>
         <div style="float: left;margin-left: 10%">
@@ -61,7 +64,7 @@
 
         </div>
         <div style="float: left;margin-left: 24px;margin-top: 24px">
-           <img src="/imge/add_file.ico" style="width: 80px;height: 80px" onclick="add_approval_view()">
+           <img src="/imge/add_file.ico" style="width: 80px;height: 80px" onclick="show_from(1)">
         </div>
     </div>
 
@@ -73,7 +76,7 @@
 
         </div>
         <div style="float: left;margin-left: 24px;margin-top: 24px">
-            <img src="/imge/add_file.ico" style="width: 80px;height: 80px" onclick="add_Unlock_Peolpe()">
+            <img src="/imge/add_file.ico" style="width: 80px;height: 80px" onclick="show_from(2)">
         </div>
     </div>
 
@@ -85,25 +88,65 @@
 
         </div>
         <div style="float: left;margin-left: 24px;margin-top: 24px">
-            <img src="/imge/add_file.ico" style="width: 80px;height: 80px" onclick="Copy_person()">
+            <img src="/imge/add_file.ico" style="width: 80px;height: 80px" onclick="show_from(3)">
+        </div>
+    </div>
+    <div>
+        <hr class="layui-bg-green">
+    </div>
+
+    <div>
+        <div style="width: 50%;height: 60px;margin:  0 auto;margin-top: 24px">
+            <div style="float: left;border-radius: 6px;background-color: #2D93CA;color:#fbfbfb;width: 120px;height:40px;font-size: 24px;text-align: center;cursor:pointer" onclick="Save_form()">
+                <p>保 存</p>
+            </div>
+            <div style="float: right;border-radius: 6px;background-color:#eb7350;color:#fbfbfb;width: 120px;height:40px;font-size: 24px;text-align: center;cursor:pointer" onclick="return_top()">
+                <p>退 出</p>
+            </div>
         </div>
     </div>
 
 </div>
 <script src="/layui/layui.all.js"></script>
-<script>
-    function  show_from()
+<script th:inline="javascript">
+    var indexs=0;
+
+    function landing_star()
     {
-        layer.open({
-            type: 2,
-            area:['900px','400px'],
-            content:"http://fyycg66.vaiwan.com/Home/DepartmentManagementPage"
+        $.ajax({
+            type: 'POST',
+            url: '/ApprovalProcessinforContraller/GetApprovalInfor',
+            dataType: 'json',
+            data:{id:[[${id}]]},
+            // headers:{  'eticket': app.globalData.eticket},
+            success: function (data) {
+                if (data.status==='1')
+                {
+                  document.getElementById("d1").click()
+                }
+                else if (data.status==='0')
+                {
+                    document.getElementById("d2").click()
+                }
+                for (var n=0;n<data.user_ids.length;n++)
+                {
+                    add_approval_view(data.user_names[n],data.user_ids[n]);
+                }
+               // parent.close_Details_page();
+            },
+            error: function (data) {
+                alert("获取审核议价信息失败")
+            }
         });
     }
 
-    function add_peolpe()
-    {
-       console.log("11111111")
+    function  show_from(e)//显示部门管理窗体
+    {  indexs=e;
+        layer.open({
+            type: 2,
+            area:['900px','400px'],
+            content:"/Home/DepartmentManagementPage"
+        });
     }
 
     function radio()
@@ -118,9 +161,24 @@
       }
     }
 
-    function add_approval_view()//添加审批视图
+    function GetNameAndId(name,id)
     {
+        if (indexs===1) //审批
+        {
+            add_approval_view(name,id)
+        }
+        else if (indexs===2)//解锁人
+        {
+            add_Unlock_Peolpe(name,id)
+        }
+        else if (indexs==3)//抄送人
+        {
+            Copy_person(name,id)
+        }
+    }
 
+    function add_approval_view(name,id)//添加审批视图
+    {
         var element=document.getElementById("approval_view");
         if (element.childNodes.length>1)
         {
@@ -133,7 +191,6 @@
                 ' </div>'
             div_1.appendChild(divitem_1);
         }
-
             var divitem = document.createElement("div");
             divitem.style.display = "inline-block";
             var div = document.getElementById("approval_view");
@@ -143,13 +200,14 @@
                 ' <img src="/imge/timg.jpg" style="height: 80px;width: 80px;" class="layui-nav-img">' +
                 '</div>' +
                 ' <div style="width: 80px;text-align: center;font-size: 18px">' +
-                ' <p>王XX</p>' +
+                ' <p>'+name+'</p>' +
+                '<p style="display: none" class="ids">'+id+'</p>'+
                 '</div>' +
                 '</div>'
             div.appendChild(divitem);
     }
     
-    function add_Unlock_Peolpe() //审核解锁人
+    function add_Unlock_Peolpe(name,id) //审核解锁人
     {
         var divitem = document.createElement("div");
         divitem.style.display = "inline-block";
@@ -160,13 +218,14 @@
             ' <img src="/imge/timg.jpg" style="height: 80px;width: 80px;" class="layui-nav-img">' +
             '</div>' +
             ' <div style="width: 80px;text-align: center;font-size: 18px">' +
-            ' <p>王XX</p>' +
+            ' <p>'+name+'</p>' +
+            '<p class="Unlock_ids" style="display: none">'+id+'</p>'+
             '</div>' +
             '</div>'
         div.appendChild(divitem);
     }
 
-    function Copy_person()//抄送人
+    function Copy_person(name,id)//抄送人
     {
         var divitem = document.createElement("div");
         divitem.style.display = "inline-block";
@@ -177,10 +236,60 @@
             ' <img src="/imge/timg.jpg" style="height: 80px;width: 80px;" class="layui-nav-img">' +
             '</div>' +
             ' <div style="width: 80px;text-align: center;font-size: 18px">' +
-            ' <p>王XX</p>' +
+            ' <p>'+name+'</p>' +
+            '<p class="push_ids" style="display: none">'+id+'</p>'+
             '</div>' +
             '</div>'
         div.appendChild(divitem);
+    }
+
+    function SubmitData()//上传文件的方法，参数 url controller地址 上传文件类型的div id 如名片div的id 或者 身份材料的divid
+    {
+        var amountMin=document.getElementById("number1").innerText
+        var amountMax=document.getElementById("number2").innerText
+        var status=$("input[name='Fruit1']:checked").val();
+        var approval_ids_huml=document.getElementsByClassName("ids")
+        var approval_ids='';
+        for (var n=0;n<approval_ids_huml.length;n++)
+        {
+            if (n===0)
+            {
+                approval_ids=approval_ids_huml[n].innerText
+            }
+            else
+            {
+                approval_ids=approval_ids+","+approval_ids_huml[n].innerText
+            }
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/ApprovalProcessinforContraller/SubmitApprovalData',
+            dataType: 'json',
+             data:{id:[[${id}]],amountMin:amountMin,amountMax:amountMax, status:status,approval_ids:approval_ids},
+            // headers:{  'eticket': app.globalData.eticket},
+            success: function (data) {
+                parent.close_Details_page();
+            },
+            error: function (data) {
+                alert("获取审核议价信息失败")
+            }
+        });
+    }
+
+    function  Save_form()
+    {
+        layer.confirm('确定要提交表单吗？', function(){
+            SubmitData()
+
+            layer.close(layer.index)
+        });
+    }
+    function return_top()//返回上一层
+    {
+        layer.confirm('退出后数据将不会保存！', function(){
+            parent.close_Details_page();
+            layer.close(layer.index)
+        });
     }
 
 

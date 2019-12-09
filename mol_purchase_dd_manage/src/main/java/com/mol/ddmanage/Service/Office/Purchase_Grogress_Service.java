@@ -88,8 +88,6 @@ public class Purchase_Grogress_Service
                     purchase_grogress_list_bens.get(n).setStatus("订单审核拒绝");
                 }
             }
-
-
         }
         return  purchase_grogress_list_bens;
     }
