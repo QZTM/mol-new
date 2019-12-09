@@ -38,7 +38,6 @@ public class MysqlDataBaseConfig {
     private String password;
     private String driverClassName;
     private int initialSize;
-    private int minIdle;
     private int maxActive;
     private long maxWait;
     private long timeBetweenEvictionRunsMillis;
@@ -104,14 +103,6 @@ public class MysqlDataBaseConfig {
 
     public void setInitialSize(int initialSize) {
         this.initialSize = initialSize;
-    }
-
-    public int getMinIdle() {
-        return minIdle;
-    }
-
-    public void setMinIdle(int minIdle) {
-        this.minIdle = minIdle;
     }
 
     public int getMaxActive() {
@@ -212,8 +203,6 @@ public class MysqlDataBaseConfig {
         druid.setInitialSize(initialSize);
         //最大连接池数量
         druid.setMaxActive(maxActive);
-        //最小连接池数量
-        druid.setMinIdle(minIdle);
         //获取连接时最大等待时间，单位毫秒。
         druid.setMaxWait(maxWait);
         //间隔多久进行一次检测，检测需要关闭的空闲连接
