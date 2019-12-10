@@ -6,4 +6,14 @@
     <select id="compareQuoteSellerNumAndSellerCountById" parameterType="String" resultType="Integer">
         select ifnull(quote_counts, 0)-ifnull(quote_seller_num, 0)>=0 from fy_purchase where id=#{id}
     </select>
+
+    <select id="getPurchaseMainPersonDDIdByOrgAndChannel" parameterType="String" resultType="String">
+        select dd_user_id
+        from app_user
+        where id=(select purchase_main_person
+                    from app_purchase_approve
+                    where id=(select purchase_approve_id
+                                from app_org_buy_channel_approve_middle
+                                where app_org_id=#{orgId} and buy_channel_id=#{buyChannelId}))
+    </select>
 </mapper>

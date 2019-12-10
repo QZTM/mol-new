@@ -1,8 +1,9 @@
 package com.mol.quartz.job;
 
-import com.mol.config.Constant;
 import com.mol.notification.SendNotification;
 import com.mol.quartz.client.ExpertClient;
+import com.mol.quartz.client.PurchaseClient;
+import com.mol.quartz.config.Constant;
 import com.mol.quartz.entity.Purchase;
 import com.mol.quartz.handler.AddJobHandler;
 import com.mol.quartz.mapper.ExpertUserMapper;
@@ -45,6 +46,9 @@ public class QuoteEndJob implements Job{
 
 	@Autowired
 	private ExpertClient expertClient;
+
+	@Autowired
+	private PurchaseClient purchaseClient;
 
 
 	@Override
@@ -122,9 +126,15 @@ public class QuoteEndJob implements Job{
 				//3.发送通知
 				String marbasClassId = purchase.getPkMarbasclass();
 				List<String> expertIdList = expertUserMapper.getExpertDDIdListByMarId(marbasClassId);
-
+				log.info("给所属行业类别的专家发送通知：行业类别："+marbasClassId+",,获取到的专家集合大小："+expertIdList.size());
 				for(String expertId:expertIdList){
-					SendNotification.getSendNotification().sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,expertClient.getToken());
+					if(StringUtils.isEmpty(expertId)){
+						break;
+					}
+					log.info("给专家"+expertId+"发送通知...");
+					String token = expertClient.getToken();
+					log.info("通过eureka获取到的token："+token);
+					SendNotification.getSendNotification().sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,token);
 				}
 
 
@@ -134,6 +144,13 @@ public class QuoteEndJob implements Job{
 				updatePurchase.setBargainingTime(TimeUtil.getNowDateTime());
 				purchaseMapper.updateByPrimaryKeySelective(updatePurchase);
 				//todo :给当前订单发起机构的所属采购类型的议价负责人发送通知
+				//查询当前订单所属发起机构的所属采购类型：
+				log.info("根据企业id("+purchase.getOrgId()+")和buyChannelId("+purchase.getBuyChannelId()+")去获取企业该采购类型的采购主要负责人的钉钉id:");
+				String purchaseMainPersonDDId = purchaseMapper.getPurchaseMainPersonDDIdByOrgAndChannel(purchase.getOrgId(),purchase.getBuyChannelId()+"");
+				log.info("获取到的结果为："+purchaseMainPersonDDId);
+				String token = purchaseClient.getToken();
+				log.info("通过eureka获取到的token："+token);
+				SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token,Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png");
 				return ;
 			}
 		}
