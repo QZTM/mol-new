@@ -141,10 +141,10 @@ public class ActService {
      */
     public void startProcessInstance(String key,String businessKey) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(key, businessKey);
-        System.out.println("buskey:"+businessKey);
-        System.out.println("流程实例 id:"+processInstance.getId());
-        System.out.println("ProcessInstanceId:"+processInstance.getProcessInstanceId());
-        System.out.println("流程定义 id: "+processInstance.getDeploymentId());
+        actLogger.info("启动流程实例 buskey:"+businessKey);
+        actLogger.info("启动流程实例 流程实例 id:"+processInstance.getId());
+        actLogger.info("启动流程实例 ProcessInstanceId:"+processInstance.getProcessInstanceId());
+        actLogger.info("启动流程实例 流程定义 id: "+processInstance.getDeploymentId());
     }
 
     /**
@@ -661,8 +661,8 @@ public class ActService {
     }
 
     public void updataPurchaseApprovalStartTime(String purId) {
-        actLogger.info("审批环节时间设定");
         String nowDateTime = TimeUtil.getNowDateTime();
+        actLogger.info("审批环节时间设定"+nowDateTime);
         purchaseMapper.updataApprovalStartTime(purId,nowDateTime);
     }
 

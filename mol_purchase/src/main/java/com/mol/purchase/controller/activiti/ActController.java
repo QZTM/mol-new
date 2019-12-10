@@ -146,10 +146,13 @@ ActController {
 
         //发送通知
         DDUser user = JWTUtil.getUserByRequest(request);
-        sendNotificationImp.sendOaFromE(user.getUserid(),user.getName(),tokenService.getToken(), Constant.AGENTID);
+        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), Constant.AGENTID);
+        logger.info("启动流程实例  发起通知  result:"+serviceResult.getMessage());
 
         //发送短信通知
-        sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),user.getMobile());
+        String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(), user.getMobile());
+        logger.info("启动流程实例  发起短信  result:"+s);
+
         log.info("----审批流程已经启动----");
 
         return ServiceResult.success("流程实例已启动");

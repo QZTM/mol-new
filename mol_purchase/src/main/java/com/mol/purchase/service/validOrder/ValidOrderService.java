@@ -86,7 +86,7 @@ public class ValidOrderService {
          String expertIdString = purDetailList.get(0).getExpertId();
          logger.info("专家id的字符串："+expertIdString);
 
-         if (expertIdString!=null){
+         if (expertIdString.length()>0){
              logger.info("需要支付专家推荐，并且有选中的推荐专家");
              //专家idArray
              String[] split = expertIdString.split(",");

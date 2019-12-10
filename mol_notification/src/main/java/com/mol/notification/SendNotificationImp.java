@@ -71,10 +71,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功");
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败");
+            return ServiceResult.failure("发送失败:"+rsp);
         }
 
     }
@@ -118,10 +118,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功");
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败");
+            return ServiceResult.failure("发送失败:"+rsp);
         }
     }
 
@@ -157,10 +157,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功");
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败");
+            return ServiceResult.failure("发送失败:"+rsp);
         }
     }
 
