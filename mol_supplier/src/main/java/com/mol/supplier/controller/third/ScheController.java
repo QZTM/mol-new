@@ -23,6 +23,7 @@ import util.BigDecimalUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -199,7 +200,7 @@ public class ScheController {
         String electronicContract = pageArray.getElectronicContract();
         modelMap.addAttribute("electronicContract",electronicContract);
         //合同费用
-        Integer contractCost= ContractConfig.CONTRACT_COST;
+        BigDecimal contractCost= ContractConfig.CONTRACT_COST;
         modelMap.addAttribute("contractCost",contractCost);
         return "schedule_detail";
     }

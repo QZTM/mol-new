@@ -95,9 +95,10 @@ public class ExpertLoginController {
     @RequestMapping("/expertInfo")
     @ResponseBody
     public ServiceResult getSticket(String code, HttpSession session,HttpServletRequest request) {
-        logger.info("进入expertInfo方法");
+        logger.info("进入expertInfo方法,code:"+code);
         //1.获取用户钉钉id‘
         String userDdId = microGetDDUserInfoService.getDDUserId(code);
+        logger.info("获取到钉钉用户id："+userDdId);
         //2.通过ddId 查询专家库，
         ExpertUser expertUser=microSalesmanService.findExpertUser(userDdId);
         logger.info("method:getSticket describe:查询登录人信息  result:"+expertUser);

@@ -125,7 +125,9 @@ public class ThirdPlatformController {
      * 获取采购内容List
      */
     @RequestMapping(value = "/findList", method = RequestMethod.GET)
-    public String findList(String pageName, int pageNumber, int pageSize, String keyword, String status, String goodsType, String tickert, ModelMap map) {
+    public String findList(String pageName, int pageNumber, int pageSize, String keyword, String status, String goodsType, String tickert,HttpSession session, ModelMap map) {
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+
         System.out.println("ti:" + tickert);
         //采购渠道
         String buyId = "";
@@ -515,7 +517,7 @@ public class ThirdPlatformController {
         DDUser ddUser = (DDUser)session.getAttribute("ddUser");
         String ddUserId = ddUser.getUserid();
 
-        if (su.getIfAttrNormal()!=1){
+        if (su.getSupstateNormal()!=1){
             //供应商不是基础供应商
             return "error_quote";
         }
@@ -523,7 +525,7 @@ public class ThirdPlatformController {
         fyPurchase purchase = platformService.selectOneById(id);
         if (Integer.parseInt(BuyChannelResource.STRATEGY)==purchase.getBuyChannelId()) {
             //判断供应商是不是战略供应商，不是则跳转报错页面；
-            if (su.getIfAttrStrategy()!=1){
+            if (su.getSupstateStrategy()!=1){
                 return "error_quote";
             }
         }

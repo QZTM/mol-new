@@ -134,4 +134,8 @@
             </foreach>
         order by create_time desc
     </select>
+
+    <select id="findFyPurchaseByNegotiatePersonNotNullAndOrgId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.dingding.solr.fyPurchase">
+        SELECT * FROM `fy_purchase` where negotiate_person is not  null and org_id =#{orgId}
+    </select>
 </mapper>
