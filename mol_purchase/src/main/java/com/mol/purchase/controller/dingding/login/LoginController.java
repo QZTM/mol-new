@@ -53,6 +53,7 @@ public class LoginController {
     }
 
     @RequestMapping("/getToken")
+    @ResponseBody
     public String getToken(){
         return tokenService.getToken();
     }
