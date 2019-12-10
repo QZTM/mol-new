@@ -63,28 +63,38 @@
     layui.use('table', function(){
         var table = layui.table;
         var Data=[{"id":"BeJson","item1":"销售主管","item2":true,"item3":"12","item4":"12","item5":"12","item6":"12"},{"id":"BeJson","item1":"销售主管","item2":true,"item3":"12","item4":"12","item5":"12","item6":"12"},{"id":"BeJson","item1":"销售主管","item2":true,"item3":"12","item4":"12","item5":"12","item6":"12"}]
-        table.render({
-            elem: '#test'
-            // ,url:'data.json'//json路径
-            , data:Data
-            ,toolbar: '#toolbarDemo'
-            ,title: '用户数据表'
-            ,cols: [
-                [
-                    {type: 'checkbox', fixed: 'left'}
-                    ,{field:'id', title:'ID', width:100, fixed: 'left'}
-                    ,{field:'item1', title:'审核数据', width:100}
-                    ,{field:'item2', title:'开启', width:150}
-                    ,{field:'item3', title:'更改', width:200}
-                    ,{field:'item4', title:'金额区间', width:100}
-                    ,{field:'item5', title:'审核流程', width:100}
-                    ,{field:'item6', title:'审核解锁权限', width:100}
-                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:260}
-                ]
-            ]
-            ,page: true
+        $.ajax({
+            type: 'POST',
+            url: '/ApprovalProcessSettingListContraller/SetapprovalList',
+            dataType: 'json',
+            // data:{state:state},
+            // headers:{  'eticket': app.globalData.eticket},
+            success: function (data) {
+                table.render({
+                    elem: '#test'
+                    // ,url:'data.json'//json路径
+                    , data:data
+                    ,toolbar: '#toolbarDemo'
+                    ,title: '用户数据表'
+                    ,cols: [
+                        [
+                            {type: 'checkbox', fixed: 'left'}
+                            ,{field:'id', title:'审批id', width:100, fixed: 'left'}
+                            ,{field:'status', title:'是否启用', width:100}
+                            ,{field:'name', title:'审批类型', width:150}
+                            ,{field:'approval', title:'审批人员', width:200}
+                            ,{field:'unlock', title:'解锁人员', width:100}
+                            ,{field:'person', title:'抄送人员', width:100}
+                            ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:260}
+                        ]
+                    ]
+                    ,page: true
+                });
+            },
+            error: function (data) {
+                alert("获取审核议价信息失败")
+            }
         });
-
 
 
         //监听行工具事件
@@ -100,7 +110,7 @@
             else if(obj.event === 'edit1')//点击查看按钮
             {
                 document.getElementById("datagridview").style.display="none";
-                document.getElementById("subWin").src="/Home/ApprovalProcessinforPage";//?JobName="+data.item1;//跳转到合同详情 传送一个合同编号
+                document.getElementById("subWin").src="/Home/ApprovalProcessinforPage?id="+data.id;//?JobName="+data.item1;//跳转到合同详情 传送一个合同编号
                 document.getElementById("Details").style.display="block";
             }
         });

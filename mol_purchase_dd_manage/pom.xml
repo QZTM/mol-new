@@ -44,13 +44,13 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/taobao-sdk-java-auto_1479188381469-20190826.jar</systemPath>
         </dependency>
-        <dependency>
-            <groupId>com.mol</groupId>
-            <artifactId>fadadaapisdk</artifactId>
-            <version>dingtalk-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/fadada_api_sdk_2.4.0.jar</systemPath>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.mol</groupId>-->
+            <!--<artifactId>fadadaapisdk</artifactId>-->
+            <!--<version>dingtalk-SNAPSHOT</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${pom.basedir}/lib/fadada_api_sdk_2.4.0.jar</systemPath>-->
+        <!--</dependency>-->
         <!-- 解析json依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -118,4 +118,15 @@
 
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

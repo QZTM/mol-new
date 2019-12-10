@@ -6,5 +6,5 @@ import java.util.ArrayList;
 
 public interface ElectronicContractSigningListMapper
 {
-    ArrayList<ElectronicContractSigningListben> GetElectronicContractSigningList();
+    ArrayList<ElectronicContractSigningListben> GetElectronicContractSigningList(String electronic_contract);
 }

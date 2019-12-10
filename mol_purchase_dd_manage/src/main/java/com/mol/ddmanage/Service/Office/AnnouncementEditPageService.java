@@ -5,6 +5,7 @@ import com.mol.ddmanage.Util.DataUtil;
 import com.mol.ddmanage.Util.Dingding_Tools;
 import com.mol.ddmanage.mapper.Office.announcementEditPageMapper;
 import org.springframework.stereotype.Service;
+import util.IdWorker;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -39,5 +40,20 @@ public class AnnouncementEditPageService
             map.put("statu",false);
             return map;
         }
+    }
+    public Map AddNewsLogic( AnnouncementEditPageben json)
+    {
+        Map map=new HashMap();
+       try
+       {
+         announcementEditPageMapper.AddNews(String.valueOf(new IdWorker().nextId()) ,json.getTitl() , "",json.getHtmltext(),DataUtil.GetNowSytemTime(),"");
+         map.put("statu",true);
+         return map;
+       }
+       catch (Exception e)
+       {
+           map.put("statu",false);
+           return map;
+       }
     }
 }

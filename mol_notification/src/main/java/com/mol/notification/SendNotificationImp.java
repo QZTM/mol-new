@@ -34,6 +34,13 @@ public class SendNotificationImp implements SendNotification{
      */
     @Override
     public ServiceResult sendOaFromE(String userIdList,String userName,String token,long agentId ) {
+        return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png");
+    }
+
+
+
+    @Override
+    public ServiceResult sendOaFromE(String userIdList,String userName,String token,long agentId,String title,String content ,String imagePath) {
         //String user="266752374326324047";
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
@@ -48,9 +55,9 @@ public class SendNotificationImp implements SendNotification{
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("云采购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
-        msg.getOa().getBody().setContent(TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！");
-        msg.getOa().getBody().setImage("http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png");
-        msg.getOa().getBody().setTitle("审批");
+        msg.getOa().getBody().setContent(content);
+        msg.getOa().getBody().setImage(imagePath);
+        msg.getOa().getBody().setTitle(title);
         if (userName!=null){
             msg.getOa().getBody().setAuthor(userName);//上一个审批人员
         }
@@ -68,6 +75,12 @@ public class SendNotificationImp implements SendNotification{
         }
 
     }
+
+
+
+
+
+
 
     /**
      * 第三方报价平台发布

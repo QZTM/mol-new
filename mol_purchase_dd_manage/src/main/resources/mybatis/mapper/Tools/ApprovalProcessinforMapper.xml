@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mol.ddmanage.mapper.Tools.ApprovalProcessinforMapper">
+    <select id="GetApprovalInfor" resultType="com.mol.ddmanage.Ben.Tools.ApprovalProcessSettingListben">
+        SELECT(SELECT fy_buy_channel.state FROM fy_buy_channel WHERE app_org_buy_channel_approve_middle.buy_channel_id=fy_buy_channel.id)`status`,
+(SELECT app_purchase_approve.purchase_approve_list FROM app_purchase_approve WHERE app_purchase_approve.id=app_org_buy_channel_approve_middle.purchase_approve_id)approval
+FROM app_org_buy_channel_approve_middle WHERE app_org_buy_channel_approve_middle.id=#{id}
+    </select>
+
+    <select id="Get_app_org_buy_channel_approve_middle" resultType="java.util.Map">
+        select * from app_org_buy_channel_approve_middle where id=#{id};
+    </select>
+
+    <update id="Updata_app_purchase_approve">
+        update app_purchase_approve set purchase_approve_list=#{purchase_approve_list} where id=#{app_purchase_approve_id}
+    </update>
+
+    <update id="updata_fy_buy_channel">
+        update fy_buy_channel set state=#{state} where id=#{fy_buy_channel_id}
+    </update>
+    
+    <select id="Get_app_user" resultType="java.util.Map">
+        select * from app_user where dd_user_id=#{user_id};
+    </select>
+    <select id="Get_app_user_id" resultType="java.util.Map">
+        select * from app_user where id=#{id};
+    </select>
+</mapper>

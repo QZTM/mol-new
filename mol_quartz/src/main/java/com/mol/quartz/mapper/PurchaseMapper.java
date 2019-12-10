@@ -6,4 +6,7 @@ import com.mol.quartz.entity.Purchase;
 public interface PurchaseMapper extends BaseMapper<Purchase> {
 
     public Integer compareQuoteSellerNumAndSellerCountById(String id);
+
+    String getPurchaseMainPersonDDIdByOrgAndChannel(String orgId,String byChannelId);
+
 }

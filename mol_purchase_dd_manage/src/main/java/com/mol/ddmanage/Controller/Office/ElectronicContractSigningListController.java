@@ -15,9 +15,16 @@ public class ElectronicContractSigningListController
 {
     @Resource
     ElectronicContractSigningListService electronicContractSigningListService;
+
+    /**
+     * 获取订单的合同列表
+     * @param Contract_statu
+     * @param electronic_contract true启用电子合同
+     * @return
+     */
     @RequestMapping("/GetElectronicContractSigningList")//获取订单的合同列表
-    public ArrayList<ElectronicContractSigningListben> GetElectronicContractSigningList(@RequestParam String Contract_statu)
+    public ArrayList<ElectronicContractSigningListben> GetElectronicContractSigningList(@RequestParam String Contract_statu,@RequestParam String electronic_contract)
     {
-        return electronicContractSigningListService.GetElectronicContractSigningListLogic(Contract_statu);
+        return electronicContractSigningListService.GetElectronicContractSigningListLogic(Contract_statu, electronic_contract);
     }
 }

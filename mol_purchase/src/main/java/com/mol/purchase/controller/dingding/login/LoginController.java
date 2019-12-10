@@ -52,6 +52,11 @@ public class LoginController {
         return loginService.login(requestAuthCode);
     }
 
+    @RequestMapping("/getToken")
+    public String getToken(){
+        return tokenService.getToken();
+    }
+
 
 
 

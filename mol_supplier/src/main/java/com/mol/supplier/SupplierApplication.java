@@ -3,6 +3,7 @@ package com.mol.supplier;
 import com.mol.cache.CacheHandle;
 import com.mol.fadada.dao.AuthRecordMapper;
 import com.mol.fadada.handler.RecordDbHandler;
+import com.mol.oos.TYOOSUtil;
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,5 +41,10 @@ public class SupplierApplication extends SpringBootServletInitializer {
         public CacheHandle getCacheHandler(){
             return CacheHandle.getCacheHandle();
         }
+
+    @Bean
+    public TYOOSUtil getTyoosUtil(){
+        return TYOOSUtil.getUtil();
+    }
 
 }
