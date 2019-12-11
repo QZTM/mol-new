@@ -50,8 +50,8 @@ eureka:
       defaultZone: http://140.249.22.202:8700/eureka/
   instance:
     prefer-ip-address: true
-    ip-address: 140.249.22.202
-    non-secure-port: 8701
+    #ip-address: 127.0.0.1
+    #non-secure-port: 8701
 #    properties:
 #      org:
 #        quartz:

@@ -14,6 +14,7 @@ public class EurekaController {
     private MicroTokenService microTokenService;
 
     @RequestMapping("/getToken")
+    @ResponseBody
     public String getToken(){
         return microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY);
     }
