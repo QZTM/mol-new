@@ -179,7 +179,7 @@ public class ThirdPlatformController {
         //进入中标公告
         if (htmlName == "index_zbgg") {
             log.info("查询中标公告");
-            list =platformService.findPassPurchByStatus(OrderStatus.pass,pageNumber,pageSize);
+            list =platformService.findPassPurchByStatus(supplier.getPkSupplier(),pageNumber,pageSize);
             list =platformService.findPassSupplierCountOfPassPur(list);
             count=platformService.findPassCountByStatus(OrderStatus.pass);
             log.info("中标公告的list"+list);

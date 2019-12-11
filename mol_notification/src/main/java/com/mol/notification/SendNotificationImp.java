@@ -51,7 +51,9 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+
+//        msg.getOa().setMessageUrl("eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+        msg.getOa().setMessageUrl("eapp://pages/purchase/purchase");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("云采购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
@@ -68,10 +70,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功:"+rsp);
+            return ServiceResult.success("发送成功:"+rsp.getMessage());
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败:"+rsp);
+            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
         }
 
     }
@@ -100,7 +102,8 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
+        msg.getOa().setMessageUrl("http://140.249.22.202:8083/index/findAll");
+        //msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
@@ -115,10 +118,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功:"+rsp);
+            return ServiceResult.success("发送成功:"+rsp.getMessage());
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败:"+rsp);
+            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
         }
     }
 

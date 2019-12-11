@@ -150,4 +150,7 @@
             AND STATUS = #{status}
         </if>
     </select>
+    <select id="findPurchaseInnerFyQuoteBySupplierId" parameterType="java.lang.String" resultType="com.mol.supplier.entity.dingding.solr.fyPurchase">
+        SELECT * FROM fy_purchase pur INNER JOIN fy_quote quo ON quo.fy_purchase_id = pur.id  AND quo.pk_supplier_id =#{supplierId}  ORDER BY pur.create_time DESC
+    </select>
 </mapper>

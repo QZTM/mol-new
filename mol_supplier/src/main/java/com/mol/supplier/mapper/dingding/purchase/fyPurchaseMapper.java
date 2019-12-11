@@ -61,4 +61,6 @@ public interface fyPurchaseMapper {
     List<fyPurchase> findListByBuyChannIdAndMarbascAndStatus(String buyId, String goodsType, String status);
 
     Integer findCountByBuyChannIdAndMarbascAndStatus(String buyId, String status, String goodsType);
+
+    List<fyPurchase> findPurchaseInnerFyQuoteBySupplierId(String supplierId);
 }

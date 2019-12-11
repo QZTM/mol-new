@@ -1,6 +1,7 @@
 package com.mol.supplier.mapper.dingding.purchase;
 
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
+import com.mol.supplier.entity.dingding.solr.fyPurchase;
 import com.mol.supplier.entity.thirdPlatform.BdMarbasclass;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -21,4 +22,5 @@ public interface fyPurchaseDetailMapper {
     PurchaseDetail findPurchaseDetailByPurIdAndQuoteId(String id, String quoteId);
 
     int findPassSupplierOfPassPurByPurId(String purId);
+
 }
