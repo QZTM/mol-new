@@ -8,29 +8,11 @@ public class Constant {
      * 域名
      */
     //public static final String domain = "fyycg1.vaiwan.com";
-    public static final String domain = "140.249.22.202";
-    //public static final String domain = "fyycg1.vaiwan.com";
-    /**
-     * 企业corpid, 需要修改成开发者所在企业
-     */
-    public static final String CORP_ID = "ding6ef23b66fc0611a335c2f4657eb6378f";
-    /**
-     * 开发者后台->企业自建应用->选择您创建的E应用->查看->AppKey
-     */
-    public static final String APP_KEY = "dingihxujkflumjcssad";
-    /**
-     * 开发者后台->企业自建应用->选择您创建的E应用->查看->AppSecret
-     */
-    public static final String APP_SECRET="xkThrr4omCZiswyF1NzlOtl0tfaL5fRMZ5wR8Pe6cUAVmSu08ewxH6p9RW_CHjum";
-    /**
-     * 数据加密密钥。用于回调数据的加密，长度固定为43个字符，从a-z, A-Z, 0-9共62个字符中选取,您可以随机生成
-     */
-    public static final String ENCODING_AES_KEY = "68PJEQx4AXwe0EPqpdk6x493nRFdR233ON35xakZK63";
+    public static final String EXPERT_DOMAIN = "140.249.22.202:8084";
 
-    /**
-     * 加解密需要用到的token，企业可以随机填写。如 "12345"
-     */
-    public static final String TOKEN = "12345";
+    public static final String PURCHASE_DOMAIN = "140.249.22.202:8082";
+    public static final String THIRD_DOMAIN = "140.249.22.202:8082";
+    //public static final String domain = "fyycg1.vaiwan.com";
 
     /**
      * E应用的agentdId，登录开发者后台可查看
@@ -47,18 +29,9 @@ public class Constant {
      */
     public static final long AGENTID_EXPERT=300343663L;
 
-    /**
-     * 审批模板唯一标识，可以在审批管理后台找到PROC-2C58A0E4-4248-4246-B02C-A13CBB4EDF51
-     */
-    //public static final String PROCESS_CODE = "PROC-2C58A0E4-4248-4246-B02C-A13CBB4EDF51";
-    public static final String UNDERLINEPUR_PROCESS_CODE = "PROC-F0EF1DDD-66A1-48BF-9934-66BB18F4A1AC";
-    //线上审批模板id   processCode=PROC-18D734DC-C7A2-4984-9226-050C06E61147
-    public static final String ONLINEPUR_PROCESS_CODE="PROC-18D734DC-C7A2-4984-9226-050C06E61147";
 
-    /**
-     * 回调host
-     */
-    public static final String CALLBACK_URL_HOST = domain;
+
+
 
     /**
      * 采购渠道常量
