@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/TimeProcessController")//时间轴
@@ -16,6 +17,11 @@ public class TimeProcessController
 {
     @Resource
     TimeProcessService timeProcessService;
+    @RequestMapping("/GetPurchas")
+    public ArrayList<Map> GetPurchas(@RequestParam String PurchasId)//获取订单表
+    {
+        return timeProcessService.GetPurchasLogic(PurchasId);
+    }
     @RequestMapping("/ExperreCommend")//获取专家对供应商报价的推荐
     public ArrayList<TimeProcessExperreCommendben> ExperreCommend(@RequestParam String purchase_id, @RequestParam String supplier_id)
     {

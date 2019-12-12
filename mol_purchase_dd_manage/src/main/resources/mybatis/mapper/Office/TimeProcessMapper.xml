@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mol.ddmanage.mapper.Office.TimeProcessMapper">
 
+    <select id="GetPurchas" resultType="java.util.Map">
+        select * from fy_purchase where id=#{PurchasId}
+    </select>
     <select id="ExperreCommend" resultType="com.mol.ddmanage.Ben.Office.TimeProcessExperreCommendben">
        select (select expert_user.`name` from expert_user where expert_user.id=expert_recommend.expert_id)experName,
        expert_recommend.*

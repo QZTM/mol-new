@@ -52,6 +52,9 @@
 </div>
 <script src="/layui/layui.all.js"></script>
 <script>
+
+    var materials_names=new Array()
+    var materials_quantity=new Array()
     function Start_landing()
     {
         layui.use('table', function(){
@@ -84,6 +87,12 @@
                 // headers:{  'eticket': app.globalData.eticket},
                 success: function (data) {
 
+                    for (var n=0;n<data.length;n++)//拿出来对应的物料需要采购的数量
+                    {
+                        materials_names[n]=data[n].name
+                        materials_quantity[n]=data[n].goods_quantity;
+                    }
+
                     var Data = data
                     table.render({
                         elem: '#test'
@@ -99,6 +108,8 @@
                         ]
                         ,page: true
                     });
+
+                    OrderDetailedinfor()
                 },
                 error: function (data) {
                     alert("获取审核议价信息失败")
@@ -106,10 +117,11 @@
             });
         });
 
+    }
+    function OrderDetailedinfor()
+    {
         layui.use('table', function(){//供应商报价单
             var table = layui.table;
-
-
             $.ajax({
                 type: 'POST',
                 url: '/PurchasOrderinfor/OrderDetailedinfor',
@@ -121,6 +133,19 @@
                     document.getElementById("Merchant_number").innerText="已报价商家数:"+data.length+" 家"
                     for (var n=0;n<data.length;n++)//所有供应商报价
                     {
+
+                        var allMoney=0.0;
+                        for (var n_1=0;n_1<data[n].length;n_1++)//遍历供应商报价的物料
+                        {
+                            for (var n_2=0;n_2<materials_names.length;n_2++)//采购单物料遍历
+                            {
+                                if (materials_names[n_2]===data[n][n_1].material_name) //报价的物料在采购名单中，则拿出采购名单中的采购数量
+                                {
+                                    allMoney=allMoney+parseFloat(materials_quantity[n_2])*parseFloat(data[n][n_1].quote)
+                                }
+                            }
+                        }
+
                         var elements= document.createElement('div')
                         elements.innerHTML=
 
@@ -129,7 +154,7 @@
                             ' <p >'+data[n][0].corp_name+' 报价</p>'+
                             ' </div>'+
                             ' <div style="float: right;margin-top: 6px;margin-right: 12px;padding:4px;background-color:#eb7350;border-radius: 5px;color: #fbfbfb;text-align: center">'+
-                            ' <p >总计 200元</p>'+
+                            ' <p >总计 '+allMoney+'元</p>'+
                             ' </div>'+
                             '</div>'+ '<table class="layui-hide" id="test'+n+'" lay-filter="test2"></table>';
 
@@ -160,43 +185,6 @@
                     alert("获取审核议价信息失败")
                 }
             });
-
-
-/*            for (var n=2;n<5;n++)//所有供应商报价
-            {
-                var elements= document.createElement('div')
-                elements.innerHTML=
-
-               '<div style="margin-top: 12px;margin-left: 12px;width: 100%;height: 50px;">'+
-                '<div style="float: left;margin-top: 6px;margin-right: 12px;padding:4px;background-color: #2D93CA;border-radius: 5px;color: #fbfbfb;text-align: center">'+
-                ' <p >山东XXX公司 报价</p>'+
-                ' </div>'+
-                ' <div style="float: right;margin-top: 6px;margin-right: 12px;padding:4px;background-color:#eb7350;border-radius: 5px;color: #fbfbfb;text-align: center">'+
-                ' <p >总计 200元</p>'+
-                ' </div>'+
-                '</div>'+ '<table class="layui-hide" id="test'+n+'" lay-filter="test2"></table>';
-
-                document.getElementById("table_panel").appendChild(elements);
-
-                var Data = [{"l1":"1","l2":"询价","l3":"计算机采购","l4":"2019080711","l5":"山东XXX有限公司","l6":"2019-08-06","l7":"王XX","l8":"查看"}]
-                table.render({
-                    elem: '#test'+n
-                    , data:Data
-                    ,cols: [
-                        [
-                            {field:'l1', width:80, title: 'DI', sort: true}
-                            ,{field:'l2', width:150, title: '类型'}
-                            ,{field:'l3', width:200, title: '对应标题', sort: true}
-                            ,{field:'l4', width:150, title: '订单编号'}
-                            ,{field:'l5', width:280,event: 'setEve4',title: '确认供应商', minWidth: 150}
-                            ,{field:'l6', width:150, title: '日期', sort: true}
-                            ,{field:'l7', width:120, title: '申请人', sort: true}
-                            ,{field:'l8', width:120,event: 'setl8', title: '操作',sort: true}
-                        ]
-                    ]
-                    ,page: true
-                });
-            }*/
 
         });
     }

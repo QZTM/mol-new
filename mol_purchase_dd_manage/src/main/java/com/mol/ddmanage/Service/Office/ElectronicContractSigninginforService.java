@@ -153,7 +153,7 @@ public class ElectronicContractSigninginforService
             Map map1=map;
             if (map.get("status").toString().equals("0") && electronicContractSigninginforMapper.Setfadada_auth_record(map.get("customer_id").toString())==null)
             {
-                electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime());
+                electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime(),"");
             }
         }
         catch (Exception e)
@@ -164,9 +164,12 @@ public class ElectronicContractSigninginforService
 
     public void AuthAsynchronousNotityLogic(Map map)//认证异步回调地址
     {
-        electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
-        ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
-        ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+        if(map.get("status").toString().equals("4"))
+        {
+            electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
+            ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
+            ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+        }
     }
 
     /**
