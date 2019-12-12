@@ -82,8 +82,6 @@
 
     <div class="downPull" style="margin-top: 52px;margin-bottom: 52px">
         <div class="col-md-5 col-xs-5" >
-
-
             <select class="js-example-basic-single js-states form-control " id="select">
                 <option  style="font-size: 10px" value="">订单状态</option>
                 <option  value="1" >正在询价</option>
@@ -91,12 +89,9 @@
                 <option  value="3">采购废止</option>
                 <option  value="4">正在审核</option>
             </select>
-
         </div>
 
         <div class="col-md-5 col-xs-5" >
-
-
             <select class="js-example-basic-single js-states form-control " id="selectss" >
                 <option  style="font-size: 10px" value="">行业类别</option>
                 <option th:each="er,in:${marList}" th:text="${er.name}" th:value="${er.pkMarbasclass}"></option>

@@ -3,13 +3,15 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
+import com.mol.config.Constant;
 import com.mol.config.URLConstant;
 import com.taobao.api.ApiException;
 import entity.ServiceResult;
 
+import lombok.extern.java.Log;
 import util.TimeUtil;
 
-
+@Log
 public class SendNotificationImp implements SendNotification{
 
 
@@ -34,6 +36,14 @@ public class SendNotificationImp implements SendNotification{
      */
     @Override
     public ServiceResult sendOaFromE(String userIdList,String userName,String token,long agentId ) {
+        return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+    }
+
+
+
+    @Override
+    public ServiceResult sendOaFromE(String userIdList,String userName,String token,long agentId,String title,String content ,String imagePath,String messageUrl) {
+        log.info("****通过钉钉E应用发送通知****");
         //String user="266752374326324047";
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
@@ -44,13 +54,15 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+
+//        msg.getOa().setMessageUrl("eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+        msg.getOa().setMessageUrl("eapp://pages/purchase/purchase");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("云采购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
-        msg.getOa().getBody().setContent(TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！");
-        msg.getOa().getBody().setImage("http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png");
-        msg.getOa().getBody().setTitle("审批");
+        msg.getOa().getBody().setContent(content);
+        msg.getOa().getBody().setImage(imagePath);
+        msg.getOa().getBody().setTitle(title);
         if (userName!=null){
             msg.getOa().getBody().setAuthor(userName);//上一个审批人员
         }
@@ -61,13 +73,19 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功");
+            return ServiceResult.success("发送成功:"+rsp.getMessage());
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败");
+            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
         }
 
     }
+
+
+
+
+
+
 
     /**
      * 第三方报价平台发布
@@ -87,7 +105,8 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
+        msg.getOa().setMessageUrl("http://140.249.22.202:8083/index/findAll");
+        //msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
@@ -102,10 +121,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功");
+            return ServiceResult.success("发送成功:"+rsp.getMessage());
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败");
+            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
         }
     }
 
@@ -127,7 +146,7 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
+        msg.getOa().setMessageUrl("http://"+ Constant.domain +"/expert/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
@@ -141,10 +160,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功");
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败");
+            return ServiceResult.failure("发送失败:"+rsp);
         }
     }
 

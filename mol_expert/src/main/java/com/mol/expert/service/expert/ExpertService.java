@@ -107,11 +107,14 @@ public class ExpertService {
 
     /**
      * 预算
-     * @param byCodeLike
+     * @param
      * @param purList
      * @return
      */
     public List<fyPurchase> findSelectionList( List<fyPurchase> purList) {
+        if(purList.size() == 0){
+            return new ArrayList<fyPurchase>();
+        }
         for (fyPurchase pur : purList) {
 
             //采购预算
@@ -132,8 +135,12 @@ public class ExpertService {
                         }
                     }
                 }
-                pur.setBudget(l/Integer.parseInt(pur.getQuoteCounts())+"");
-                purchaseMapper.updateBudgetById(l/Integer.parseInt(pur.getQuoteCounts())+"",pur.getId());
+                if(pur.getQuoteCounts() == null || "0".equals(pur.getQuoteCounts())){
+                    pur.setBudget("0");
+                }else{
+                    pur.setBudget(l/Integer.parseInt(pur.getQuoteCounts())+"");
+                }
+                purchaseMapper.updateBudgetById(pur.getBudget(),pur.getId());
             }else {
                 pur.setBudget(budget);
             }

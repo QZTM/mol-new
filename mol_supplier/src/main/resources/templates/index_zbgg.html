@@ -75,12 +75,12 @@
 
 
             <select class="js-example-basic-single js-states form-control " id="selectss" >
-                <option  style="font-size: 12px" value="">--请选择行业类别--</option>
+                <option  style="font-size: 12px" value="">行业类别</option>
                 <option th:each="er,in:${marList}" th:text="${er.name}" th:value="${er.pkMarbasclass}"></option>
             </select>
         </div>
         <div  class="col-md-4 col-xs-4">
-            <p style="margin-top: 5px;font-size: 12px">共<font style="color: red" th:text="${count}" id="count">132</font>条数据</p>
+            <p style="margin-top:7px;font-size: 8px">共<font style="color: red" th:text="${count}" id="count">132</font>条</p>
         </div>
     <!--</div>-->
 

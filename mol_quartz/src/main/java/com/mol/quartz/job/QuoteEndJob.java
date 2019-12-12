@@ -1,8 +1,12 @@
 package com.mol.quartz.job;
 
+import com.mol.notification.SendNotification;
+import com.mol.quartz.config.Constant;
 import com.mol.quartz.entity.Purchase;
 import com.mol.quartz.handler.AddJobHandler;
+import com.mol.quartz.mapper.ExpertUserMapper;
 import com.mol.quartz.mapper.PurchaseMapper;
+import com.mol.quartz.service.GetTokenService;
 import com.mol.quartz.service.PurchaseService;
 import lombok.extern.java.Log;
 import org.apache.commons.lang.StringUtils;
@@ -16,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import util.TimeUtil;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
@@ -34,6 +38,12 @@ public class QuoteEndJob implements Job{
 
 	@Autowired
 	private AddJobHandler addJobHandler;
+
+	@Autowired
+	private ExpertUserMapper expertUserMapper;
+
+	@Autowired
+	private GetTokenService getTokenService;
 
 
 	@Override
@@ -105,13 +115,58 @@ public class QuoteEndJob implements Job{
 				updatePurchase.setExpertTime(TimeUtil.getNowDateTime());
 				purchaseMapper.updateByPrimaryKeySelective(updatePurchase);
 				addJobHandler.addExpertReviewEndJob(orderId,AddJobHandler.EXPERTREVIEWDELAY);
+				//todo:给所属行业类别的专家发送通知
+				//1.获取该行业类别
+				//2.查询所属该行业类别的钉钉id list
+				//3.发送通知
+				String marbasClassId = purchase.getPkMarbasclass();
+				List<String> expertIdList = expertUserMapper.getExpertDDIdListByMarId(marbasClassId);
+				log.info("给所属行业类别的专家发送通知：行业类别："+marbasClassId+",,获取到的专家集合大小："+expertIdList.size());
+				String token = null;
+				try {
+					token = getTokenService.getExpertToken().get();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+				log.info("通过eureka获取到的token："+token);
+				if(expertIdList.size() == 0){
+					log.info("没有符合条件的专家！");
+					return ;
+				}
+				for(String expertId:expertIdList){
+					if(StringUtils.isEmpty(expertId)){
+						break;
+					}
+					log.info("给专家"+expertId+"发送通知...");
+					SendNotification.getSendNotification().sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,token);
+				}
+
 
 			}else{
 
 				updatePurchase.setStatus("4");
 				updatePurchase.setBargainingTime(TimeUtil.getNowDateTime());
 				purchaseMapper.updateByPrimaryKeySelective(updatePurchase);
-				return ;
+				//todo :给当前订单发起机构的所属采购类型的议价负责人发送通知
+				//查询当前订单所属发起机构的所属采购类型：
+				log.info("根据企业id("+purchase.getOrgId()+")和buyChannelId("+purchase.getBuyChannelId()+")去获取企业该采购类型的采购主要负责人的钉钉id:");
+				Map paraMap = new HashMap();
+				paraMap.put("orgId",purchase.getOrgId());
+				paraMap.put("buyChannelId",purchase.getBuyChannelId());
+				String purchaseMainPersonDDId = purchaseMapper.getPurchaseMainPersonDDIdByOrgAndChannel(paraMap);
+				log.info("获取到的结果为："+purchaseMainPersonDDId);
+				String token = null;
+				try {
+					token = getTokenService.getPurchaseToken().get();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+				log.info("通过eureka获取到的token："+token);
+				SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token,Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
 			}
 		}
 

@@ -17,10 +17,7 @@ import com.mol.purchase.entity.dingding.purchase.workBench.toBeNegotiated.MaterI
 import com.mol.purchase.entity.dingding.purchase.workBench.toBeNegotiated.NegotiatIng;
 import com.mol.purchase.entity.dingding.purchase.workBench.toBeNegotiated.SupplierIdToExpertId;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
-import com.mol.purchase.mapper.newMysql.AppPurchaseApproveMapper;
-import com.mol.purchase.mapper.newMysql.ExpertRecommendMapper;
-import com.mol.purchase.mapper.newMysql.ExpertUserMapper;
-import com.mol.purchase.mapper.newMysql.FyQuoteMapper;
+import com.mol.purchase.mapper.newMysql.*;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiProcinstMapper;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActReProcdefMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.BdSupplierMapper;
@@ -75,6 +72,8 @@ public class TobeNegotiatedService {
     private ActReProcdefMapper actProRecdefMapper;
     @Autowired
     private AppPurchaseApproveMapper appPurchaseApproveMapper;
+    @Autowired
+    AppOrgBuyChannelApproveMiddleMapper appOrgBuyChannelApproveMiddleMapper;
 
 
     public List<String> getListBelongsSupplier(String supplierId) {
@@ -124,17 +123,24 @@ public class TobeNegotiatedService {
         return quoteMap;
     }
 
-    public void updataAppUserListById(String id, String [] callId) {
+    public Integer updataAppUserListById(String id, String [] callId) {
         List<AppUser> list= new ArrayList<>();
         for (String dduserId : callId) {
             AppUser appUser= new AppUser();
             appUser.setDdUserId(dduserId);
             appUser= appUserMapper.selectOne(appUser);
-            list.add(appUser);
+            if (appUser!=null){
+                list.add(appUser);
+            }
         }
         //fyPurchase pur = fyPurchaseMapper.findOneById(id);
-        String arr = JSON.toJSONString(list);
-        fyPurchaseMapper.updateAppUserListById(id,arr);
+        if (list.size()>0){
+            String arr = JSON.toJSONString(list);
+            log.info("查询到的议价人员："+arr.length());
+            return fyPurchaseMapper.updateAppUserListById(id, arr);
+        }
+
+        return 0;
     }
 
     public List<AppUser> findAppUserListById(String id) {
@@ -157,21 +163,23 @@ public class TobeNegotiatedService {
         List<fyPurchase> overList=new ArrayList<>();
         PageHelper.startPage(pageNum,pageSize);
         List<fyPurchase> list = fyPurchaseMapper.findListByOrgIdAndStatus(orgId, status,secondStatus);
-        for (fyPurchase fyPurchase : list) {
-            String negotiatePerson = fyPurchase.getNegotiatePerson();
-            if (negotiatePerson!=null&&negotiatePerson.length()>0){
-                List appuserlist=JSON.parseObject(negotiatePerson, List.class);
-                for (int i =0 ;i<appuserlist.size();i++){
-                    Object o = appuserlist.get(i);
-                    String s = JSON.toJSONString(o);
-                    AppUser appUser = JSON.parseObject(s, AppUser.class);
-                    if (appUser.getId().equals(userId)){
-                        System.out.println(fyPurchase);
-                        overList.add(fyPurchase);
+        if(list.size()>0){
+            for (fyPurchase fyPurchase : list) {
+                String negotiatePerson = fyPurchase.getNegotiatePerson();
+                if (negotiatePerson!=null&&negotiatePerson.length()>0){
+                    List appuserlist=JSON.parseObject(negotiatePerson, List.class);
+                    for (int i =0 ;i<appuserlist.size();i++){
+                        Object o = appuserlist.get(i);
+                        String s = JSON.toJSONString(o);
+                        AppUser appUser = JSON.parseObject(s, AppUser.class);
+                        if (appUser.getId().equals(userId)){
+                            overList.add(fyPurchase);
+                        }
                     }
                 }
             }
         }
+
         return overList;
     }
 
@@ -197,7 +205,6 @@ public class TobeNegotiatedService {
         u.setCategories(caArr);
         u.setSeries(ulist);
 
-        System.out.println(u);
         return u;
     }
 
@@ -338,5 +345,50 @@ public class TobeNegotiatedService {
             return bdSupplierMapper.findSupplierByQuoteId(quoteId);
         }
         return null;
+    }
+
+    public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndMainPersonId(String orgId, String userId) {
+        List<AppOrgBuyChannelApproveMiddle> appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId = appOrgBuyChannelApproveMiddleMapper.findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(orgId, userId);
+        log.info("根据orgID，userID 查询到的appOrgBuyChannelApproveMiddle的list长度："+appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId.size());
+        return appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId.get(0);
+    }
+
+    public List<fyPurchase> findFyPurchaseByBuyChannelAndOrgId(String buyChannelId, String orgId,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        Example e =new Example(fyPurchase.class);
+        Example.Criteria criteria = e.createCriteria();
+        criteria.andEqualTo("buyChannelId",buyChannelId);
+        criteria.andEqualTo("orgId",orgId);
+        criteria.andGreaterThan("status",OrderStatus.UNDER_REVIEW);
+        return fyPurchaseMapper.selectByExample(e);
+    }
+
+    public List<fyPurchase> findFyPurchaseByNegotiatePersonNotNullAndOrgId(String orgId) {
+        return fyPurchaseMapper.findFyPurchaseByNegotiatePersonNotNullAndOrgId(orgId);
+    }
+
+    public List<fyPurchase> findNegotiatePersonNotNullInnerUser(List<fyPurchase> list, String userId) {
+        if (list.size()==0){
+            return list;
+        }
+        if (userId==null){
+            return null;
+        }
+        List <fyPurchase> overlist=new ArrayList<>();
+        for (fyPurchase pur : list) {
+            String negotiatePerson = pur.getNegotiatePerson();
+            if (negotiatePerson!=null&&negotiatePerson.length()>0){
+                List appuserlist=JSON.parseObject(negotiatePerson, List.class);
+                for (int i =0 ;i<appuserlist.size();i++){
+                    Object o = appuserlist.get(i);
+                    String s = JSON.toJSONString(o);
+                    AppUser appUser = JSON.parseObject(s, AppUser.class);
+                    if (appUser.getId().equals(userId)){
+                        overlist.add(pur);
+                    }
+                }
+            }
+        }
+        return overlist;
     }
 }

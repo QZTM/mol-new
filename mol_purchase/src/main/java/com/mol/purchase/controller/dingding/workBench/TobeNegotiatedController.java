@@ -74,7 +74,9 @@ public class TobeNegotiatedController {
             if (pageNum==1){
                 //首页添加
                 List<fyPurchase> listIfOk = negotiatedService.findListIfOk(orgId, status, secondStatus, userId, pageNum, pageSize);
-                list.addAll(listIfOk);
+                if (listIfOk.size()>0){
+                    list.addAll(listIfOk);
+                }
             }
         }else {
             log.info("登录信息属于不采购负责人");
@@ -93,7 +95,65 @@ public class TobeNegotiatedController {
      *
      * -- 	2.不是任何一个议价负责人
      * 		select * from fy_purchase where negotiate_person is not null
+     * 	已议价
      */
+    @GetMapping("/getComplateBargainningList")
+    public List<fyPurchase> getComplateBargainningList(String orgId,String userId,int pageNum,int pageSize){
+        if (orgId==null || userId==null){
+            return  null;
+        }
+        //查询userID 是否为企业的议价负责人
+        AppOrgBuyChannelApproveMiddle apam=negotiatedService.findAppOrgBuyChannelApproveMiddleByOrgIdAndMainPersonId(orgId,userId);
+        log.info("已议价list 查询userID 是否为企业的议价负责人"+apam);
+        if (apam!=null){
+            log.info("已议价list  userID是企业的议价负责人"+apam);
+
+            //属于议价负责人
+            //查询自己负责议价的订单
+            List<fyPurchase> purList=negotiatedService.findFyPurchaseByBuyChannelAndOrgId(apam.getBuyChannelId(),orgId,pageNum,pageSize);
+            log.info("已议价list  查询自己负责议价的订单"+purList);
+
+            //查询辅助议价的订单
+            //查询组织有参与辅助的订单
+            List <fyPurchase> npNotNullList=negotiatedService.findFyPurchaseByNegotiatePersonNotNullAndOrgId(orgId);
+            log.info("已议价list  查询组织有参与辅助的订单"+npNotNullList);
+
+            //在上一步的订单中找出userID 参与的订单(方法里判null)
+            List <fyPurchase> npNotNullListInnerUserList=negotiatedService.findNegotiatePersonNotNullInnerUser(npNotNullList,userId);
+            log.info("已议价list  在上一步的订单中找出userID 参与的订单"+npNotNullListInnerUserList);
+
+            if (pageNum==1){
+                //第一个页面
+                if (purList.size()==0 || npNotNullListInnerUserList.size()==0){
+                    if (purList.size()>0){
+                        return purList;
+                    }
+                    if (npNotNullListInnerUserList.size()>0){
+                        return npNotNullListInnerUserList;
+                    }
+                }else {
+                    purList.addAll(npNotNullListInnerUserList);
+                    return purList;
+                }
+            }
+
+        }else {
+            log.info("已议价list  userID不是企业的议价负责人"+apam);
+
+            //不属于议价负责人
+            //查询辅助议价的订单
+            //查询组织有参与辅助的订单
+            List <fyPurchase> npNotNullList=negotiatedService.findFyPurchaseByNegotiatePersonNotNullAndOrgId(orgId);
+            log.info("已议价list  查询组织有参与辅助的订单"+npNotNullList);
+
+            //在上一步的订单中找出userID 参与的订单(方法里判null)
+            List <fyPurchase> npNotNullListInnerUserList=negotiatedService.findNegotiatePersonNotNullInnerUser(npNotNullList,userId);
+            log.info("已议价list  在上一步的订单中找出userID 参与的订单"+npNotNullListInnerUserList);
+
+            return npNotNullListInnerUserList;
+        }
+        return new ArrayList<>();
+    }
 
     /**
      * 待审批List
@@ -203,8 +263,10 @@ public class TobeNegotiatedController {
      */
     @RequestMapping(value = "/saveNagotiaPersonList",method = RequestMethod.GET)
     public ServiceResult saveNagotiatePersonList(String id,String [] callId){
-        negotiatedService.updataAppUserListById(id,callId);
-        return ServiceResult.success(null);
+        log.info("保存参与的议价人员  订单id:"+id+",callId:"+callId);
+        Integer integer = negotiatedService.updataAppUserListById(id, callId);
+        log.info("保存参与的议价人员  订单id:"+id+",callId:"+callId+",保存结果："+integer);
+        return ServiceResult.success("保存成功");
 
     }
 

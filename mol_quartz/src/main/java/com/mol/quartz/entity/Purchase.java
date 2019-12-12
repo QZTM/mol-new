@@ -17,7 +17,8 @@ public class Purchase implements Serializable {
 	
 	@Id
 	private String id;
-    private Integer buyChannelId;
+	private String pkMarbasclass;
+	private Integer buyChannelId;
     private String goodsType;
     private String goodsBrand;
     private String goodsName;

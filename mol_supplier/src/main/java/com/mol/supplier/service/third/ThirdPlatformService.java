@@ -408,10 +408,14 @@ public class ThirdPlatformService {
         return bdSupplierMapper.selectOne(t);
     }
 
-    public List<fyPurchase> findPassPurchByStatus(Integer pass, Integer pageNumber,Integer pageSize) {
+    public List<fyPurchase> findPassPurchByStatus(String supplieId,Integer pageNumber,Integer pageSize) {
         PageHelper.startPage(pageNumber,pageSize);
-        return fyPurchaseMapper.findListByStatus(pass+"",null,null);
+//        return fyPurchaseMapper.findListByStatus(pass+"",null,null);
+        return fyPurchaseMapper.findPurchaseInnerFyQuoteBySupplierId(supplieId);
     }
+
+
+
 
     public int findPassCountByStatus(Integer pass) {
         return fyPurchaseMapper.findCountByStatus(pass+"",null,null);
