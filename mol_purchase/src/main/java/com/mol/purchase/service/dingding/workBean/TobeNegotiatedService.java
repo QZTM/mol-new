@@ -185,7 +185,10 @@ public class TobeNegotiatedService {
 
     public Ucharts getBigData(String supplierId, String pkMaterialId) {
         List<BigDataStar> bdList=poOrderMapper.getBigDataBySuppliedAndpkMaterialId(supplierId,pkMaterialId);
-
+        log.info("查询大数据 查到的物料价格list："+bdList);
+        if (bdList.size()==0){
+            return new Ucharts();
+        }
         Ucharts u=new Ucharts();
         UchartsSeries us=new UchartsSeries();
         String [] caArr=new String [bdList.size()];
@@ -347,17 +350,18 @@ public class TobeNegotiatedService {
         return null;
     }
 
-    public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndMainPersonId(String orgId, String userId) {
+    public List<AppOrgBuyChannelApproveMiddle> findAppOrgBuyChannelApproveMiddleByOrgIdAndMainPersonId(String orgId, String userId) {
         List<AppOrgBuyChannelApproveMiddle> appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId = appOrgBuyChannelApproveMiddleMapper.findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(orgId, userId);
         log.info("根据orgID，userID 查询到的appOrgBuyChannelApproveMiddle的list长度："+appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId.size());
-        return appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId.get(0);
+        return appOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId;
     }
 
-    public List<fyPurchase> findFyPurchaseByBuyChannelAndOrgId(String buyChannelId, String orgId,int pageNum,int pageSize) {
+    public List<fyPurchase> findFyPurchaseByBuyChannelAndOrgId(List<String> buychanneList, String orgId,int pageNum,int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
         Example e =new Example(fyPurchase.class);
         Example.Criteria criteria = e.createCriteria();
-        criteria.andEqualTo("buyChannelId",buyChannelId);
+//        criteria.andEqualTo("buyChannelId",buyChannelId);
+        criteria.andIn("buyChannelId",buychanneList);
         criteria.andEqualTo("orgId",orgId);
         criteria.andGreaterThan("status",OrderStatus.UNDER_REVIEW);
         return fyPurchaseMapper.selectByExample(e);

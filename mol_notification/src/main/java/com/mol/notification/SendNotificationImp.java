@@ -56,7 +56,7 @@ public class SendNotificationImp implements SendNotification{
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
 
 //        msg.getOa().setMessageUrl("eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
-        msg.getOa().setMessageUrl("eapp://pages/purchase/purchase");
+        msg.getOa().setMessageUrl(messageUrl);
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("云采购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());

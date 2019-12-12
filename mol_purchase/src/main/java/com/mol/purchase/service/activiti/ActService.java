@@ -21,6 +21,7 @@ import com.mol.purchase.service.token.TokenService;
 import com.mol.sms.SendMsmHandler;
 import com.mol.sms.XiaoNiuMsm;
 import com.mol.sms.XiaoNiuMsmTemplate;
+import entity.ServiceResult;
 import entity.dd.DDUser;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.*;
@@ -109,7 +110,7 @@ public class ActService {
 
 
 
-    private  Logger actLogger = LoggerFactory.getLogger(ActService.class);
+    private  Logger log = LoggerFactory.getLogger(ActService.class);
     /**
      * 部署流程实例
      * @param model 流程模型
@@ -141,10 +142,10 @@ public class ActService {
      */
     public void startProcessInstance(String key,String businessKey) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(key, businessKey);
-        actLogger.info("启动流程实例 buskey:"+businessKey);
-        actLogger.info("启动流程实例 流程实例 id:"+processInstance.getId());
-        actLogger.info("启动流程实例 ProcessInstanceId:"+processInstance.getProcessInstanceId());
-        actLogger.info("启动流程实例 流程定义 id: "+processInstance.getDeploymentId());
+        log.info("启动流程实例 buskey:"+businessKey);
+        log.info("启动流程实例 流程实例 id:"+processInstance.getId());
+        log.info("启动流程实例 ProcessInstanceId:"+processInstance.getProcessInstanceId());
+        log.info("启动流程实例 流程定义 id: "+processInstance.getDeploymentId());
     }
 
     /**
@@ -550,10 +551,12 @@ public class ActService {
         return sendUserId;
     }
 
-    //4.专家
+    //4.专家发通知
     @Async
     public ListenableFuture<Integer> getExpertSendMessage(List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName) {
+        log.info("给订单推荐专家发送dd通知和短信");
         if (detailList.get(0).getExpertId()==null){
+            log.info("没有推荐专家，不需要发送dd通知");
             return new AsyncResult<>(0);
         }
         Set<String> expetSet = new HashSet<>();
@@ -571,9 +574,12 @@ public class ActService {
         try{
             for (ExpertUser expertUser : userList) {
                 //发送钉钉通知
-                sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT,tokenService.getToken());
+                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT, tokenService.getToken());
+                log.info("钉钉给专家："+expertUser.getId()+"通知发送结果："+serviceResult.getMessage());
                 //发送短信通知
-                sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName,expertUser.getMobile());
+                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
+                log.info("钉钉给采购人员："+expertUser.getId()+"发送短信结果："+s);
+
             }
             return new AsyncResult<>(1);
         }catch (Exception e){
@@ -591,6 +597,7 @@ public class ActService {
         for (PurchaseDetail purchaseDetail : detailList) {
             supplierSet.add(purchaseDetail.getQuoteId());
         }
+        log.info("给订单报价人员发送dd通知和短信");
         List<SupplierSalesman> saleManList=new ArrayList<>();
         for (String s : supplierSet) {
             FyQuote quo=findQuoteById(s);
@@ -600,9 +607,12 @@ public class ActService {
         try{
             for (SupplierSalesman salesman : saleManList) {
                 //发送钉钉通知
-                sendNotificationImp.sendOaFromThird(salesman.getDdUserId(),Constant.AGENTID_THIRDPLAT,tokenService.getToken());
+                ServiceResult serviceResult = sendNotificationImp.sendOaFromThird(salesman.getDdUserId(), Constant.AGENTID_THIRDPLAT, tokenService.getToken());
+                log.info("钉钉给专家："+salesman.getId()+"通知发送结果："+serviceResult.getMessage());
                 //发送短信通知
-                sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
+                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
+                log.info("钉钉给采购人员："+salesman.getId()+"发送短信结果："+s);
+
             }
             return new AsyncResult<>(1);
         }catch (Exception e){
@@ -613,12 +623,16 @@ public class ActService {
 
     @Async
     public ListenableFuture<Integer> getAuSendMessage(String staffId,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName) {
+        log.info("给订单发起人员发送dd通知和短信");
+
         AppUser au = findAppUserById(staffId);
         try{
             //发送钉钉通知
-            sendNotificationImp.sendOaFromE(au.getId(),au.getUserName(),tokenService.getToken(),Constant.AGENTID_EXPERT);
+            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.AGENTID_EXPERT);
+            log.info("钉钉给采购人员："+staffId+"发送通知结果："+serviceResult.getMessage());
             //发送短信通知
-            sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName,au.getMobile());
+            String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, au.getMobile());
+            log.info("钉钉给采购人员："+staffId+"发送短信结果："+s);
             return new AsyncResult<>(1);
         }catch (Exception e){
             e.printStackTrace();
@@ -662,14 +676,14 @@ public class ActService {
 
     public void updataPurchaseApprovalStartTime(String purId) {
         String nowDateTime = TimeUtil.getNowDateTime();
-        actLogger.info("审批环节时间设定"+nowDateTime);
+        log.info("审批环节时间设定"+nowDateTime);
         purchaseMapper.updataApprovalStartTime(purId,nowDateTime);
     }
 
-    public void updataPurchaseApprovalEndTime(String purId) {
-        actLogger.info("审批结束时间设定");
+    public int updataPurchaseApprovalEndTime(String purId) {
+        log.info("审批结束时间设定");
         String nowDateTime = TimeUtil.getNowDateTime();
-        purchaseMapper.updataApprovalEndTime(purId,nowDateTime);
+        return purchaseMapper.updataApprovalEndTime(purId, nowDateTime);
     }
 
     public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(String orgId, String buyChannelId) {
@@ -720,5 +734,9 @@ public class ActService {
         t.setId(appOrgBuyChannelApproveMiddle.getId());
         t.setPurchaseApproveId(id+"");
         return appOrgBuyChannelApproveMiddleMapper.updateByPrimaryKeySelective(t);
+    }
+    //给议价负责人发送通知
+    public ListenableFuture<Integer> getPurMainPerson(String orgId, Integer buyChannelId) {
+        return null;
     }
 }
