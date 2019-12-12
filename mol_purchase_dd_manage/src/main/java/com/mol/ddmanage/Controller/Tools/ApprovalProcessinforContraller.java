@@ -35,8 +35,9 @@ public class ApprovalProcessinforContraller
     @Test
     public void test2()
     {
+        //调用此方法之前在app_org_buy_channel_approve_middle表内插入一条数据
        try {
-           URL url = new URL("http://140.249.22.202:8082/ac/deploy?name=111&processId=123453333&processName=12322&orgId=1204069409234190336");//实例化一个URL对象，用百度有道翻译进行了测试/hello
+           URL url = new URL("http://140.249.22.202:8082/ac/deploy?name=111&processId=123453333&processName=test&orgId=1204069409234190336&buyChannelId=3");//实例化一个URL对象，用百度有道翻译进行了测试/hello
           // URL url = new URL("http://140.249.22.202:8082/ac/hello");
            URLConnection connection = url.openConnection();//通过URL对象的openConnection()方法得到一个java.net.URLConnection;
            InputStream is = connection.getInputStream();  // 获取输入流

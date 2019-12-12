@@ -15,7 +15,7 @@ public interface ElectronicContractSigninginforMapper
 
     Map Get_fy_purchase_supplier_contract(String ContractId);//获取订单合同签署状态表
     Map  Setfadada_auth_record(String customerId);//查看fadada_auth_record是否有对应的数据
-    void AuthSynchronizeNotity(String id,String customer_id,String transaction_no,String authentication_type,String sign,String status,String create_time);//认证同步回调地址
+    void AuthSynchronizeNotity(String id,String customer_id,String transaction_no,String authentication_type,String sign,String status,String create_time,String url);//认证同步回调地址
     void AuthAsynchronousNotity(String customerId,String transaction_no,String status,String status_desc,String last_update_time);//认证异步回调地址
     void SignContractNotity(String contract_id,String sign_status);//手动签署合同回调 更改签署状态为采购方签署  更新fy_purchase_supplier_contract表
 }

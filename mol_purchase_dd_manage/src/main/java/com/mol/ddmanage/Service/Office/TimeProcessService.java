@@ -1,5 +1,7 @@
 package com.mol.ddmanage.Service.Office;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.mol.ddmanage.Ben.Office.TimeProcessExperreCommendben;
 import com.mol.ddmanage.Ben.PurchasOrderManagement.PurchasOrderinforben;
 import com.mol.ddmanage.mapper.Office.TimeProcessMapper;
@@ -15,6 +17,38 @@ public class TimeProcessService
 {
     @Resource
     TimeProcessMapper timeProcessMapper;
+    public ArrayList<Map> GetPurchasLogic(String PurchasId)
+    {
+        ArrayList<Map> map=new ArrayList<>();
+        map=timeProcessMapper.GetPurchas(PurchasId);
+        String user_names="";
+        if (map.get(0).get("negotiate_person")!=null)
+        {
+            JSONArray names=JSONArray.parseArray(map.get(0).get("negotiate_person").toString());
+            if (names!=null)
+            {
+                for (int n=0;n<names.size();n++)
+                {
+                    JSONObject jsonObject=JSONObject.parseObject(names.get(n).toString());
+
+                    if (n==0)
+                    {
+                        user_names=jsonObject.get("userName").toString();
+                    }
+                    else if (n>0)
+                    {
+                        user_names=user_names+","+jsonObject.get("userName").toString();
+                    }
+
+                }
+
+                map.get(0).put("userNames",user_names);
+            }
+        }
+
+
+        return map;
+    }
     public ArrayList<TimeProcessExperreCommendben>ExperreCommendLogic(String PurchasId,String supplier_id)
     {
         ArrayList<TimeProcessExperreCommendben> timeProcessExperreCommendbens=timeProcessMapper.ExperreCommend(PurchasId,supplier_id);

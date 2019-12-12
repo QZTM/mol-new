@@ -43,7 +43,7 @@
              <li class="layui-timeline-item">
                  <i class="layui-icon layui-timeline-axis"></i>
                  <div class="layui-timeline-content layui-text">
-                     <h3 class="layui-timeline-title">8月16日</h3>
+                     <h3 class="layui-timeline-title" th:text="${create_time}">8月16日</h3>
                      <h3 class="layui-timeline-title">报价</h3>
                      <div id="list2" style="overflow-y:auto;height: 500px;border: 2px solid #8D8D8D ">
 
@@ -54,7 +54,7 @@
              <li class="layui-timeline-item">
                  <i class="layui-icon layui-timeline-axis"></i>
                  <div class="layui-timeline-content layui-text">
-                     <h3 class="layui-timeline-title">8月15日</h3>
+                     <h3 id="expert_time" class="layui-timeline-title"></h3>
                      <h3 class="layui-timeline-title">专家评审</h3>
                      <div id="list3" style="overflow-y:auto;height: 500px;border: 2px solid #8D8D8D ">
 
@@ -65,7 +65,7 @@
              <li class="layui-timeline-item">
                  <i class="layui-icon layui-timeline-axis"></i>
                  <div class="layui-timeline-content layui-text">
-                     <h3 class="layui-timeline-title">8月15日</h3>
+                     <h3 id="bargaining_time" class="layui-timeline-title"></h3>
                      <h3 class="layui-timeline-title">采购部议价结果</h3>
                      <div id="list4" style="overflow-y:auto;height: 500px;border: 3px solid #8D8D8D ">
 
@@ -76,7 +76,7 @@
              <li class="layui-timeline-item">
                  <i class="layui-icon layui-timeline-axis"></i>
                  <div class="layui-timeline-content layui-text">
-                     <h3 class="layui-timeline-title">8月15日</h3>
+                     <h3 id="approval_start_time" class="layui-timeline-title"></h3>
                      <h3 class="layui-timeline-title">审批结果</h3>
                      <div id="list5" style="overflow-y:auto;height: 500px;border: 3px solid #8D8D8D ">
 
@@ -86,7 +86,8 @@
              <li class="layui-timeline-item">
                  <i class="layui-icon layui-timeline-axis"></i>
                  <div class="layui-timeline-content layui-text">
-                     <div class="layui-timeline-title">过去</div>
+                     <h3 id="approval_end_time" class="layui-timeline-title"></h3>
+                     <div class="layui-timeline-title">审批结束</div>
                  </div>
              </li>
          </ul>
@@ -101,6 +102,42 @@
      var materials_quantity=new Array()
      function landing_star()
      {
+
+         $.ajax({ //拿到时间轴时间
+             type: 'POST',
+             url: '/TimeProcessController/GetPurchas',
+             dataType: 'json',
+             data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
+             // headers:{  'eticket': app.globalData.eticket},
+             success: function (data) {
+               if (data[0].expert_time!=null)//进入专家推荐时间
+               {
+                  var expert_time=document.getElementById("expert_time")
+                   expert_time.innerText=data[0].expert_time;
+               }
+               if (data[0].bargaining_time!=null)//订单状态进入议价环节的时间
+               {
+                   var bargaining_time=document.getElementById("bargaining_time")
+                   bargaining_time.innerText=data[0].bargaining_time;
+               }
+               if (data[0].approval_start_time!=null)//订单状态进入审批环节的时间
+               {
+                   var approval_start_time=document.getElementById("approval_start_time")
+                   approval_start_time.innerText=data[0].approval_start_time;
+               }
+               if (data[0].approval_end_time!=null)//订单状态结束审批的时间（最终的订单状态）
+               {
+                   var approval_end_time=document.getElementById("approval_end_time")
+                   approval_end_time.innerText=data[0].approval_end_time;
+               }
+             },
+             error: function (data) {
+                 alert("获取时间轴时间失败")
+             }
+         });
+
+
+
          var table=document.createElement('table');//创建一个表
          table.id='list1table1';
          table.class='layui-hide';
@@ -143,7 +180,7 @@
                      Process()//专家审核 采购部议价等流程
                  },
                  error: function (data) {
-                     alert("获取审核议价信息失败")
+                     alert("获取待采购信息失败")
                  }
              });
          });
@@ -164,7 +201,7 @@
                      document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
                  },
                  error: function (data) {
-                     alert("获取审核议价信息失败")
+                     alert("获取供应商报价信息失败")
                  }
              });
 
@@ -179,7 +216,7 @@
                      Add_data_table("list3",data)
                  },
                  error: function (data) {
-                     alert("获取审核议价信息失败")
+                     alert("专家评审区域信息失败")
                  }
              });
 
@@ -193,9 +230,53 @@
                  // headers:{  'eticket': app.globalData.eticket},
                  success: function (data) {
                      Add_data_table("list4",data)
+
+
+                     $.ajax({
+                         type: 'POST',
+                         url: '/TimeProcessController/GetPurchas',
+                         dataType: 'json',
+                         data:{PurchasId:document.getElementById("PurchasId").innerText.split(':')[1]},
+                         // headers:{  'eticket': app.globalData.eticket},
+                         success: function (Data) {
+                             var Company_name=document.createElement('div')
+                             Company_name.innerHTML=
+                                 '<div style="margin: 12px">'+
+                                 '<hr class="layui-bg-green">'+
+                                 '</div>'+
+                                 '<div style="width:8%;margin: 6px;padding: 6px;background-color: #eb7350;color: #fbfbfb;font-size: 16px;border-radius: 6px;text-align: center">'+
+                                 ' <label >议价结果</label>'+
+                                 '</div>';
+                             document.getElementById("list4").appendChild(Company_name);
+                             var table=document.createElement('table');//创建一个表
+                             table.id="list4"+'_log';
+                             table.class='layui-hide';
+                             document.getElementById("list4").appendChild(table);
+
+                             layui.use('table', function(){
+                                 var table = layui.table;
+                                 table.render({
+                                     elem: '#'+"list4"+'_log'
+                                     // ,url:'/demo/table/user/'
+                                     , data:Data
+                                     ,cols: [
+                                         [
+                                             {field:'userNames', width:80, title: '议价人员', sort: true}
+                                             ,{field:'negotiated_explain', width:200, title: '意见'}
+                                         ]
+                                     ]
+                                     ,page: true
+                                 });
+                             });
+
+                         },
+                         error: function (data) {
+                             alert("采购部议价信息失败")
+                         }
+                     });
                  },
                  error: function (data) {
-                     alert("获取审核议价信息失败")
+                     alert("采购部议价信息失败")
                  }
              });
 
@@ -208,6 +289,39 @@
                  // headers:{  'eticket': app.globalData.eticket},
                  success: function (data) {
                      Add_data_table("list5",data)
+
+
+                     $.ajax({ //获取订单对应的审批日志
+                         type: 'POST',
+                         url: '/Office/Title_Details_contorller/ReviewPeolpes',
+                         dataType: 'json',
+                         data:{purchase_id:document.getElementById("PurchasId").innerText.split(':')[1]},
+                         // headers:{  'eticket': app.globalData.eticket},
+                         success: function (data) {
+                             for (var n=0;n<data.length;n++)
+                             {
+                                 if (data[n].approvalStatus=='1')//审核通过
+                                 {
+                                     data[n].approvalStatus='同意'
+                                 }
+                                 else if (data[n].approvalStatus=='2')//审核拒绝
+                                 {
+                                     data[n].approvalStatus='拒绝'
+                                 }
+                                 else if (data[n].approvalStatus=='0')//审批中
+                                 {
+                                     data[n].approvalStatus='审批中'
+                                 }
+                             }
+
+                             console.log(data)
+                             Log_Process("list5",data,"审批日志")
+                         },
+                         error: function (data) {
+                             alert("获取审批日志失败")
+                         }
+                     });
+
                  },
                  error: function (data) {
                      alert("获取审核议价信息失败")
@@ -374,7 +488,7 @@
          }
      }
 
-     function Log_Process(List_name,log_Data)//审批日志 参数 对应日期框的div的id 和审批日志数据
+     function Log_Process(List_name,log_Data,title)//审批日志 参数 对应日期框的div的id 和审批日志数据
      {
          // var Data = [{"id":"BeJson","username":"http://www.bejson.com","sex":true,"city":"12","number":"12","experience":"12","all":"100"}]
          //审批日志
@@ -384,7 +498,7 @@
              '<hr class="layui-bg-green">'+
              '</div>'+
              '<div style="width:8%;margin: 6px;padding: 6px;background-color: #eb7350;color: #fbfbfb;font-size: 16px;border-radius: 6px;text-align: center">'+
-             ' <label >审批日志</label>'+
+             ' <label >'+title+'</label>'+
              '</div>';
          document.getElementById(List_name).appendChild(Company_name);
 
@@ -401,10 +515,10 @@
                  , data:log_Data
                  ,cols: [
                      [
-                         {field:'people', width:80, title: '议价人', sort: true}
-                         ,{field:'state', width:150, title: '审核状态'}
-                         ,{field:'time', width:100, title: '审核时间', sort: true}
-                         ,{field:'opinion', width:80, title: '意见'}
+                         {field:'name', width:80, title: '姓名', sort: true}
+                         ,{field:'approvalStatus', width:150, title: '状态'}
+                         ,{field:'time', width:100, title: '日期', sort: true}
+                         ,{field:'remarks', width:80, title: '意见'}
                      ]
                  ]
                  ,page: true

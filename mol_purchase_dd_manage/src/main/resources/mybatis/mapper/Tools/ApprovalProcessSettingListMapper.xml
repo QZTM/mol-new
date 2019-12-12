@@ -14,6 +14,5 @@
         join zkfy.app_user au
         WHERE   (LENGTH(z.purchase_approve_list)-LENGTH(REPLACE(z.purchase_approve_list,',',''))+1) > t.help_topic_id
         having au.id=num) a) b on b.app_purchase_approve_id = apa.id
-        where app_org_id='1204069409234190336'
     </select>
 </mapper>
