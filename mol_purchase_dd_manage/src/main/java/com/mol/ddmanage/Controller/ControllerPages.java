@@ -153,6 +153,16 @@ public class ControllerPages {
         return "Office/Purchase_Grogress/Time_Process";
     }
 
+    @RequestMapping("/Local_Purchase")  //本地采购进度时间轴流程详情
+    public String Local_Purchase(@RequestParam Map map,Model model)
+    {
+        model.addAttribute("Oreder_number","订单编号:"+map.get("Oreder_number").toString());
+        model.addAttribute("user_name","申请人:"+map.get("user_name").toString());
+        model.addAttribute("goods_name",map.get("goods_name").toString());
+        model.addAttribute("create_time","创建时间"+map.get("create_time").toString());
+        return "Office/Purchase_Grogress/Local_Purchase";
+    }
+
     @RequestMapping("/ReviewBargainingHistoryList")//审核议价历史列表#
     public String ReviewBargainingHistoryList(HttpServletRequest httpServletRequest)
     {

@@ -16,7 +16,7 @@
     <select id="Set_Push_history_list"  resultType="com.mol.ddmanage.Ben.Office.Push_history_list_ben"><!--查找用户-->
 
         SELECT
-        (SELECT app_user.user_name FROM app_user WHERE app_user.dd_user_id=fy_purchase.staff_id)user_name,
+        (SELECT app_user.user_name FROM app_user WHERE app_user.id=fy_purchase.staff_id)user_name,
         fy_purchase.*
         from fy_purchase
         where

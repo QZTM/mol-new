@@ -195,9 +195,18 @@
 			}
 			else if(obj.event === 'edit2'){
 
-				document.getElementById("datagridview").style.display="none";
-				document.getElementById("subWin").src="/Home/Time_Process?Oreder_number="+obj.data.id+"&goods_name="+obj.data.goods_name+"&user_name="+obj.data.user_name+"&create_time="+obj.data.create_time;//跳转到合同详情 传送一个合同编号/Home/Time_Process
-				document.getElementById("Details").style.display="block";
+				if(obj.data.buy_channel_id==="线上" || obj.data.buy_channel_id==="线下" /*|| obj.data.buy_channel_id==="询价采购"*/)//本地采购
+				{
+					document.getElementById("datagridview").style.display="none";
+					document.getElementById("subWin").src="/Home/Local_Purchase?Oreder_number="+obj.data.id+"&goods_name="+obj.data.goods_name+"&user_name="+obj.data.user_name+"&create_time="+obj.data.create_time;//跳转到合同详情 传送一个合同编号/Home/Time_Process
+					document.getElementById("Details").style.display="block";
+				}
+				else
+				{
+					document.getElementById("datagridview").style.display="none";
+					document.getElementById("subWin").src="/Home/Time_Process?Oreder_number="+obj.data.id+"&goods_name="+obj.data.goods_name+"&user_name="+obj.data.user_name+"&create_time="+obj.data.create_time;//跳转到合同详情 传送一个合同编号/Home/Time_Process
+					document.getElementById("Details").style.display="block";
+				}
 			}
 			$("#Details").animate({width:"100%"}, 500);//展开
 		});
