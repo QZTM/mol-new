@@ -17,6 +17,7 @@ public class DdManageApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DdManageApplication.class, args);
+
     }
 
     @Bean
@@ -32,6 +33,10 @@ public class DdManageApplication {
     public IdWorker getIdWorker()
     {
         return new IdWorker();
+    }
+    public void rrrr()
+    {
+        String hh="";
     }
 /*    @Bean("ContractHandler")
     public ContractHandler getContractHandler()
