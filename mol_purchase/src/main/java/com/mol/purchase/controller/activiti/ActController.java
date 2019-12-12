@@ -176,16 +176,16 @@ ActController {
 
         DDUser user = JWTUtil.getUserByRequest(request);
         String name = user.getName();
-        logger.info("登录人："+user);
+        logger.info("完成个人审批任务 审批人信息："+user);
         actService.completeTask(taskId,processInsId,variables,comment,name);
 
 
 
         if (result.equals("pass")){
-            logger.info("当前任务通过");
+            logger.info("当前审批任务通过");
             //去获取下一个审批人的id
             String sendUserId=actService.getNextSendUserId(user);
-
+            logger.info("下一个审批人的id："+sendUserId);
 
 
             if (sendUserId!="" || sendUserId==null){
@@ -197,20 +197,26 @@ ActController {
                 //发送短信通知
                 sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),appUserById.getMobile());
             }else {
-                logger.info("审批通过");
+                logger.info("订单审批任务通过");
 
                 //审批任务完成
                 //查询订单相关信息
                 //1.订单ID
                 ActHiProcinst hiProcinst=actService.getActHiprocinstByProcInstId(processInsId);
+                logger.info("审批通过后查询到的订单id:"+hiProcinst.getBusinessKey());
                 //2.订单
                 fyPurchase pur=actService.findPurchaseById(hiProcinst.getBusinessKey());
                 //3.订单详情
                 List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
-                //修改选中的专家推荐表中的采纳状态
-                actService.updataExpertRecommendChecked(pur.getId(),detailList);
-                //修改未选中的专家推荐表中的采纳状态
-                actService.updataExpertRecommendNotChecked(pur.getId());
+                logger.info("修改专家推荐的采纳状态");
+                if(detailList.size()>0){
+                    logger.info("开始修改专家推荐的采纳状态："+detailList.size());
+                    //修改选中的专家推荐表中的采纳状态
+                    actService.updataExpertRecommendChecked(pur.getId(),detailList);
+                    //修改未选中的专家推荐表中的采纳状态
+                    actService.updataExpertRecommendNotChecked(pur.getId());
+                }
+
 
 
 
@@ -221,11 +227,12 @@ ActController {
                     actService.saveQuotePayresult(pur);
                 }
                 //设置订单结束审批的时间
-                actService.updataPurchaseApprovalEndTime(pur.getId());
+                int i = actService.updataPurchaseApprovalEndTime(pur.getId());
+                logger.info("写入订单结束审批的时间 result:"+i);
 
 
                 //1.给采购部门主管发短信，通知
-
+                ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId());
                 //2.给选中的专家发短信，通知
                 ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板());
                 //3.给发起采购的采购人员发短信，通知
@@ -235,7 +242,7 @@ ActController {
             }
         }else{
             //审批拒绝
-            logger.info("审批拒绝");
+            logger.info("当前审批任务状态为拒绝");
             //查询订单相关信息
             //1.订单ID
             ActHiProcinst hiProcinst=actService.getActHiprocinstByProcInstId(processInsId);
