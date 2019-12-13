@@ -34,6 +34,9 @@ public class QuoteEndJob implements Job{
 	private PurchaseService purchaseService;
 
 	@Autowired
+	SendNotification sendNotificationImp;
+
+	@Autowired
 	private PurchaseMapper purchaseMapper;
 
 	@Autowired
@@ -124,13 +127,13 @@ public class QuoteEndJob implements Job{
 				log.info("给所属行业类别的专家发送通知：行业类别："+marbasClassId+",,获取到的专家集合大小："+expertIdList.size());
 				String token = null;
 				try {
-					token = getTokenService.getExpertToken().get();
+					token = getTokenService.getExpertToken().get().trim();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				}
-				log.info("通过eureka获取到的token："+token);
+				log.info("通过eureka获取到的专家端token："+token);
 				if(expertIdList.size() == 0){
 					log.info("没有符合条件的专家！");
 					return ;
@@ -140,7 +143,7 @@ public class QuoteEndJob implements Job{
 						break;
 					}
 					log.info("给专家"+expertId+"发送通知...");
-					SendNotification.getSendNotification().sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,token);
+					sendNotificationImp.sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,token);
 				}
 
 
@@ -166,9 +169,10 @@ public class QuoteEndJob implements Job{
 					e.printStackTrace();
 				}
 				log.info("通过eureka获取到的token："+token);
-				SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token,Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+				sendNotificationImp.sendOaFromE(purchaseMainPersonDDId,"",token,Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
 			}
 		}
+
 
 
 

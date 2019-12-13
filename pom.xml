@@ -49,31 +49,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-
-
-    <!--<dependencyManagement>-->
-        <!--<dependencies>-->
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.cloud</groupId>-->
-                <!--<artifactId>spring-cloud-dependencies</artifactId>-->
-                <!--<version>Finchley.M9</version>-->
-                <!--<type>pom</type>-->
-                <!--<scope>import</scope>-->
-            <!--</dependency>-->
-        <!--</dependencies>-->
-    <!--</dependencyManagement>-->
-
-
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-web</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-test</artifactId>-->
-        <!--</dependency>-->
         <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -97,76 +73,235 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-
         <!--数据库-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.15</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.oracle</groupId>-->
-<!--            <artifactId>ojdbc6</artifactId>-->
-<!--            <version>12.1.0.1-atlassian-hosted</version>-->
-<!--        </dependency>-->
-
     </dependencies>
 
 
-
-
-
-    <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>spring-snapshots</id>-->
-            <!--<name>Spring Snapshots</name>-->
-            <!--<url>https://repo.spring.io/snapshot</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-        <!--<repository>-->
-            <!--<id>spring-milestones</id>-->
-            <!--<name>Spring Milestones</name>-->
-            <!--<url>https://repo.spring.io/milestone</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>false</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-    <!--</repositories>-->
-
-
-    <!--<pluginRepositories>-->
-        <!--<pluginRepository>-->
-            <!--<id>spring-snapshots</id>-->
-            <!--<name>Spring Snapshots</name>-->
-            <!--<url>https://repo.spring.io/snapshot</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
-        <!--</pluginRepository>-->
-        <!--<pluginRepository>-->
-            <!--<id>spring-milestones</id>-->
-            <!--<name>Spring Milestones</name>-->
-            <!--<url>https://repo.spring.io/milestone</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>false</enabled>-->
-            <!--</snapshots>-->
-        <!--</pluginRepository>-->
-    <!--</pluginRepositories>-->
-
-
-    <!--<build>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<groupId>org.springframework.boot</groupId>-->
-                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<includeSystemScope>true</includeSystemScope>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-    <!--</build>-->
-
-
+    <!--全局配置-->
+    <profiles>
+        <!--##############################开发环境#######################################-->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+                <!--purchase小程序参数-->
+                <purchasehttp>http://</purchasehttp>
+                <purchaseip>192.168.1.171</purchaseip>
+                <purchaseport>8082</purchaseport>
+                <purchasedomain>purchase.vaiwan.com</purchasedomain>
+                <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
+                <purchaseagentid>330159066</purchaseagentid>
+                <purchaseappkey>dingfps4ilpbxa6wmw0z</purchaseappkey>
+                <purchaseappsecret>_GXmOidlkjda-vZzxdy24WSI7wcKlDsoQqCp-vNORdhWdNjaoYvsKlgjvJfgsBhf</purchaseappsecret>
+                <!--supplier微应用参数-->
+                <supplierhttp>http://</supplierhttp>
+                <supplierip>192.168.1.173</supplierip>
+                <supplierport>8083</supplierport>
+                <supplierdomain>supplier.vaiwan.com</supplierdomain>
+                <suppliercorpid>ding6ef23b66fc0611a335c2f4657eb6378f</suppliercorpid>
+                <supplieragentid>280301722</supplieragentid>
+                <supplierappkey>dingahkyew1sw286fzdb</supplierappkey>
+                <supplierappsecret>8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr</supplierappsecret>
+                <elasticsearchhostlist>140.249.22.202:9200</elasticsearchhostlist>
+                <!--专家端微应用配置-->
+                <experthttp>http://</experthttp>
+                <expertip>192.168.1.172</expertip>
+                <expertport>8084</expertport>
+                <expertdomain>expert.vaiwan.com</expertdomain>
+                <expertcorpid>ding6ef23b66fc0611a335c2f4657eb6378f</expertcorpid>
+                <expertagentid>331964659</expertagentid>
+                <expertappkey>dingpwqrgpz2ijiyzgzu</expertappkey>
+                <expertappsecret>kyAA_DBYE9-JlgYx0no_i_qp_sIfmS51_sDXXqY35Wh1YAgt3FW0jrHdrtlXkaqD</expertappsecret>
+                <!--管理后端配置-->
+                <managehttp>http://</managehttp>
+                <manageip>192.168.1.174</manageip>
+                <manageport>8085</manageport>
+                <managedomain>manage.vaiwan.com</managedomain>
+                <!--数据库配置-->
+                <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>root</dbusername>
+                <dbpassword>ald377</dbpassword>
+                <!--eureka服务器-->
+                <eurekaport>8700</eurekaport>
+                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <!--eureka服务器注册地址-->
+                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <!--redis配置-->
+                <redishost>192.168.1.171</redishost>
+                <redisport>6379</redisport>
+                <redispassword>ald377</redispassword>
+            </properties>
+            <!-- 这里代表默认使用dev环境配置文件 -->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+        </profile>
+        <!--##########################################测试环境##################################################-->
+        <profile>
+            <id>test</id>
+            <properties>
+                <activatedProperties>test</activatedProperties>
+                <!--purchase小程序参数-->
+                <purchasehttp>http://</purchasehttp>
+                <purchaseip>192.168.1.171</purchaseip>
+                <purchaseport>8082</purchaseport>
+                <purchasedomain>purchase.vaiwan.com</purchasedomain>
+                <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
+                <purchaseagentid>330159066</purchaseagentid>
+                <purchaseappkey>dingfps4ilpbxa6wmw0z</purchaseappkey>
+                <purchaseappsecret>_GXmOidlkjda-vZzxdy24WSI7wcKlDsoQqCp-vNORdhWdNjaoYvsKlgjvJfgsBhf</purchaseappsecret>
+                <!--supplier微应用参数-->
+                <supplierhttp>http://</supplierhttp>
+                <supplierip>192.168.1.173</supplierip>
+                <supplierport>8083</supplierport>
+                <supplierdomain>supplier.vaiwan.com</supplierdomain>
+                <suppliercorpid>ding6ef23b66fc0611a335c2f4657eb6378f</suppliercorpid>
+                <supplieragentid>280301722</supplieragentid>
+                <supplierappkey>dingahkyew1sw286fzdb</supplierappkey>
+                <supplierappsecret>8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr</supplierappsecret>
+                <elasticsearchhostlist>140.249.22.202:9200</elasticsearchhostlist>
+                <!--专家端微应用配置-->
+                <experthttp>http://</experthttp>
+                <expertip>192.168.1.172</expertip>
+                <expertport>8084</expertport>
+                <expertdomain>expert.vaiwan.com</expertdomain>
+                <expertcorpid>ding6ef23b66fc0611a335c2f4657eb6378f</expertcorpid>
+                <expertagentid>331964659</expertagentid>
+                <expertappkey>dingpwqrgpz2ijiyzgzu</expertappkey>
+                <expertappsecret>kyAA_DBYE9-JlgYx0no_i_qp_sIfmS51_sDXXqY35Wh1YAgt3FW0jrHdrtlXkaqD</expertappsecret>
+                <!--管理后端配置-->
+                <managehttp>http://</managehttp>
+                <manageip>192.168.1.174</manageip>
+                <manageport>8085</manageport>
+                <managedomain>manage.vaiwan.com</managedomain>
+                <!--数据库配置-->
+                <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>root</dbusername>
+                <dbpassword>ald377</dbpassword>
+                <!--eureka服务器-->
+                <eurekaport>8700</eurekaport>
+                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <!--eureka服务器注册地址-->
+                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <!--redis配置-->
+                <redishost>192.168.1.171</redishost>
+                <redisport>6379</redisport>
+                <redispassword>ald377</redispassword>
+            </properties>
+        </profile>
+        <!--*********************************************正式环境**************************************************-->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+                <!--purchase小程序参数-->
+                <purchasehttp>http://</purchasehttp>
+                <purchaseip>192.168.1.171</purchaseip>
+                <purchaseport>8082</purchaseport>
+                <purchasedomain>purchase.vaiwan.com</purchasedomain>
+                <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
+                <purchaseagentid>330159066</purchaseagentid>
+                <purchaseappkey>dingfps4ilpbxa6wmw0z</purchaseappkey>
+                <purchaseappsecret>_GXmOidlkjda-vZzxdy24WSI7wcKlDsoQqCp-vNORdhWdNjaoYvsKlgjvJfgsBhf</purchaseappsecret>
+                <!--supplier微应用参数-->
+                <supplierhttp>http://</supplierhttp>
+                <supplierip>192.168.1.173</supplierip>
+                <supplierport>8083</supplierport>
+                <supplierdomain>supplier.vaiwan.com</supplierdomain>
+                <suppliercorpid>ding6ef23b66fc0611a335c2f4657eb6378f</suppliercorpid>
+                <supplieragentid>280301722</supplieragentid>
+                <supplierappkey>dingahkyew1sw286fzdb</supplierappkey>
+                <supplierappsecret>8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr</supplierappsecret>
+                <elasticsearchhostlist>140.249.22.202:9200</elasticsearchhostlist>
+                <!--专家端微应用配置-->
+                <experthttp>http://</experthttp>
+                <expertip>192.168.1.172</expertip>
+                <expertport>8084</expertport>
+                <expertdomain>expert.vaiwan.com</expertdomain>
+                <expertcorpid>ding6ef23b66fc0611a335c2f4657eb6378f</expertcorpid>
+                <expertagentid>331964659</expertagentid>
+                <expertappkey>dingpwqrgpz2ijiyzgzu</expertappkey>
+                <expertappsecret>kyAA_DBYE9-JlgYx0no_i_qp_sIfmS51_sDXXqY35Wh1YAgt3FW0jrHdrtlXkaqD</expertappsecret>
+                <!--管理后端配置-->
+                <managehttp>http://</managehttp>
+                <manageip>192.168.1.174</manageip>
+                <manageport>8085</manageport>
+                <managedomain>manage.vaiwan.com</managedomain>
+                <!--数据库配置-->
+                <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>root</dbusername>
+                <dbpassword>ald377</dbpassword>
+                <!--eureka服务器-->
+                <eurekaport>8700</eurekaport>
+                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <!--eureka服务器注册地址-->
+                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <!--redis配置-->
+                <redishost>192.168.1.171</redishost>
+                <redisport>6379</redisport>
+                <redispassword>ald377</redispassword>
+            </properties>
+        </profile>
+        <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-lyYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->
+        <profile>
+            <id>testy</id>
+            <properties>
+                <activatedProperties>testy</activatedProperties>
+                <!--purchase小程序参数-->
+                <purchasehttp>http://</purchasehttp>
+                <purchaseip>192.168.1.171</purchaseip>
+                <purchaseport>8082</purchaseport>
+                <purchasedomain>purchase.vaiwan.com</purchasedomain>
+                <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
+                <purchaseagentid>330159066</purchaseagentid>
+                <purchaseappkey>dingfps4ilpbxa6wmw0z</purchaseappkey>
+                <purchaseappsecret>_GXmOidlkjda-vZzxdy24WSI7wcKlDsoQqCp-vNORdhWdNjaoYvsKlgjvJfgsBhf</purchaseappsecret>
+                <!--supplier微应用参数-->
+                <supplierhttp>http://</supplierhttp>
+                <supplierip>192.168.1.173</supplierip>
+                <supplierport>8083</supplierport>
+                <supplierdomain>supplier.vaiwan.com</supplierdomain>
+                <suppliercorpid>ding6ef23b66fc0611a335c2f4657eb6378f</suppliercorpid>
+                <supplieragentid>280301722</supplieragentid>
+                <supplierappkey>dingahkyew1sw286fzdb</supplierappkey>
+                <supplierappsecret>8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr</supplierappsecret>
+                <elasticsearchhostlist>140.249.22.202:9200</elasticsearchhostlist>
+                <!--专家端微应用配置-->
+                <experthttp>http://</experthttp>
+                <expertip>192.168.1.172</expertip>
+                <expertport>8084</expertport>
+                <expertdomain>expert.vaiwan.com</expertdomain>
+                <expertcorpid>ding6ef23b66fc0611a335c2f4657eb6378f</expertcorpid>
+                <expertagentid>331964659</expertagentid>
+                <expertappkey>dingpwqrgpz2ijiyzgzu</expertappkey>
+                <expertappsecret>kyAA_DBYE9-JlgYx0no_i_qp_sIfmS51_sDXXqY35Wh1YAgt3FW0jrHdrtlXkaqD</expertappsecret>
+                <!--管理后端配置-->
+                <managehttp>http://</managehttp>
+                <manageip>192.168.1.174</manageip>
+                <manageport>8085</manageport>
+                <managedomain>manage.vaiwan.com</managedomain>
+                <!--数据库配置-->
+                <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>root</dbusername>
+                <dbpassword>ald377</dbpassword>
+                <!--eureka服务器-->
+                <eurekaport>8700</eurekaport>
+                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <!--eureka服务器注册地址-->
+                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <!--redis配置-->
+                <redishost>192.168.1.171</redishost>
+                <redisport>6379</redisport>
+                <redispassword>ald377</redispassword>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
 </project>

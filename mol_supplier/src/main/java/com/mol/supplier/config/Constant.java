@@ -1,13 +1,18 @@
 package com.mol.supplier.config;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * 项目中的常量定义类
  */
 public class Constant {
+    @Value("${httppotocol}")
+    public static String http ;
     /**
      * 域名
      */
-    public static final String domain = "140.249.22.202:8083";
+    @Value("${domain}")
+    public static String domain ;
     //public static final String domain = "fyycg2.vaiwan.com";
     /**
      * 企业corpid, 需要修改成开发者所在企业

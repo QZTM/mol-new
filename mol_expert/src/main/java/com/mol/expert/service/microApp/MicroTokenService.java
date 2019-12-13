@@ -25,20 +25,24 @@ public class MicroTokenService {
     @Autowired
     private MicroEhcacheCacheService microEhcacheCacheService;
 
+    @Autowired
+    private MicroAttr microAttr;
+
     public static final String MICROAPPTOKENKEY = "expertToken";
     public static String MICROAPPACCESSTOKEN = "";
 
     //@Cacheable(value = "token",key="#key")
     @Synchronized
     public String getToken(String key){
-        String token = (String) microEhcacheCacheService.getMicroTokenCacheService().get(key);
-        if(token == null){
+//        String token = (String) microEhcacheCacheService.getMicroTokenCacheService().get(key);
+//        if(token == null){
             bizLogger.info("专家端服务器获取微应用token");
+            String token = "";
             try {
                 DefaultDingTalkClient client = new DefaultDingTalkClient(URL_GET_TOKKEN);
                 OapiGettokenRequest request = new OapiGettokenRequest();
-                request.setAppkey(MicroAttr.APP_KEY);
-                request.setAppsecret(MicroAttr.APP_SECRET);
+                request.setAppkey(microAttr.getAppKey());
+                request.setAppsecret(microAttr.getAppSecret());
                 request.setHttpMethod("GET");
                 OapiGettokenResponse response = client.execute(request);
                 token = response.getAccessToken();
@@ -50,7 +54,6 @@ public class MicroTokenService {
                 bizLogger.error("getAccessToken failed", e);
                 throw new RuntimeException("服务器通讯异常，请稍后再试");
             }
-        }
-        return token;
+//        }
     }
 }

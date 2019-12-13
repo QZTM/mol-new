@@ -75,6 +75,7 @@ public class UploadController {
     }
 
     @PostMapping("/uploadMany")
+    @ResponseBody
     public ServiceResult uploadManyPictures(@RequestParam("file") MultipartFile file, HttpSession session){
 
         Supplier supplier = microUserService.getSupplierFromSession(session);

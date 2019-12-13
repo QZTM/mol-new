@@ -2,6 +2,7 @@ package com.mol.expert;
 
 import com.mol.cache.CacheHandle;
 import com.mol.expert.entity.MicroApp.Supplier;
+import com.mol.notification.SendNotification;
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,5 +32,10 @@ public class ExpertApplication {
     @Bean
     public CacheHandle getCacheHandler(){
         return CacheHandle.getCacheHandle();
+    }
+
+    @Bean
+    public SendNotification getSendNotification(){
+        return SendNotification.getSendNotification();
     }
 }
