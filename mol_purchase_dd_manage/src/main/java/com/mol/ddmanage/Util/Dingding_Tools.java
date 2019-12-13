@@ -136,6 +136,21 @@ public class Dingding_Tools
         }
         return response.getSnsToken();
     }
+    public static String Get_admin()
+    {
+        try
+        {
+            DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE+"/user/get_admin");
+            OapiUserGetAdminRequest request = new OapiUserGetAdminRequest();
+            request.setHttpMethod("GET");
+            OapiUserGetAdminResponse response = client.execute(request,Dingding_config.DingdingAPP_Token);
+            return response.getBody();
+        }
+        catch (Exception e)
+        {
+            return e.toString();
+        }
+    }
 
     //当前登录的个人信息
     public  static String get_sns_userinfo_unionid(String snsToken) {

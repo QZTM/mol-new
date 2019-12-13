@@ -277,42 +277,50 @@ public class StartInspectionService //启动检查
                     if (n==1)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                       String pp= HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                       System.out.println(pp);
                     }
                     else if (n==2)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp=  HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                     else if (n==3)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp=  HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                     else if (n==4)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp= HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                     else if (n==5)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp= HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                     else if (n==6)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp= HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                     else if (n==7)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp= HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                     else if (n==8)
                     {
                         startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                        HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        String pp=  HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+String.valueOf(n)+"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                        System.out.println(pp);
                     }
                 }
             }

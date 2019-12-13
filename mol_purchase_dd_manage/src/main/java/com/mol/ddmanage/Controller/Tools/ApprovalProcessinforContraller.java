@@ -37,8 +37,8 @@ public class ApprovalProcessinforContraller
      * @return
      */
     @RequestMapping("/SubmitApprovalData")
-    public Map SubmitApprovalData(@RequestParam String id,@RequestParam String amountMin,@RequestParam String amountMax, @RequestParam String status, @RequestParam String approval_ids)
+    public Map SubmitApprovalData(@RequestParam String id,@RequestParam String amountMin,@RequestParam String amountMax, @RequestParam String status, @RequestParam String approval_ids,@RequestParam String Unlock_ids_str)
     {
-        return approvalProcessinforService.SubmitApprovalDataLogic(id,amountMin,amountMax,status,approval_ids);
+        return approvalProcessinforService.SubmitApprovalDataLogic(id,amountMin,amountMax,status,approval_ids,Unlock_ids_str);
     }
 }

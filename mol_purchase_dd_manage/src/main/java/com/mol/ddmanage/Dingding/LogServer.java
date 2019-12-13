@@ -2,6 +2,7 @@ package com.mol.ddmanage.Dingding;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mol.ddmanage.Service.DepartmentManagement.AddJurisdictionService;
 import com.mol.ddmanage.Service.DepartmentManagement.UpdateUserService;
 import com.mol.ddmanage.Service.StartInspectionService;
 import com.mol.ddmanage.Util.Dingding_Tools;
@@ -24,7 +25,7 @@ public class LogServer {
     @Scheduled(fixedRate=1000*60*60*6)//6小时更新一次
     private void configureTasks() {
         Dingding_config.DingdingAPP_Token= Dingding_Tools.GetAPPdingding_token();
-        if ( Dingding_config.DingdingAPP_Token!=null)
+        if (Dingding_config.DingdingAPP_Token!=null)
         {
             System.out.println("服务注册成功");
             UpdateUser();
@@ -34,6 +35,14 @@ public class LogServer {
             System.out.println("服务注册失败");
         }
 }
+
+     @Resource
+     AddJurisdictionService addJurisdictionService;
+    @Scheduled(fixedRate=1000*60*60*6)//24小时更新一次
+    private void ViewRole()//查看权限表里是否有超级管理员，如果没有需要创建一个超级管理员
+    {
+        System.out.println(addJurisdictionService.ViewRoles());
+    }
 
      @Resource
     StartInspectionService startInspectionService;
