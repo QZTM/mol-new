@@ -574,7 +574,7 @@ public class ActService {
         try{
             for (ExpertUser expertUser : userList) {
                 //发送钉钉通知
-                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT, tokenService.getToken());
+                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.getInstance().getExpertAgentId(), tokenService.getToken());
                 log.info("钉钉给专家："+expertUser.getId()+"通知发送结果："+serviceResult.getMessage());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
@@ -607,7 +607,7 @@ public class ActService {
         try{
             for (SupplierSalesman salesman : saleManList) {
                 //发送钉钉通知
-                ServiceResult serviceResult = sendNotificationImp.sendOaFromThird(salesman.getDdUserId(), Constant.AGENTID_THIRDPLAT, tokenService.getToken());
+                ServiceResult serviceResult = sendNotificationImp.sendOaFromThird(salesman.getDdUserId(), Constant.getInstance().getSupplierAgentId(), tokenService.getToken());
                 log.info("钉钉给专家："+salesman.getId()+"通知发送结果："+serviceResult.getMessage());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
@@ -628,7 +628,7 @@ public class ActService {
         AppUser au = findAppUserById(staffId);
         try{
             //发送钉钉通知
-            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.AGENTID_EXPERT);
+            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.getInstance().getExpertAgentId());
             log.info("钉钉给采购人员："+staffId+"发送通知结果："+serviceResult.getMessage());
             //发送短信通知
             String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, au.getMobile());

@@ -31,6 +31,8 @@ public class QuoteEndJob implements Job{
 
 
 	@Autowired
+	private Constant constant;
+	@Autowired
 	private PurchaseService purchaseService;
 
 	@Autowired
@@ -143,7 +145,7 @@ public class QuoteEndJob implements Job{
 						break;
 					}
 					log.info("给专家"+expertId+"发送通知...");
-					sendNotificationImp.sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,token);
+					sendNotificationImp.sendOaFromExpert(expertId, constant.getExpertAgentId(),token);
 				}
 
 
@@ -169,7 +171,7 @@ public class QuoteEndJob implements Job{
 					e.printStackTrace();
 				}
 				log.info("通过eureka获取到的token："+token);
-				sendNotificationImp.sendOaFromE(purchaseMainPersonDDId,"",token,Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+				sendNotificationImp.sendOaFromE(purchaseMainPersonDDId,"",token,constant.getPurchaseAgentId(),"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
 			}
 		}
 

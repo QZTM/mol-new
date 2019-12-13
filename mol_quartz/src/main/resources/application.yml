@@ -72,7 +72,12 @@ eureka:
 #            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
 #            tablePrefix: QRTZ_
 
-
+supplier:
+  agentid: @supplieragentid@
+expert:
+  agentid: @expertagentid@
+purchase:
+  agentid: @purchaseagentid@
 
 
 

@@ -25,6 +25,9 @@ import java.util.concurrent.ExecutionException;
 public class ExpertReviewEndJob implements Job {
 
     @Autowired
+    private Constant constant;
+
+    @Autowired
     private PurchaseService purchaseService;
 
     @Autowired
@@ -71,6 +74,6 @@ public class ExpertReviewEndJob implements Job {
             e.printStackTrace();
         }
         log.info("通过eureka获取到的token："+token);
-        SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token, Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+        SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token, constant.getPurchaseAgentId(),"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
     }
 }

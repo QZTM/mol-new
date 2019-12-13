@@ -146,7 +146,7 @@ ActController {
 
         //发送通知
         DDUser user = JWTUtil.getUserByRequest(request);
-        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), Constant.AGENTID);
+        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), Constant.getInstance().getPurchaseAgentId());
         logger.info("启动流程实例  发起通知  result:"+serviceResult.getMessage());
 
         //发送短信通知
@@ -193,7 +193,7 @@ ActController {
                 //给下个任务处理人发通知和短信
                 AppUser appUserById = actService.findAppUserById(sendUserId);
                 //发送钉钉通知
-                sendNotificationImp.sendOaFromE(appUserById.getDdUserId(),appUserById.getUserName(),tokenService.getToken(),Constant.AGENTID);
+                sendNotificationImp.sendOaFromE(appUserById.getDdUserId(),appUserById.getUserName(),tokenService.getToken(),Constant.getInstance().getPurchaseAgentId());
                 //发送短信通知
                 sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),appUserById.getMobile());
             }else {
