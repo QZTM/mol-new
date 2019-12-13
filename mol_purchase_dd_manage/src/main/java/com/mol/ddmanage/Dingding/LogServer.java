@@ -3,6 +3,7 @@ package com.mol.ddmanage.Dingding;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mol.ddmanage.Service.DepartmentManagement.UpdateUserService;
+import com.mol.ddmanage.Service.StartInspectionService;
 import com.mol.ddmanage.Util.Dingding_Tools;
 import com.mol.ddmanage.config.Dingding_config;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ import java.util.Map;
 @EnableScheduling   // 2.开启定时任务
 public class LogServer {
     //或直接指定时间间隔，例如：5秒
-    @Scheduled(fixedRate=1000*3000)
+    @Scheduled(fixedRate=1000*60*60*6)//6小时更新一次
     private void configureTasks() {
         Dingding_config.DingdingAPP_Token= Dingding_Tools.GetAPPdingding_token();
         if ( Dingding_config.DingdingAPP_Token!=null)
@@ -33,6 +34,16 @@ public class LogServer {
             System.out.println("服务注册失败");
         }
 }
+
+     @Resource
+    StartInspectionService startInspectionService;
+     @Scheduled(fixedRate = 1000*60*60*24)//24小时更新一次
+     private void StartInspection()
+     {
+         startInspectionService.Inspection_fy_buy_channel();//审批状态表
+         startInspectionService.Inspection_app_purchase_approve();//审批流程表
+         startInspectionService.Inspection_app_org_buy_channel_approve_middle();//审批中间表
+     }
 
     @Resource
     UpdateUserService updateUserService;

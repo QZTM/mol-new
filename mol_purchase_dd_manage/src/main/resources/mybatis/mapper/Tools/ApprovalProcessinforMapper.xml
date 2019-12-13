@@ -25,4 +25,8 @@ FROM app_org_buy_channel_approve_middle WHERE app_org_buy_channel_approve_middle
     <select id="Get_app_user_id" resultType="java.util.Map">
         select * from app_user where id=#{id};
     </select>
+
+    <select id="Get_app_purchase_approve" resultType="java.util.Map">
+        select * from app_purchase_approve where id=#{id}
+    </select>
 </mapper>

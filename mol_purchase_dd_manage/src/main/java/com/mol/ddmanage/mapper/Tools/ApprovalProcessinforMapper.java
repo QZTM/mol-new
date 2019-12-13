@@ -13,4 +13,5 @@ public interface ApprovalProcessinforMapper
     Map Get_app_user(String user_id);//获取人员列表
     Map Get_app_user_id(String id);//获取人员列表
     Map Get_app_org_buy_channel_approve_middle(String id);//获取审核中间表
+    Map Get_app_purchase_approve(String id);//获取审批表
 }
