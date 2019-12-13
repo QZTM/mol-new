@@ -1,7 +1,9 @@
 package com.mol.purchase.service.activiti;
 
+import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.github.pagehelper.PageHelper;
 import com.mol.config.Constant;
+import com.mol.config.NotificationConfig;
 import com.mol.notification.SendNotification;
 import com.mol.purchase.config.ExecutorConfig;
 import com.mol.purchase.config.OrderStatus;
@@ -12,15 +14,18 @@ import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
+import com.mol.purchase.expertClient.ExpertClient;
 import com.mol.purchase.mapper.newMysql.*;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiCommentMapper;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiProcinstMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.fyPurchaseDetailMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.fyPurchaseMapper;
 import com.mol.purchase.service.token.TokenService;
+import com.mol.purchase.supplierClient.SupplierClient;
 import com.mol.sms.SendMsmHandler;
 import com.mol.sms.XiaoNiuMsm;
 import com.mol.sms.XiaoNiuMsmTemplate;
+import entity.NotificationModel;
 import entity.ServiceResult;
 import entity.dd.DDUser;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -99,8 +104,16 @@ public class ActService {
     BdSupplierSalesmanMapper supplierSalesmanMapper;
     @Autowired
     SendNotification sendNotificationImp;
+    //获取dd的token
     @Autowired
     private TokenService tokenService;
+    //供应商端token
+    @Autowired
+    private SupplierClient supplierClient;
+    //专家端token
+    @Autowired
+    private ExpertClient expertClient;
+
     @Autowired
     private QuotePayresultMapper quotePayresultMapper;
     @Autowired
@@ -553,18 +566,21 @@ public class ActService {
 
     //4.专家发通知
     @Async
-    public ListenableFuture<Integer> getExpertSendMessage(List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName) {
+    public ListenableFuture<Integer> getExpertSendMessage(List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
         log.info("给订单推荐专家发送dd通知和短信");
-        if (detailList.get(0).getExpertId()==null){
+        if (detailList.get(0)==null){
             log.info("没有推荐专家，不需要发送dd通知");
             return new AsyncResult<>(0);
         }
         Set<String> expetSet = new HashSet<>();
         for (PurchaseDetail purchaseDetail : detailList) {
-            String[] split = purchaseDetail.getExpertId().split(",");
-            for (String s : split) {
-                expetSet.add(s);
+            if(purchaseDetail.getExpertId().length()>0){
+                String[] split = purchaseDetail.getExpertId().split(",");
+                for (String s : split) {
+                    expetSet.add(s);
+                }
             }
+
         }
         List <ExpertUser> userList=new ArrayList<>();
         for (String s : expetSet) {
@@ -574,8 +590,21 @@ public class ActService {
         try{
             for (ExpertUser expertUser : userList) {
                 //发送钉钉通知
-                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT, tokenService.getToken());
-                log.info("钉钉给专家："+expertUser.getId()+"通知发送结果："+serviceResult.getMessage());
+//                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT, tokenService.getToken());
+//                log.info("钉钉给专家："+expertUser.getId()+"通知发送结果："+serviceResult.getMessage());
+                NotificationModel nm = new NotificationModel();
+                nm.setAgentId(Constant.AGENTID_EXPERT);
+                nm.setContent(notificationContant);
+                nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+                nm.setMessageUrl(NotificationConfig.EXPERT_APP);
+                nm.setText("摩尔易购");
+                nm.setToAllUser(false);
+                nm.setToken(expertClient.getToken());
+                nm.setUserList(expertUser.getDdId());
+                nm.setTitle(notificationTitle);
+                OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+
+                log.info("钉钉给议价负责人员："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
                 log.info("钉钉给采购人员："+expertUser.getId()+"发送短信结果："+s);
@@ -591,7 +620,7 @@ public class ActService {
 
     //报价人员
     @Async
-    public ListenableFuture<Integer> getSaleManSendMessage(List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName) {
+    public ListenableFuture<Integer> getSaleManSendMessage(List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
 
         Set<String> supplierSet=new HashSet<>();
         for (PurchaseDetail purchaseDetail : detailList) {
@@ -607,8 +636,18 @@ public class ActService {
         try{
             for (SupplierSalesman salesman : saleManList) {
                 //发送钉钉通知
-                ServiceResult serviceResult = sendNotificationImp.sendOaFromThird(salesman.getDdUserId(), Constant.AGENTID_THIRDPLAT, tokenService.getToken());
-                log.info("钉钉给专家："+salesman.getId()+"通知发送结果："+serviceResult.getMessage());
+                NotificationModel nm = new NotificationModel();
+                nm.setAgentId(Constant.AGENTID_THIRDPLAT);
+                nm.setContent(notificationContant);
+                nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+                nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
+                nm.setText("摩尔易购");
+                nm.setToAllUser(false);
+                nm.setToken(supplierClient.getToken());
+                nm.setUserList(salesman.getDdUserId());
+                nm.setTitle(notificationTitle);
+                OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+                log.info("钉钉给议价负责人员："+salesman.getDdUserId()+"发送通知结果："+omar+",token:"+supplierClient.getToken());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
                 log.info("钉钉给采购人员："+salesman.getId()+"发送短信结果："+s);
@@ -622,14 +661,27 @@ public class ActService {
     }
 
     @Async
-    public ListenableFuture<Integer> getAuSendMessage(String staffId,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName) {
+    public ListenableFuture<Integer> getAuSendMessage(String staffId,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
         log.info("给订单发起人员发送dd通知和短信");
 
         AppUser au = findAppUserById(staffId);
         try{
             //发送钉钉通知
-            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.AGENTID_EXPERT);
-            log.info("钉钉给采购人员："+staffId+"发送通知结果："+serviceResult.getMessage());
+//            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.AGENTID_EXPERT);
+//            log.info("钉钉给采购人员："+staffId+"发送通知结果："+serviceResult.getMessage());
+            NotificationModel nm = new NotificationModel();
+            nm.setAgentId(Constant.AGENTID);
+            nm.setContent(notificationContant);
+            nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+            nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
+            nm.setText("摩尔易购");
+            nm.setToAllUser(false);
+            nm.setToken(tokenService.getToken());
+            nm.setUserList(au.getDdUserId());
+            nm.setTitle(notificationTitle);
+            OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+
+            log.info("钉钉给议价负责人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
             //发送短信通知
             String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, au.getMobile());
             log.info("钉钉给采购人员："+staffId+"发送短信结果："+s);
@@ -735,8 +787,78 @@ public class ActService {
         t.setPurchaseApproveId(id+"");
         return appOrgBuyChannelApproveMiddleMapper.updateByPrimaryKeySelective(t);
     }
+
+
+
     //给议价负责人发送通知
-    public ListenableFuture<Integer> getPurMainPerson(String orgId, Integer buyChannelId) {
-        return null;
+    @Async
+    public ListenableFuture<Integer> getPurMainPerson(String orgId, Integer buyChannelId,SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant ) {
+        if(orgId==null || buyChannelId==null){
+            log.info("给议价负责人发送通知和短信失败！ 参数orgid:"+orgId+",buychannelId:"+buyChannelId);
+            return null;
+        }
+        AppOrgBuyChannelApproveMiddle t = new AppOrgBuyChannelApproveMiddle();
+        t.setAppOrgId(orgId);
+        t.setBuyChannelId(buyChannelId+"");
+        AppOrgBuyChannelApproveMiddle aobam=appOrgBuyChannelApproveMiddleMapper.selectOne(t);
+        log.info("查询到AppOrgBuyChannelApproveMiddle ："+aobam);
+        if (aobam==null && aobam.getPurchaseApproveId()==null){
+            log.info("中间表数据查询失败");
+            return null;
+        }
+        AppPurchaseApprove apa = appPurchaseApproveMapper.selectByPrimaryKey(aobam.getPurchaseApproveId());
+        log.info("查询到的议价负责人id："+apa.getPurchaseMainPerson());
+        if (apa==null && apa.getPurchaseMainPerson()==null){
+            log.info("查询议价负责人查询失败:"+apa);
+            return null;
+        }
+        AppUser ap  =new AppUser();
+        ap.setId(apa.getPurchaseMainPerson());
+        AppUser appUser = appUserMapper.selectOne(ap);
+        log.info("查询到的议价负责人ddId:"+appUser.getDdUserId());
+        if (appUser==null && appUser.getDdUserId()==null){
+            log.info("查询议价负责人ddId查询失败:"+apa);
+            return null;
+        }
+        //发送钉钉通知(成功）
+        //ServiceResult serviceResult = sendNotificationImp.sendOaFromE(appUser.getDdUserId(),null,tokenService.getToken(),Constant.AGENTID);
+        //log.info("钉钉给议价负责人员："+appUser.getId()+"发送通知结果："+serviceResult.getMessage());
+        NotificationModel nm = new NotificationModel();
+        nm.setAgentId(Constant.AGENTID);
+        nm.setContent(notificationContant);
+        nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+        nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
+        nm.setText("摩尔易购");
+        nm.setToAllUser(false);
+        nm.setToken(tokenService.getToken());
+        nm.setUserList(appUser.getDdUserId());
+        nm.setTitle(notificationTitle);
+        OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+        log.info("钉钉给议价负责人员："+appUser.getId()+"发送通知结果："+omar+",token:"+tokenService.getToken());
+        //发送短信通知
+        String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, appUser.getMobile());
+        log.info("钉钉给采购人员："+appUser.getId()+"发送短信结果："+s);
+        return new AsyncResult<>(1);
+    }
+
+    //发送通知审批
+    @Async
+    public ListenableFuture<Integer> getApprove(String ddUserId,String phone ,SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
+        NotificationModel nm = new NotificationModel();
+        nm.setAgentId(Constant.AGENTID);
+        nm.setContent(notificationContant);
+        nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+        nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
+        nm.setText("摩尔易购");
+        nm.setToAllUser(false);
+        nm.setToken(tokenService.getToken());
+        nm.setUserList(ddUserId);
+        nm.setTitle(notificationTitle);
+        OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+        log.info("钉钉给议价负责人员："+ddUserId+"发送通知结果："+omar+",token:"+tokenService.getToken());
+        //发送短信通知
+        String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName,phone);
+        log.info("钉钉给采购人员："+ddUserId+"发送短信结果："+s);
+        return new AsyncResult<>(1);
     }
 }

@@ -1,6 +1,7 @@
 package com.mol.purchase.controller.activiti;
 
 import com.mol.config.Constant;
+import com.mol.config.NotificationConfig;
 import com.mol.notification.SendNotification;
 import com.mol.notification.SendNotificationImp;
 import com.mol.purchase.entity.*;
@@ -192,10 +193,11 @@ ActController {
                 logger.info("当前任务完成，向下一审批人发通知:"+sendUserId);
                 //给下个任务处理人发通知和短信
                 AppUser appUserById = actService.findAppUserById(sendUserId);
+                ListenableFuture<Integer> purMainPersonSendMessage=actService.getApprove(appUserById.getDdUserId(),appUserById.getMobile(),sendMsmHandler, XiaoNiuMsmTemplate.提醒领导审批订单模板(),NotificationConfig.通过,NotificationConfig.审批负责人_NEW);
                 //发送钉钉通知
-                sendNotificationImp.sendOaFromE(appUserById.getDdUserId(),appUserById.getUserName(),tokenService.getToken(),Constant.AGENTID);
+                //sendNotificationImp.sendOaFromE(appUserById.getDdUserId(),appUserById.getUserName(),tokenService.getToken(),Constant.AGENTID);
                 //发送短信通知
-                sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),appUserById.getMobile());
+                //sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),appUserById.getMobile());
             }else {
                 logger.info("订单审批任务通过");
 
@@ -210,11 +212,11 @@ ActController {
                 List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
                 logger.info("修改专家推荐的采纳状态");
                 if(detailList.size()>0){
-                    logger.info("开始修改专家推荐的采纳状态："+detailList.size());
+                    //logger.info("开始修改专家推荐的采纳状态："+detailList.size());
                     //修改选中的专家推荐表中的采纳状态
-                    actService.updataExpertRecommendChecked(pur.getId(),detailList);
+                    //actService.updataExpertRecommendChecked(pur.getId(),detailList);
                     //修改未选中的专家推荐表中的采纳状态
-                    actService.updataExpertRecommendNotChecked(pur.getId());
+                    //actService.updataExpertRecommendNotChecked(pur.getId());
                 }
 
 
@@ -224,21 +226,21 @@ ActController {
                 //1.判断订单是否（电子合同，专家推荐）二有一，有则插入数据记录
                 if ("true".equals(pur.getExpertReview()) || "true".equals(pur.getElectronicContract())){
                     logger.info("订单需要支付专家费用或者电子合同费用，插入新数据");
-                    actService.saveQuotePayresult(pur);
+                    //actService.saveQuotePayresult(pur);
                 }
                 //设置订单结束审批的时间
                 int i = actService.updataPurchaseApprovalEndTime(pur.getId());
                 logger.info("写入订单结束审批的时间 result:"+i);
 
 
-                //1.给采购部门主管发短信，通知
-                ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId());
-                //2.给选中的专家发短信，通知
-                ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板());
-                //3.给发起采购的采购人员发短信，通知
-                ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板());
-                //4.给供应商下的报价人发短信，通知
-                ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板());
+                //1.给采购部门主管发短信，通知（P）
+                ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.议价负责人_PASS);
+                //2.给选中的专家发短信，通知（E)
+                ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板(),NotificationConfig.通过,NotificationConfig.专家端_PASS);
+                //3.给发起采购的采购人员发短信，通知(p)
+                ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.采购人_PASS);
+                //4.给供应商下的报价人发短信，通知(s)
+                ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.供应商_PASS);
             }
         }else{
             //审批拒绝
@@ -252,13 +254,14 @@ ActController {
             List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
             //修改未选中的专家推荐表中的adopt
             actService.updataExpertRecommendNotChecked(pur.getId());
-            //1.给采购部门主管发短信，通知
+            //1.给议价负责人发短信，通知
+            ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.议价负责人_REFUSE);
             //2.给选中的专家发短信，通知
-            ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家发送评审失败结果模板());
+            ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家发送评审失败结果模板(),NotificationConfig.拒绝,NotificationConfig.专家端_REFUSE);
             //3.给发起采购的采购人员发短信，通知
-            ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板());
+            ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.采购人_REFUSE);
             //4.给供应商下的报价人发短信，通知
-            ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板());
+            ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.供应商_REFUSE);
 
         }
 
