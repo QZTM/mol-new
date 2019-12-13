@@ -302,16 +302,39 @@
         upload.render({
             elem: '#test2'
             ,url: '/file/uploadMany'
+            // ,exts: 'gif|jpg|jpeg|png|bmp|png'
+            ,acceptMime: 'image/*'
             ,multiple: true
+            ,auto: true
+            ,size: 2*1024
             ,asy: false
-            ,before: function(obj){
-                //预读本地文件示例，不支持ie8
-                obj.preview(function(index, file, result){
-                    $('#demo2').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="width:90%;">')
-                });
+            ,bindAction: "#save"
+            // ,before: function(obj){
+            //     //预读本地文件示例，不支持ie8
+            //     obj.preview(function(index, file, result){
+            //         $('#demo2').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="width:100%;padding:none;">')
+            //     });
+            // }
+            ,choose: function (obj) { //obj参数包含的信息，跟 choose回调完全一致
+                //将每次选择的文件追加到文件队列
+                files = obj.pushFile();
+                //layer.load(); //上传loading
+                obj.preview(function (index, file, result) {
+                    $(".layui-upload-list").append('<img src="' + result + '" id="remove_' + index + '" title="双击删除该图片" style="width:100%;height:auto;">')
+                    $('#remove_' + index).bind('dblclick', function () {//双击删除指定预上传图片
+                        delete files[index];//删除指定图片
+                        $(this).remove();
+                    })
+                    //console.log(1, index); //得到文件索引
+                    //console.log(2, file.name); //得到文件对象
+                    //console.log(3, result); //得到文件base64编码，比如图片
+                })
             }
             ,done: function(res){
                 //上传完毕
+                if(res.success){
+                    alertMsg("上传成功！");
+                }
             }
         });
 

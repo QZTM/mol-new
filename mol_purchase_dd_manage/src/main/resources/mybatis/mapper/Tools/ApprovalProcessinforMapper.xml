@@ -12,7 +12,7 @@ FROM app_org_buy_channel_approve_middle WHERE app_org_buy_channel_approve_middle
     </select>
 
     <update id="Updata_app_purchase_approve">
-        update app_purchase_approve set purchase_approve_list=#{purchase_approve_list} where id=#{app_purchase_approve_id}
+        update app_purchase_approve set purchase_approve_list=#{purchase_approve_list},purchase_main_person=#{Unlock_ids_str} where id=#{app_purchase_approve_id}
     </update>
 
     <update id="updata_fy_buy_channel">
@@ -24,5 +24,9 @@ FROM app_org_buy_channel_approve_middle WHERE app_org_buy_channel_approve_middle
     </select>
     <select id="Get_app_user_id" resultType="java.util.Map">
         select * from app_user where id=#{id};
+    </select>
+
+    <select id="Get_app_purchase_approve" resultType="java.util.Map">
+        select * from app_purchase_approve where id=#{id}
     </select>
 </mapper>

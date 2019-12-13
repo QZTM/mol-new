@@ -1,5 +1,11 @@
 package com.mol.supplier.config;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import util.TimeUtil;
 
 import java.text.ParseException;
@@ -10,28 +16,35 @@ import java.util.Date;
 /**
  * 钉钉微应用参数
  */
+@Component
+@Configuration
+@Log
 public class MicroAttr {
-    public static final String CROPID = "ding6ef23b66fc0611a335c2f4657eb6378f";
-//    public static final String APP_KEY = "dingm6ltqohyp8oevxrp";
-//    public static final String APP_SECRET = "tLJc6hTfKKStJwZJtAvQ8omtC7TLqifQs8ZUvc9YClPB0SFMEt7ggYBQYXzVqlbL";
-//    public static final String AGENTID = "277589845";
 
+    public MicroAttr(){
+        log.info("初始化自定义配置类");
+    }
 
-//    public static final String APP_KEY = "dingahkyew1sw286fzdb";
-//    public static final String APP_SECRET = "8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr";
-//    public static final String AGENTID = "280301722";
-//
-//
-    public static final String APP_KEY = "ding8y9wfet5dxnobbpm";
-    public static final String APP_SECRET = "qrbdorINEMrMLTiflvQFQ57i2qQfx8Akm6aw-0rsbpbTCoedHs60cpNZjGq4EWGH";
-    public static final String AGENTID = "280740196";
-
-
-    //服务器上测试版本使用：
-//    public static final String APP_KEY = "dingwgy9ilfon7ovxl9r";
-//    public static final String APP_SECRET = "FxoA6whPb7LyXgIN9oOa4oyyZUqr2k5rpjNkjHSKyg-PLY2_nx-LA2AwmYPJNxHM";
-//    public static final String AGENTID = "280533794";
-
+    @Getter
+    @Setter
+    @Value("${corpid}")
+    private String corpId ;
+    @Getter
+    @Setter
+    @Value("${appkey}")
+    private String appKey ;
+    @Getter
+    @Setter
+    @Value("${appsecret}")
+    private String appSecret ;
+    @Getter
+    @Setter
+    @Value("${agentid}")
+    private String agentId ;
+    @Getter
+    @Setter
+    @Value("${server.port}")
+    private String port ;
 
     //供应商认证完成
     public static final Integer  SUPSTATE_SUCCESS = 1;

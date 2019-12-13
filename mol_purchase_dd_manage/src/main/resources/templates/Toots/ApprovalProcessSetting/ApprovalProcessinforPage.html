@@ -70,7 +70,7 @@
 
     <div style="width: 100% ;height: 200px;font-size: 20px;margin-top: 12px">
         <div style=" width: 150px;height: 35px;background-color:#2D93CA;border-radius: 6px;text-align:center;color:#fbfbfb;">
-            <p>审核解锁人</p>
+            <p>议价人</p>
         </div>
         <div id="Unlock_Peolpe" style="float: left;margin-top: 24px">
 
@@ -132,6 +132,12 @@
                 {
                     add_approval_view(data.user_names[n],data.user_ids[n]);
                 }
+                if (data.purchase_main_person_dd_user_id!="")
+                {
+                    add_Unlock_Peolpe(data.purchase_main_person_user_name,data.purchase_main_person_dd_user_id)
+                }
+
+
                // parent.close_Details_page();
             },
             error: function (data) {
@@ -167,7 +173,7 @@
         {
             add_approval_view(name,id)
         }
-        else if (indexs===2)//解锁人
+        else if (indexs===2)//议价人
         {
             add_Unlock_Peolpe(name,id)
         }
@@ -180,23 +186,24 @@
     function add_approval_view(name,id)//添加审批视图
     {
         var element=document.getElementById("approval_view");
-        if (element.childNodes.length>1)
+/*        if (element.childNodes.length>1)
         {
             var divitem_1 = document.createElement("div");//添加箭头
             divitem_1.style.display="inline-block";
+           // divitem_1.onclick="delete_electment(this)"
             var div_1 = document.getElementById("approval_view");
             divitem_1.innerHTML =
-                ' <div style="display: inline-block;margin-left: 12px;vertical-align:top;margin-top: 20px">'+
-                ' <img style="width: 50px;height: 50px;" src="/imge/jiantou.jpg">'+
+                ' <div  style="display: inline-block;margin-left: 12px;vertical-align:top;margin-top: 20px">'+
+                ' <img  style="width: 50px;height: 50px;" src="/imge/jiantou.jpg">'+
                 ' </div>'
             div_1.appendChild(divitem_1);
-        }
+        }*/
             var divitem = document.createElement("div");
             divitem.style.display = "inline-block";
             var div = document.getElementById("approval_view");
             divitem.innerHTML =
                 '<div style="display: inline-block;margin-left: 12px;vertical-align:top">' +
-                '<div>' +
+                '<div onclick="delete_electment(this)">' +
                 ' <img src="/imge/timg.jpg" style="height: 80px;width: 80px;" class="layui-nav-img">' +
                 '</div>' +
                 ' <div style="width: 80px;text-align: center;font-size: 18px">' +
@@ -207,14 +214,14 @@
             div.appendChild(divitem);
     }
     
-    function add_Unlock_Peolpe(name,id) //审核解锁人
+    function add_Unlock_Peolpe(name,id) //议价人
     {
         var divitem = document.createElement("div");
         divitem.style.display = "inline-block";
         var div = document.getElementById("Unlock_Peolpe");
         divitem.innerHTML =
             '<div style="display: inline-block;margin-left: 12px;vertical-align:top">' +
-            '<div>' +
+            '<div onclick="delete_electment(this)">' +
             ' <img src="/imge/timg.jpg" style="height: 80px;width: 80px;" class="layui-nav-img">' +
             '</div>' +
             ' <div style="width: 80px;text-align: center;font-size: 18px">' +
@@ -261,11 +268,27 @@
                 approval_ids=approval_ids+","+approval_ids_huml[n].innerText
             }
         }
+
+        var Unlock_ids=document.getElementsByClassName("Unlock_ids")
+        var Unlock_ids_str="";
+        for (var n=0;n<Unlock_ids.length;n++)
+        {
+
+            if (n===0)
+            {
+                Unlock_ids_str=Unlock_ids[n].innerText
+            }
+            else
+            {
+                Unlock_ids_str=Unlock_ids_str+","+Unlock_ids[n].innerText
+            }
+        }
+
         $.ajax({
             type: 'POST',
             url: '/ApprovalProcessinforContraller/SubmitApprovalData',
             dataType: 'json',
-             data:{id:[[${id}]],amountMin:amountMin,amountMax:amountMax, status:status,approval_ids:approval_ids},
+             data:{id:[[${id}]],amountMin:amountMin,amountMax:amountMax, status:status,approval_ids:approval_ids, Unlock_ids_str:Unlock_ids_str},
             // headers:{  'eticket': app.globalData.eticket},
             success: function (data) {
                 parent.close_Details_page();
@@ -280,9 +303,16 @@
     {
         layer.confirm('确定要提交表单吗？', function(){
             SubmitData()
-
             layer.close(layer.index)
         });
+    }
+    function delete_electment(e) {
+        layer.confirm('是否移除此人员？', function(){
+            var electment=e.parentElement.parentElement;
+            electment.remove();
+            layer.close(layer.index)
+        });
+
     }
     function return_top()//返回上一层
     {

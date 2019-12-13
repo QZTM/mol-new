@@ -22,6 +22,9 @@ public class MicroDdJsApiAuthService {
     @Autowired
     private MicroJsapiTicketService microJsapiTicketService;
 
+    @Autowired
+    private MicroAttr microAttr;
+
 
     public Map getAuthMap(HttpServletRequest request){
         /**
@@ -53,8 +56,8 @@ public class MicroDdJsApiAuthService {
         configValue.put("signature", signature);
         configValue.put("nonceStr", nonceStr);
         configValue.put("timeStamp", timeStamp);
-        configValue.put("corpId", MicroAttr.CROPID);
-        configValue.put("agentId", MicroAttr.AGENTID);
+        configValue.put("corpId", microAttr.getCorpId());
+        configValue.put("agentId", microAttr.getAgentId());
         return configValue;
     }
 

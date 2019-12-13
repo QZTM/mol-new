@@ -45,6 +45,8 @@ ActController {
     private static final Logger logger=LoggerFactory.getLogger(ActController.class);
 
     @Autowired
+    private Constant constant;
+    @Autowired
     ActService actService;
     @Autowired
     SendNotification sendNotificationImp;
@@ -147,7 +149,7 @@ ActController {
 
         //发送通知
         DDUser user = JWTUtil.getUserByRequest(request);
-        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), Constant.AGENTID);
+        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), constant.getInstance().getPurchaseAgentId());
         logger.info("启动流程实例  发起通知  result:"+serviceResult.getMessage());
 
         //发送短信通知
@@ -212,11 +214,11 @@ ActController {
                 List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
                 logger.info("修改专家推荐的采纳状态");
                 if(detailList.size()>0){
-                    //logger.info("开始修改专家推荐的采纳状态："+detailList.size());
+                    logger.info("开始修改专家推荐的采纳状态："+detailList.size());
                     //修改选中的专家推荐表中的采纳状态
-                    //actService.updataExpertRecommendChecked(pur.getId(),detailList);
+                    actService.updataExpertRecommendChecked(pur.getId(),detailList);
                     //修改未选中的专家推荐表中的采纳状态
-                    //actService.updataExpertRecommendNotChecked(pur.getId());
+                    actService.updataExpertRecommendNotChecked(pur.getId());
                 }
 
 
@@ -226,7 +228,7 @@ ActController {
                 //1.判断订单是否（电子合同，专家推荐）二有一，有则插入数据记录
                 if ("true".equals(pur.getExpertReview()) || "true".equals(pur.getElectronicContract())){
                     logger.info("订单需要支付专家费用或者电子合同费用，插入新数据");
-                    //actService.saveQuotePayresult(pur);
+                    actService.saveQuotePayresult(pur);
                 }
                 //设置订单结束审批的时间
                 int i = actService.updataPurchaseApprovalEndTime(pur.getId());

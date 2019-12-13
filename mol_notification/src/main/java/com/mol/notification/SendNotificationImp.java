@@ -8,7 +8,6 @@ import com.mol.config.URLConstant;
 import com.taobao.api.ApiException;
 import entity.NotificationModel;
 import entity.ServiceResult;
-
 import lombok.extern.java.Log;
 import util.TimeUtil;
 
@@ -16,7 +15,7 @@ import util.TimeUtil;
 public class SendNotificationImp implements SendNotification{
 
 
-    private static SendNotificationImp sendNotificationImp;
+    private static SendNotificationImp sendNotificationImp = new SendNotificationImp();
 
     private SendNotificationImp(){ }
 
@@ -114,7 +113,7 @@ public class SendNotificationImp implements SendNotification{
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setContent(TimeUtil.getNowDateTime()+"有新的采购订单来了，快去报价吧！");
-        msg.getOa().getBody().setImage("http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png");
+        msg.getOa().getBody().setImage("http://"+Constant.getInstance().getSupplierDomain()+"/static/upload/imgs/supplier/ask.png");
         msg.getOa().getBody().setTitle("新订单");
         msg.setMsgtype("oa");
         messageRequest.setMsg(msg);
@@ -148,7 +147,7 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://"+ Constant.domain +"/expert/findAll");
+        msg.getOa().setMessageUrl("http://"+ Constant.getInstance().getExpertDomain() +"/expert/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());

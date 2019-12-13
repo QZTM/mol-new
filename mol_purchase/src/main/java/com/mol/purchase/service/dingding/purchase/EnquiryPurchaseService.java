@@ -313,7 +313,7 @@ public class EnquiryPurchaseService {
             List<String> manIdList=findSaleIdList(saleManList);
             //发送通知消息
             for (String s : manIdList) {
-                sendNotification.sendOaFromThird(s, Constant.AGENTID_THIRDPLAT,tokenService.getMicroToken());
+                sendNotification.sendOaFromThird(s, Constant.getInstance().getSupplierAgentId(),tokenService.getMicroToken());
             }
             //查询人员的电话
             List<String> manPhoneList= findSalePhoneList(saleManList);

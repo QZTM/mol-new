@@ -13,4 +13,17 @@
             jurisdictionName=#{workcode}
         </foreach>
     </select>
+    
+    <select id="select_Super_administrator" resultType="java.util.Map">
+        select * from bac_position where jurisdictionName=#{jurisdictionName};
+    </select>
+
+    <insert id="Insert_admin" >
+ insert into bac_position(jurisdictionId,jurisdictionName,notice,history,bargaining,telephoneRecording,purchaseProgress,contract,electronicContract,department,`position`,staff,expertInfor,expertApproval,purchase,supplierManage,supplierApproval,approvalSet,bargainingSet,logSee,creatTime,creadStaff,status)
+        values (#{jurisdictionId},#{jurisdictionName},1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,#{creatTime},#{creadStaff},1)
+
+    </insert>
+    <insert id="insert_bac_user_position">
+        insert into  bac_user_position (id,ddUserId,jurisdictionId) values (#{id},#{ddUserId},#{jurisdictionId})
+    </insert>
 </mapper>

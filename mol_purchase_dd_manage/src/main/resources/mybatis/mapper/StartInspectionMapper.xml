@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mol.ddmanage.mapper.StartInspectionMapper">
+    <select id="Get_app_auth_org" resultType="java.util.Map">
+        select * from app_auth_org
+    </select>
+<select id="Get_fy_buy_channel" resultType="java.util.Map">
+    select * from fy_buy_channel
+</select>
+    <insert id="insert_fy_buy_channel_row">
+     insert into fy_buy_channel (id,`name`,state) values (#{id},#{name},#{state});
+    </insert>
+
+    <select id="Get_app_purchase_approve" resultType="java.util.Map">
+        select * from app_purchase_approve
+    </select>
+
+    <insert id="insert_app_purchase_approve">
+        insert into app_purchase_approve (id,purchase_main_person,purchase_approve_leader,purchase_approve_list) values (#{id},#{purchase_main_person},#{purchase_approve_leader},#{purchase_approve_list});
+    </insert>
+
+    <select id="Get_app_org_buy_channel_approve_middle" resultType="java.util.Map">
+        select * from app_org_buy_channel_approve_middle
+    </select>
+
+    <insert id="insert_app_org_buy_channel_approve_middle">
+ insert into app_org_buy_channel_approve_middle (id,app_org_id,buy_channel_id,purchase_approve_id) values (#{id},#{app_org_id},#{buy_channel_id},#{purchase_approve_id});
+    </insert>
+
+</mapper>

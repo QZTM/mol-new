@@ -51,6 +51,8 @@ public class LoginService {
     private Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     @Autowired
+    private Constant constant;
+    @Autowired
     private TokenService tokenService;
     @Autowired
     private AppOrgMapper appOrgMapper;
@@ -173,8 +175,8 @@ public class LoginService {
         AppAuthOrg newAppAuthOrg = new AppAuthOrg();
         String newOrgId = idWorker.nextId()+"";
         newAppAuthOrg.setId(newOrgId);
-        newAppAuthOrg.setDdOrgCorpId(Constant.CORP_ID);
-        newAppAuthOrg.setDdOrgAgentId(Constant.AGENTID+"");
+        newAppAuthOrg.setDdOrgCorpId(constant.getCorpId());
+        newAppAuthOrg.setDdOrgAgentId(constant.getAgentId()+"");
         newAppAuthOrg.setAuthDd(1);
         newAppAuthOrg.setOrgName(ddDept.getName());
         newAppAuthOrg.setLastLoginTime(TimeUtil.getNowDateTime());

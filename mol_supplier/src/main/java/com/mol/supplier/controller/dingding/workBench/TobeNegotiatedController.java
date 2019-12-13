@@ -79,7 +79,7 @@ public class TobeNegotiatedController {
     @RequestMapping(value = "/getTaskList", method = RequestMethod.GET)
     public List<fyPurchase> getList(@RequestParam(value = "arr",required = false) List<String> arr){
         List<fyPurchase> list= new ArrayList<>();
-        if (arr.size()>0 && arr!=null){
+        if (arr!=null && arr.size()>0){
             list=negotiatedService.findFyPurchaseByIdArr(arr);
         }else {
             list=null;

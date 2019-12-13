@@ -33,6 +33,7 @@ public class DepartmentManagementListService
         String Userinfor=JSONObject.parseObject(Dingding_Tools.GetDepartmentUser(Long.parseLong(DeparmentId))).getString("userlist")  ;//获取本门所有用户
         JSONArray Userids=JSONArray.parseArray(Userinfor);
 
+       // String admin=Dingding_Tools.Get_admin();
         for (int n=0;n<Userids.size();n++)//获取此层级下所有人员
         {
             DeparmentManagementben deparmentManagementben=new DeparmentManagementben();
