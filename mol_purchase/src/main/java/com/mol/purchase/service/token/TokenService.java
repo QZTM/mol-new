@@ -22,6 +22,9 @@ public class TokenService {
     @Autowired
     private CacheHandle cacheHandle;
 
+    @Autowired
+    private Constant constant;
+
     private final String appTokenKey = "purchase-app-token";
 
     public static final String MICROAPPTOKENKEY = "mol-supplier-microAppToken";
@@ -34,8 +37,8 @@ public class TokenService {
             try {
                 DefaultDingTalkClient client = new DefaultDingTalkClient(URL_GET_TOKKEN);
                 OapiGettokenRequest request = new OapiGettokenRequest();
-                request.setAppkey(Constant.APP_KEY);
-                request.setAppsecret(Constant.APP_SECRET);
+                request.setAppkey(constant.getAppKey());
+                request.setAppsecret(constant.getAppSecret());
                 request.setHttpMethod("GET");
                 OapiGettokenResponse response = client.execute(request);
                 token = response.getAccessToken();

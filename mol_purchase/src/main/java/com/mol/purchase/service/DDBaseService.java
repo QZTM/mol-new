@@ -25,6 +25,9 @@ public class DDBaseService {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private Constant constant;
+
     public void sendMessageToOriginator(String processInstanceId) throws RuntimeException {
         try {
             DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_PROCESSINSTANCE_GET);
@@ -54,7 +57,7 @@ public class DDBaseService {
             DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
             OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
             messageRequest.setUseridList(userId);
-            messageRequest.setAgentId(Constant.AGENTID);
+            messageRequest.setAgentId(constant.getAgentId());
             messageRequest.setToAllUser(false);
             OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
             msg.setMsgtype("text");

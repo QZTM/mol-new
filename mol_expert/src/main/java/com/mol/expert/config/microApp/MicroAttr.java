@@ -1,18 +1,33 @@
 package com.mol.expert.config.microApp;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
 /**
  * 钉钉微应用参数
  */
+@Component
+@Configuration
 public class MicroAttr {
-    public static final String CROPID = "ding6ef23b66fc0611a335c2f4657eb6378f";
-//    public static final String APP_KEY = "dingm6ltqohyp8oevxrp";
-//    public static final String APP_SECRET = "tLJc6hTfKKStJwZJtAvQ8omtC7TLqifQs8ZUvc9YClPB0SFMEt7ggYBQYXzVqlbL";
-//    public static final String AGENTID = "277589845";
-    
-    //专家端
-    public static final String APP_KEY = "dingidfnb67q9iqngk3v";
-    public static final String APP_SECRET = "d8O5t76ImQ8Wtk66OIaVyKQcBQg_hK4D3o0hrI2PDQkg7th3eBiLjbMqi9AjKCwg";
-    public static final String AGENTID = "300343663";
+    @Getter
+    @Setter
+    @Value("${corpid}")
+    private String corpId ;
+    @Getter
+    @Setter
+    @Value("${appkey}")
+    private String appKey ;
+    @Getter
+    @Setter
+    @Value("${appsecret}")
+    private String appSecret ;
+    @Getter
+    @Setter
+    @Value("${agentid}")
+    private String agentId ;
 
 
 

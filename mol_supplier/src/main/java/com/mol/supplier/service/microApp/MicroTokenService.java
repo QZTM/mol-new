@@ -24,6 +24,8 @@ public class MicroTokenService {
     private static final Logger bizLogger = LoggerFactory.getLogger(MicroTokenService.class);
 
     @Autowired
+    private MicroAttr microAttr;
+    @Autowired
     private CacheHandle cacheHandle;
 
     public static final String MICROAPPTOKENKEY = "mol-supplier-microAppToken";
@@ -36,8 +38,8 @@ public class MicroTokenService {
             try {
                 DefaultDingTalkClient client = new DefaultDingTalkClient(URL_GET_TOKKEN);
                 OapiGettokenRequest request = new OapiGettokenRequest();
-                request.setAppkey(MicroAttr.APP_KEY);
-                request.setAppsecret(MicroAttr.APP_SECRET);
+                request.setAppkey(microAttr.getAppKey());
+                request.setAppsecret(microAttr.getAppSecret());
                 request.setHttpMethod("GET");
                 OapiGettokenResponse response = client.execute(request);
                 token = response.getAccessToken();

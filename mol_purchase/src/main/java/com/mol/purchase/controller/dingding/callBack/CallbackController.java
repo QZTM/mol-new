@@ -23,6 +23,8 @@ public class CallbackController {
     private static final Logger bizLogger = LoggerFactory.getLogger(CallbackController.class);
 
     @Autowired
+    private Constant constant;
+    @Autowired
     private CallbackService callbackService;
 
 
@@ -55,8 +57,7 @@ public class CallbackController {
                                         @RequestBody(required = false) JSONObject json) {
         String params = " signature:"+signature + " timestamp:"+timestamp +" nonce:"+nonce+" json:"+json;
         try {
-            DingTalkEncryptor dingTalkEncryptor = new DingTalkEncryptor(Constant.TOKEN, Constant.ENCODING_AES_KEY,
-                    Constant.CORP_ID);
+            DingTalkEncryptor dingTalkEncryptor = new DingTalkEncryptor(Constant.TOKEN, Constant.ENCODING_AES_KEY,constant.getCorpId());
 
             //从post请求的body中获取回调信息的加密数据进行解密处理
             String encryptMsg = json.getString("encrypt");

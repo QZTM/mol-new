@@ -25,6 +25,9 @@ public class MicroTokenService {
     @Autowired
     private MicroEhcacheCacheService microEhcacheCacheService;
 
+    @Autowired
+    private MicroAttr microAttr;
+
     public static final String MICROAPPTOKENKEY = "expertToken";
     public static String MICROAPPACCESSTOKEN = "";
 
@@ -38,8 +41,8 @@ public class MicroTokenService {
             try {
                 DefaultDingTalkClient client = new DefaultDingTalkClient(URL_GET_TOKKEN);
                 OapiGettokenRequest request = new OapiGettokenRequest();
-                request.setAppkey(MicroAttr.APP_KEY);
-                request.setAppsecret(MicroAttr.APP_SECRET);
+                request.setAppkey(microAttr.getAppKey());
+                request.setAppsecret(microAttr.getAppSecret());
                 request.setHttpMethod("GET");
                 OapiGettokenResponse response = client.execute(request);
                 token = response.getAccessToken();

@@ -26,27 +26,29 @@ import java.util.Arrays;
 public class RegisterCallBackTask implements ApplicationRunner {
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private Constant constant;
 
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // 先删除企业已有的回调
-        DingTalkClient client = new DefaultDingTalkClient(URLConstant.DELETE_CALLBACK);
-        OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();request.setHttpMethod("GET");
-        String token = tokenService.getToken();
-        System.out.println("run...token:"+token);
-        client.execute(request, tokenService.getToken());
-
-        // 重新为企业注册回调
-        client = new DefaultDingTalkClient(URLConstant.REGISTER_CALLBACK);
-        OapiCallBackRegisterCallBackRequest registerRequest = new OapiCallBackRegisterCallBackRequest();
-        registerRequest.setUrl("http://"+Constant.CALLBACK_URL_HOST + "/callback");
-        registerRequest.setAesKey(Constant.ENCODING_AES_KEY);
-        registerRequest.setToken(Constant.TOKEN);
-        registerRequest.setCallBackTag(Arrays.asList("bpms_instance_change", "bpms_task_change"));
-        OapiCallBackRegisterCallBackResponse registerResponse = client.execute(registerRequest,tokenService.getToken());
-        if (registerResponse.isSuccess()) {
-            System.out.println("回调注册成功了！！！");
-        }
+//        // 先删除企业已有的回调
+//        DingTalkClient client = new DefaultDingTalkClient(URLConstant.DELETE_CALLBACK);
+//        OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();request.setHttpMethod("GET");
+//        String token = tokenService.getToken();
+//        System.out.println("run...token:"+token);
+//        client.execute(request, tokenService.getToken());
+//
+//        // 重新为企业注册回调
+//        client = new DefaultDingTalkClient(URLConstant.REGISTER_CALLBACK);
+//        OapiCallBackRegisterCallBackRequest registerRequest = new OapiCallBackRegisterCallBackRequest();
+//        registerRequest.setUrl("http://"+constant.CALLBACK_URL_HOST + "/callback");
+//        registerRequest.setAesKey(Constant.ENCODING_AES_KEY);
+//        registerRequest.setToken(Constant.TOKEN);
+//        registerRequest.setCallBackTag(Arrays.asList("bpms_instance_change", "bpms_task_change"));
+//        OapiCallBackRegisterCallBackResponse registerResponse = client.execute(registerRequest,tokenService.getToken());
+//        if (registerResponse.isSuccess()) {
+//            System.out.println("回调注册成功了！！！");
+//        }
     }
 }

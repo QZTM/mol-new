@@ -39,6 +39,8 @@ import java.util.Map;
 public class ExpertLoginController {
 
     private Logger logger = LoggerFactory.getLogger(ExpertLoginController.class);
+    @Autowired
+    private MicroAttr microAttr;
 
     @Autowired
     private MicroGetDDUserInfoService microGetDDUserInfoService;
@@ -196,8 +198,8 @@ public class ExpertLoginController {
         configValue.put("signature", signature);
         configValue.put("nonceStr", nonceStr);
         configValue.put("timeStamp", timeStamp);
-        configValue.put("corpId", MicroAttr.CROPID);
-        configValue.put("agentId", MicroAttr.AGENTID);
+        configValue.put("corpId", microAttr.getCorpId());
+        configValue.put("agentId", microAttr.getAgentId());
 
         //String config = JSON.toJSONString(configValue);
         return configValue;
