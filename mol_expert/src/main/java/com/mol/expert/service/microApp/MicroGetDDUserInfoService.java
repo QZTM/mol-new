@@ -33,7 +33,7 @@ public class MicroGetDDUserInfoService {
         request.setHttpMethod("GET");
         OapiUserGetuserinfoResponse response = new OapiUserGetuserinfoResponse();
         try{
-            response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            response = client.execute(request, microTokenService.getToken());
         }catch (Exception e){
             logger.error("通过免登授权码获取用户id失败（ddAPI）");
             e.printStackTrace();
@@ -55,7 +55,7 @@ public class MicroGetDDUserInfoService {
         request.setHttpMethod("GET");
         OapiUserGetResponse response = new OapiUserGetResponse();
         try{
-            response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            response = client.execute(request, microTokenService.getToken());
         }catch (Exception e){
             logger.error("根据用户id获取用户详情失败（ddAPI）");
             e.printStackTrace();
@@ -95,7 +95,7 @@ public class MicroGetDDUserInfoService {
         request.setHttpMethod("GET");
         OapiDepartmentGetResponse response = new OapiDepartmentGetResponse();
         try{
-            response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            response = client.execute(request, microTokenService.getToken());
         }catch (Exception e){
             logger.error("获取部门信息时出错（ddAPI）");
             e.printStackTrace();

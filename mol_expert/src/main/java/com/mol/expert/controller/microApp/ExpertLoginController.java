@@ -1,14 +1,10 @@
 package com.mol.expert.controller.microApp;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dingtalk.api.response.OapiDepartmentGetResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.oapi.lib.aes.DingTalkJsApiSingnature;
-import com.mol.expert.config.ExecutorConfig;
 import com.mol.expert.config.ExpertStatus;
-import com.mol.expert.entity.MicroApp.DDDept;
 import com.mol.expert.entity.MicroApp.DDUser;
-import com.mol.expert.mapper.newMysql.expert.ExpertUserMapper;
 import com.mol.expert.service.expert.ExpertService;
 import com.mol.expert.service.microApp.*;
 import com.mol.expert.config.microApp.MicroAttr;
@@ -19,14 +15,11 @@ import com.mol.expert.util.ServiceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.net.URLDecoder;
@@ -184,9 +177,9 @@ public class ExpertLoginController {
         String signature = null;
 
         try {
-            accessToken = microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY);
+            accessToken = microTokenService.getToken();
 
-            ticket = microJsapiTicketService.getJsApiTicket(MicroJsapiTicketService.MICROAPPJSAPITICKETKEY);
+            ticket = microJsapiTicketService.getJsApiTicket();
             signature = sign(ticket, nonceStr, timeStamp, signedUrl);
 
         } catch (OApiException e) {

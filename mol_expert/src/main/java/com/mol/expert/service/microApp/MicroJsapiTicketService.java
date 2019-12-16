@@ -3,8 +3,10 @@ package com.mol.expert.service.microApp;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
+import com.mol.cache.CacheHandle;
 import com.taobao.api.ApiException;
 import lombok.Synchronized;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +23,25 @@ public class MicroJsapiTicketService {
     public static final String MICROAPPJSAPITICKETKEY = "zhuanjiajsApiTicket";
 
     @Autowired
-    private MicroEhcacheCacheService microEhcacheCacheService;
+    private CacheHandle cacheHandle;
 
+    @Autowired
+    private MicroTokenService microTokenService;
 
-    //@Cacheable(value = "jsapiticket",key="#key")
     @Synchronized
-    public String getJsApiTicket(String key) {
-        String jsapiTicket = (String) microEhcacheCacheService.getMicroJsapiTicketCacheService().get(key);
-        if (jsapiTicket == null) {
+    public String getJsApiTicket() {
+        String jsapiTicket = cacheHandle.getStr(MICROAPPJSAPITICKETKEY);
+        if (StringUtils.isEmpty(jsapiTicket)) {
             bizLogger.info("访问钉钉服务器获取JSAPITICKET");
             DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
             OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
             req.setTopHttpMethod("GET");
             try {
-                OapiGetJsapiTicketResponse execute = client.execute(req, MicroTokenService.MICROAPPACCESSTOKEN);
+                OapiGetJsapiTicketResponse execute = client.execute(req, microTokenService.getToken());
                 System.out.println(execute.getExpiresIn());
                 bizLogger.info("JSAPITICKET:" + execute.getTicket());
                 jsapiTicket = execute.getTicket();
+                cacheHandle.saveStr(MICROAPPJSAPITICKETKEY,2*60*58,jsapiTicket);
             } catch (ApiException e) {
                 e.printStackTrace();
                 throw new RuntimeException("获取ticket时出错");
