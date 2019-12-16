@@ -1,15 +1,13 @@
 package com.mol.purchase.controller.activiti;
 
-import com.mol.config.Constant;
 import com.mol.config.NotificationConfig;
 import com.mol.notification.SendNotification;
-import com.mol.notification.SendNotificationImp;
+import com.mol.purchase.config.Constant;
 import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiProcinst;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
 import com.mol.purchase.service.activiti.ActService;
-import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.service.token.TokenService;
 import com.mol.purchase.util.JWTUtil;
@@ -149,7 +147,7 @@ ActController {
 
         //发送通知
         DDUser user = JWTUtil.getUserByRequest(request);
-        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), constant.getInstance().getPurchaseAgentId());
+        ServiceResult serviceResult = sendNotificationImp.sendOaFromE(user.getUserid(), user.getName(), tokenService.getToken(), constant.getAgentId());
         logger.info("启动流程实例  发起通知  result:"+serviceResult.getMessage());
 
         //发送短信通知
@@ -197,9 +195,9 @@ ActController {
                 AppUser appUserById = actService.findAppUserById(sendUserId);
                 ListenableFuture<Integer> purMainPersonSendMessage=actService.getApprove(appUserById.getDdUserId(),appUserById.getMobile(),sendMsmHandler, XiaoNiuMsmTemplate.提醒领导审批订单模板(),NotificationConfig.通过,NotificationConfig.审批负责人_NEW);
                 //发送钉钉通知
-                //sendNotificationImp.sendOaFromE(appUserById.getDdUserId(),appUserById.getUserName(),tokenService.getToken(),Constant.AGENTID);
+                sendNotificationImp.sendOaFromE(appUserById.getDdUserId(),appUserById.getUserName(),tokenService.getToken(),constant.getAgentId());
                 //发送短信通知
-                //sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),appUserById.getMobile());
+                sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒领导审批订单模板(),appUserById.getMobile());
             }else {
                 logger.info("订单审批任务通过");
 

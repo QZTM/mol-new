@@ -1,6 +1,8 @@
 package com.mol.config;
 
 import lombok.Getter;
+import lombok.Setter;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -8,25 +10,31 @@ import java.util.Properties;
  * 项目中的常量定义类
  * @author ly
  */
+
 public class Constant {
 
     @Getter
     private String expertDomain ;
+
     @Getter
     private String purchaseDomain;
+
     @Getter
     private String supplierDomain;
+
     @Getter
     private Long expertAgentId;
+
     @Getter
     private Long purchaseAgentId;
+
     @Getter
     private Long supplierAgentId;
 
     public Constant(){
         Properties prop = new Properties();
         try {
-            prop.load(Constant.class.getResourceAsStream("/application.properties"));
+            prop.load(Constant.class.getResourceAsStream("/notificationApplication.properties"));
             this.setPurchaseDomain(prop.getProperty("purchasedomain"));
             this.setPurchaseAgentId(Long.parseLong(prop.getProperty("purchaseagentid")));
             this.setExpertDomain(prop.getProperty("expertdomain"));

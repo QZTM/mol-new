@@ -45,6 +45,6 @@
             fq.pk_material_id =#{pkMaterialId}
             and fq.pk_supplier_id=#{supplierId}
         ORDER BY
-            fq.creationtime DESC
+            fq.creationtime ASC
     </select>
 </mapper>
