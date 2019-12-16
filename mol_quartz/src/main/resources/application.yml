@@ -1,5 +1,5 @@
 server:
-  port: 8701
+  port: @quartzport@
   tomcat:
     uri-encoding: utf-8
     max-http-post-size: 1048576000
@@ -18,9 +18,9 @@ spring:
       type: com.alibaba.druid.pool.DruidDataSource
       filters: stat
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://140.249.22.202:3306/zkfy_test_1?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
-      username: root
-      password: ald377
+      url: @dburl@
+      username: @dbusername@
+      password: @dbpassword@
       initial-size: 1
       min-idle: 1
       max-active: 20
@@ -47,7 +47,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:8700/eureka/
+      defaultZone: @eurekaserverurl@
   instance:
     prefer-ip-address: true
     #ip-address: 127.0.0.1
