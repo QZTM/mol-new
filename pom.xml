@@ -122,6 +122,9 @@
                 <manageip>192.168.1.174</manageip>
                 <manageport>8085</manageport>
                 <managedomain>manage.vaiwan.com</managedomain>
+                <!--定时任务端配置-->
+                <quartzip>127.0.0.1</quartzip>
+                <quartzport>8701</quartzport>
                 <!--数据库配置-->
                 <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>root</dbusername>
@@ -179,6 +182,9 @@
                 <manageip>192.168.1.174</manageip>
                 <manageport>8085</manageport>
                 <managedomain>manage.vaiwan.com</managedomain>
+                <!--定时任务端配置-->
+                <quartzip>127.0.0.1</quartzip>
+                <quartzport>8701</quartzport>
                 <!--数据库配置-->
                 <dburl>jdbc:mysql://localhost:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>root</dbusername>
@@ -235,6 +241,9 @@
                 <manageip>192.168.1.174</manageip>
                 <manageport>8085</manageport>
                 <managedomain>manage.vaiwan.com</managedomain>
+                <!--定时任务端配置-->
+                <quartzip>127.0.0.1</quartzip>
+                <quartzport>8701</quartzport>
                 <!--数据库配置-->
                 <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>root</dbusername>
@@ -288,6 +297,9 @@
                 <manageip>192.168.1.174</manageip>
                 <manageport>8085</manageport>
                 <managedomain>manage.vaiwan.com</managedomain>
+                <!--定时任务端配置-->
+                <quartzip>127.0.0.1</quartzip>
+                <quartzport>8701</quartzport>
                 <!--数据库配置-->
                 <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>root</dbusername>
