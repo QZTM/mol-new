@@ -29,6 +29,11 @@ public class MicroAttr {
     @Value("${agentid}")
     private String agentId ;
 
+//    //专家端(杨江彦）
+//    public static final String APP_KEY = "ding14jg3np2dvvtbiso";
+//    public static final String APP_SECRET = "35rkiTbDCRDwG5APgIpeQm89Nwhy8dg52sCpXgHuZ1KYaY6vJVBnoaud_BjyPJn7";
+//    public static final String AGENTID = "330312434";
+
 
 
 

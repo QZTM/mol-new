@@ -593,7 +593,7 @@ public class ActService {
 //                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT, tokenService.getToken());
 //                log.info("钉钉给专家："+expertUser.getId()+"通知发送结果："+serviceResult.getMessage());
                 NotificationModel nm = new NotificationModel();
-                nm.setAgentId(Constant.AGENTID_EXPERT);
+                nm.setAgentId(Constant.getInstance().getExpertAgentId());
                 nm.setContent(notificationContant);
                 nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
                 nm.setMessageUrl(NotificationConfig.EXPERT_APP);
@@ -637,7 +637,7 @@ public class ActService {
             for (SupplierSalesman salesman : saleManList) {
                 //发送钉钉通知
                 NotificationModel nm = new NotificationModel();
-                nm.setAgentId(Constant.AGENTID_THIRDPLAT);
+                nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
                 nm.setContent(notificationContant);
                 nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
                 nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
@@ -670,7 +670,7 @@ public class ActService {
 //            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.AGENTID_EXPERT);
 //            log.info("钉钉给采购人员："+staffId+"发送通知结果："+serviceResult.getMessage());
             NotificationModel nm = new NotificationModel();
-            nm.setAgentId(Constant.AGENTID);
+            nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
             nm.setContent(notificationContant);
             nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
             nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
@@ -824,7 +824,7 @@ public class ActService {
         //ServiceResult serviceResult = sendNotificationImp.sendOaFromE(appUser.getDdUserId(),null,tokenService.getToken(),Constant.AGENTID);
         //log.info("钉钉给议价负责人员："+appUser.getId()+"发送通知结果："+serviceResult.getMessage());
         NotificationModel nm = new NotificationModel();
-        nm.setAgentId(Constant.AGENTID);
+        nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
         nm.setContent(notificationContant);
         nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
         nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
@@ -845,7 +845,7 @@ public class ActService {
     @Async
     public ListenableFuture<Integer> getApprove(String ddUserId,String phone ,SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
         NotificationModel nm = new NotificationModel();
-        nm.setAgentId(Constant.AGENTID);
+        nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
         nm.setContent(notificationContant);
         nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
         nm.setMessageUrl(NotificationConfig.PURCHASE_APP);

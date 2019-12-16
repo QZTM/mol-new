@@ -1,5 +1,7 @@
 package com.mol.notification;
 
+import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
+import entity.NotificationModel;
 import entity.ServiceResult;
 
 public interface SendNotification {
@@ -14,4 +16,6 @@ public interface SendNotification {
     public static SendNotification getSendNotification(){
         return  SendNotificationImp.getSendNotification();
     }
+
+    public OapiMessageCorpconversationAsyncsendV2Response sendOANotification(NotificationModel notificationModel);
 }

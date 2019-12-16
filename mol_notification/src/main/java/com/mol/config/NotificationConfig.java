@@ -9,9 +9,9 @@ public class NotificationConfig {
     //小程序首页地址
     public static final String PURCHASE_APP="eapp://pages/purchase/purchase";
     //供应商首页地址
-    public static final String SUPPLIER_APP="http://"+ Constant.domain +"/index/findAll";
+    public static final String SUPPLIER_APP="http://"+ Constant.getInstance().getSupplierDomain() +"/index/findAll";
     //专家端首页地址
-    public static final String EXPERT_APP="http://"+ Constant.domain +"/expert/findAll";
+    public static final String EXPERT_APP="http://"+ Constant.getInstance().getExpertDomain() +"/expert/findAll";
 
     //title
     public static final String 通过= "已通过";
