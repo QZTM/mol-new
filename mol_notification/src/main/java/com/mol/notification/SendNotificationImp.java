@@ -6,6 +6,7 @@ import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.mol.config.Constant;
 import com.mol.config.URLConstant;
 import com.taobao.api.ApiException;
+import entity.NotificationModel;
 import entity.ServiceResult;
 import lombok.extern.java.Log;
 import util.TimeUtil;
@@ -35,7 +36,11 @@ public class SendNotificationImp implements SendNotification{
      */
     @Override
     public ServiceResult sendOaFromE(String userIdList,String userName,String token,long agentId ) {
-        return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+        //服务器
+        //return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/purchase");
+
+        //本地
+        return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/purchase");
     }
 
 
@@ -72,16 +77,13 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功:"+rsp.getMessage());
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
+            return ServiceResult.failure("发送失败:"+rsp);
         }
 
     }
-
-
-
 
 
 
@@ -120,10 +122,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功:"+rsp.getMessage());
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
+            return ServiceResult.failure("发送失败:"+rsp);
         }
     }
 
@@ -165,5 +167,37 @@ public class SendNotificationImp implements SendNotification{
             return ServiceResult.failure("发送失败:"+rsp);
         }
     }
+
+    @Override
+    public OapiMessageCorpconversationAsyncsendV2Response sendOANotification(NotificationModel notificationModel) {
+        DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
+
+        OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
+        messageRequest.setUseridList(notificationModel.getUserList());
+        messageRequest.setAgentId(notificationModel.getAgentId());
+        messageRequest.setToAllUser(notificationModel.getToAllUser());
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
+        msg.getOa().setMessageUrl(notificationModel.getMessageUrl());
+        msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
+        msg.getOa().getHead().setText(notificationModel.getText());
+        msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
+        msg.getOa().getBody().setContent(notificationModel.getContent());
+        msg.getOa().getBody().setImage(notificationModel.getImage());
+        msg.getOa().getBody().setTitle(notificationModel.getTitle());
+        msg.setMsgtype(notificationModel.getMsgType());
+        messageRequest.setMsg(msg);
+
+        OapiMessageCorpconversationAsyncsendV2Response rsp = null;
+        try {
+            rsp = client.execute(messageRequest,notificationModel.getToken());
+            return rsp;
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return rsp;
+        }
+    }
+
 
 }

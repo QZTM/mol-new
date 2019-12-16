@@ -115,7 +115,21 @@ public class TobeNegotiatedService {
         //根据订单id，公司id 查询
         for (String supplierId : supplierIdsList) {
             List<FyQuote> fyQuotesList=fyQuoteMapper.findQuoteBySupplierIdAndPurchaseId(id,supplierId);
-
+            //便利fyquotelist获取物料id，查询上次该物料的报价
+            for (FyQuote quote : fyQuotesList) {
+                Example e = new Example(FyQuote.class);
+                Example.Criteria criteria = e.createCriteria();
+                criteria.andEqualTo("pkSupplierId",quote.getPkSupplierId());
+                criteria.andEqualTo("pkMaterialId",quote.getPkMaterialId());
+                criteria.andLessThan("creationtime",quote.getCreationtime());
+                e.setOrderByClause("creationtime desc");
+                List<FyQuote> quotesList = fyQuoteMapper.selectByExample(e);
+                log.info("查询到公司"+quote.getPkSupplierId()+"上次对"+quote.getPkMaterialId()+"的报价是list："+quotesList);
+                if (quotesList.size()>0){
+                    log.info("查询到公司"+quote.getPkSupplierId()+"上次对"+quote.getPkMaterialId()+"的报价是"+quotesList.get(0).getQuote());
+                    quote.setLastQuotePrice(quotesList.get(0).getQuote());
+                }
+            }
             //根据公司id查询公司名称
             //String supplierName = bdSupplierMapper.getSupplierNameById(supplierId);
             quoteMap.put(supplierId,fyQuotesList);
@@ -184,8 +198,18 @@ public class TobeNegotiatedService {
     }
 
     public Ucharts getBigData(String supplierId, String pkMaterialId) {
-        List<BigDataStar> bdList=poOrderMapper.getBigDataBySuppliedAndpkMaterialId(supplierId,pkMaterialId);
-        log.info("查询大数据 查到的物料价格list："+bdList);
+
+        List<BigDataStar> bdList = new ArrayList<>();
+        if (supplierId==null){
+            log.info("查询ERP");
+            //查询ERP数据
+            bdList=poOrderMapper.getBigDataBySuppliedAndpkMaterialId(supplierId,pkMaterialId);
+            log.info("查询大数据 查询ERP数据物料价格list："+bdList);
+        }else {
+            //查询历史报价数据
+            bdList=fyQuoteMapper.getBigDataBySuppliedAndpkMaterialId(supplierId,pkMaterialId);
+            log.info("查询大数据 查询该公司"+supplierId+"物料"+pkMaterialId+"价格list："+bdList);
+        }
         if (bdList.size()==0){
             return new Ucharts();
         }

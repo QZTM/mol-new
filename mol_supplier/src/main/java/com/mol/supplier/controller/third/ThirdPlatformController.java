@@ -507,7 +507,7 @@ public class ThirdPlatformController {
 
 
     /**
-     * 前往我要报价页面，获取当前页面的物品id
+     * 前往报价页面，获取当前页面的物品id
      */
     @RequestMapping("/quote")
     public String toGetQuote(String id, ModelMap map, HttpSession session) {

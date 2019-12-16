@@ -190,7 +190,7 @@ public class TobeNegotiatedController {
         log.info("待议价  查询订单信息："+pur);
 
         pur=negotiatedService.getStaffName(pur);
-        log.info("待议价  查询订单的发起人："+pur);
+        log.info("待议价  查询订单的发起人："+pur.getStaffId());
         map.put("fyPurchase",pur);
 
         //报价信息

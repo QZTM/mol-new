@@ -2,6 +2,7 @@ package com.mol.purchase.mapper.newMysql;
 
 import com.mol.base.BaseMapper;
 import com.mol.purchase.entity.FyQuote;
+import com.mol.purchase.entity.dingding.purchase.workBench.BigDataStar;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -34,4 +35,6 @@ public interface FyQuoteMapper extends BaseMapper<FyQuote> {
     FyQuote findQuoteByid(String quoteId);
 
     List<FyQuote> findSupplierIdListByPurId(String id);
+
+    List<BigDataStar> getBigDataBySuppliedAndpkMaterialId(String supplierId,String pkMaterialId);
 }
