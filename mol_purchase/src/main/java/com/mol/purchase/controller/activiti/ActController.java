@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -305,6 +306,5 @@ ActController {
         actService.claim(taskId,assignee);
         return ServiceResult.success("任务已拾取");
     }
-
 
 }

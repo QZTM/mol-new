@@ -17,6 +17,7 @@ public class SessionExpertInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        logger.info("进入expert拦截器");
         String servletPath = request.getServletPath();
         logger.info("访问专家端的请求路径"+servletPath);
 
@@ -29,7 +30,7 @@ public class SessionExpertInterceptor implements HandlerInterceptor {
         if (user==null){
             logger.info("session中没有专家的信息");
             //重定向到首页
-            response.sendRedirect("http://"+request.getServerName()+"/index/findAll");
+            response.sendRedirect("http://"+request.getServerName()+"/expert/findAll");
             return false;
         }
         return true;

@@ -9,4 +9,5 @@
     <select id="getProByProId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.activiti.ActHiProcinst">
         SELECT * FROM `act_hi_procinst` where PROC_INST_ID_=#{proId}
     </select>
+
 </mapper>

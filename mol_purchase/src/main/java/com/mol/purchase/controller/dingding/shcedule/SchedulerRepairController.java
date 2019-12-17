@@ -4,18 +4,13 @@ import com.alipay.api.domain.Sale;
 import com.github.pagehelper.PageInfo;
 import com.mol.oos.OOSConfig;
 import com.mol.purchase.config.OrderStatus;
-import com.mol.purchase.entity.FyQuote;
-import com.mol.purchase.entity.QuotePayresult;
-import com.mol.purchase.entity.SupplierSalesman;
-import com.mol.purchase.entity.activiti.ActHiActinst;
-import com.mol.purchase.entity.activiti.ActHiComment;
-import com.mol.purchase.entity.activiti.ActHiProcinst;
+import com.mol.purchase.entity.*;
+import com.mol.purchase.entity.activiti.*;
 import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
 import com.mol.purchase.service.dingding.schedule.SchedulerRepairService;
 import entity.ServiceResult;
-import com.mol.purchase.entity.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,12 +102,39 @@ public class SchedulerRepairController {
 
     @GetMapping("/getApproveList")
     public ServiceResult getApproveList(String purId){
+        log.info("查询订单审批人，参数purid:"+purId);
         if (purId==null){
             return ServiceResult.failureMsg("订单id传递失败！");
         }
-        List<ActHiActinst> list=schedulerRepairService.getActHiActinstByPurId(purId);
-        List<AppUser> userList=schedulerRepairService.getAppUserByList(list);
+
+        //查询ActHiProcinst
+        ActHiProcinst ahp=schedulerRepairService.findActHiProcinstByBusinessKey(purId);
+        //act_hi_varinst  查询结果
+        ActHiVarinst ahv=schedulerRepairService.findActHiVarinstByProcInstId(ahp.getProcInstId());
+        log.info("查询订单最终审批结果："+ahv.getText());
+        List<ActHiActinst> list=new ArrayList<>();
+        List<AppUser> userList=new ArrayList<>();
+
+
+        list=schedulerRepairService.getActHiActinstByPurId(purId);
+        log.info("查询订单的审批人员id："+list);
+        userList=schedulerRepairService.getAppUserByList(list);
+        if (ahv!=null && "pass".equals(ahv.getText())){
+            for (AppUser appUser : userList) {
+                appUser.setIfPass(true);
+            }
+        }else {
+            for (int i=0;i<userList.size();i++){
+                if (i==userList.size()-1){
+                    userList.get(i).setIfPass(false);
+                }else {
+                    userList.get(i).setIfPass(true);
+                }
+            }
+        }
         return ServiceResult.success(userList);
+
+
     }
 
     /**
