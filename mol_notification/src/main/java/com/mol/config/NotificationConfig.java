@@ -6,6 +6,21 @@ public class NotificationConfig {
     //图片地址
     public static final String NOTIFICATION_IMAGE_url="http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png";
 
+    //议价图片地址
+    public static final String 议价图片="http://140.249.22.202:8719/notification/yijia.png";
+    //评审图片地址
+    public static final String 评审图片="http://140.249.22.202:8719/notification/pingsheng.png";
+    //审批图片地址
+    public static final String 审批图片="http://140.249.22.202:8719/notification/shenpi.png";
+    //报价图片地址
+    public static final String 报价图片="http://140.249.22.202:8719/notification/baojia.png";
+    //拒绝图片地址
+    public static final String 拒绝图片="http://140.249.22.202:8719/notification/baojia.png";
+    //通过图片地址
+    public static final String 通过图片="http://140.249.22.202:8719/notification/baojia.png";
+
+
+
     //小程序首页地址
     public static final String PURCHASE_APP="eapp://pages/purchase/purchase";
     //供应商首页地址

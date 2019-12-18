@@ -566,7 +566,7 @@ public class ActService {
 
     //4.专家发通知
     @Async
-    public ListenableFuture<Integer> getExpertSendMessage(List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
+    public ListenableFuture<Integer> getExpertSendMessage(List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
         log.info("给订单推荐专家发送dd通知和短信");
         if (detailList.get(0)==null){
             log.info("没有推荐专家，不需要发送dd通知");
@@ -595,7 +595,7 @@ public class ActService {
                 NotificationModel nm = new NotificationModel();
                 nm.setAgentId(Constant.getInstance().getExpertAgentId());
                 nm.setContent(notificationContant);
-                nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+                nm.setImage(image);
                 nm.setMessageUrl(NotificationConfig.EXPERT_APP);
                 nm.setText("摩尔易购");
                 nm.setToAllUser(false);
@@ -620,7 +620,7 @@ public class ActService {
 
     //报价人员
     @Async
-    public ListenableFuture<Integer> getSaleManSendMessage(List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
+    public ListenableFuture<Integer> getSaleManSendMessage(List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
 
         Set<String> supplierSet=new HashSet<>();
         for (PurchaseDetail purchaseDetail : detailList) {
@@ -639,7 +639,7 @@ public class ActService {
                 NotificationModel nm = new NotificationModel();
                 nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
                 nm.setContent(notificationContant);
-                nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+                nm.setImage(image);
                 nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
                 nm.setText("摩尔易购");
                 nm.setToAllUser(false);
@@ -661,7 +661,7 @@ public class ActService {
     }
 
     @Async
-    public ListenableFuture<Integer> getAuSendMessage(String staffId,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant) {
+    public ListenableFuture<Integer> getAuSendMessage(String staffId,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
         log.info("给订单发起人员发送dd通知和短信");
 
         AppUser au = findAppUserById(staffId);
@@ -672,7 +672,7 @@ public class ActService {
             NotificationModel nm = new NotificationModel();
             nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
             nm.setContent(notificationContant);
-            nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+            nm.setImage(image);
             nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
             nm.setText("摩尔易购");
             nm.setToAllUser(false);
@@ -792,7 +792,7 @@ public class ActService {
 
     //给议价负责人发送通知
     @Async
-    public ListenableFuture<Integer> getPurMainPerson(String orgId, Integer buyChannelId,SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant ) {
+    public ListenableFuture<Integer> getPurMainPerson(String orgId, Integer buyChannelId,SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image ) {
         if(orgId==null || buyChannelId==null){
             log.info("给议价负责人发送通知和短信失败！ 参数orgid:"+orgId+",buychannelId:"+buyChannelId);
             return null;
@@ -826,7 +826,7 @@ public class ActService {
         NotificationModel nm = new NotificationModel();
         nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
         nm.setContent(notificationContant);
-        nm.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+        nm.setImage(image);
         nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
         nm.setText("摩尔易购");
         nm.setToAllUser(false);

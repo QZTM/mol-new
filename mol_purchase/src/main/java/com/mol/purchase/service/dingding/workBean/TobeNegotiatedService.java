@@ -342,9 +342,9 @@ public class TobeNegotiatedService {
     }
 
 
-    public List<fyPurchase> findListByOrgIdAndBuychannelAndStatus(String orgId, String status, List<String> buyChannelList,int pageNum,int pageSize) {
+    public List<fyPurchase> findListByOrgIdAndBuychannelAndStatus(String orgId, String status,String statusSecond, List<String> buyChannelList,int pageNum,int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        return fyPurchaseMapper.findListByOrgIdAndBuychannelAndStatus(orgId,status,buyChannelList);
+        return fyPurchaseMapper.findListByOrgIdAndBuychannelAndStatus(orgId,status, statusSecond,buyChannelList);
     }
 
     public ActHiProcinst findActHiProcinstByPurId(String purId) {

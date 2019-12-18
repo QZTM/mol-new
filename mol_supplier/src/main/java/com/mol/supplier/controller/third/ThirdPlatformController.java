@@ -99,6 +99,17 @@ public class ThirdPlatformController {
                 buyId = 6 + "";
                 break;
         }
+        //查询五条最新公告
+        List<fyPurchase> passPurList = platformService.findPassPurchByStatus(OrderStatus.pass + "", 1, 5);
+        map.addAttribute("notice",passPurList);
+
+
+        //获取最新的五个采购
+        List<fyPurchase> newEstPurList = platformService.findPur(OrderStatus.waitingQuote+"",1,5);
+        //获取公司的名称
+        newEstPurList=platformService.getAppOrgNameByPurId(newEstPurList);
+
+        map.addAttribute("newEst",newEstPurList);
 
 
         List<fyPurchase> orderList = platformService.findList(buyId, 1, 5);
@@ -165,7 +176,7 @@ public class ThirdPlatformController {
         if (htmlName=="error_enter"){
             return htmlName;
         }
-        List<fyPurchase> list = null;
+        List<fyPurchase> list = new ArrayList<>();
         int count = 0;
 
         //进入茉尔资讯
@@ -179,8 +190,14 @@ public class ThirdPlatformController {
         //进入中标公告
         if (htmlName == "index_zbgg") {
             log.info("查询中标公告");
-            list =platformService.findPassPurchByStatus(supplier.getPkSupplier(),pageNumber,pageSize);
-            list =platformService.findPassSupplierCountOfPassPur(list);
+            List<fyPurchase> lists =platformService.findPassPurchByStatus(OrderStatus.pass+"",pageNumber,pageSize);
+            lists =platformService.findPassSupplierCountOfPassPur(lists);
+            //将订单状态改为中文
+
+            for (fyPurchase pur : lists) {
+                fyPurchase p = platformService.getPurStatusToChinese(pur);
+                list.add(p);
+            }
             count=platformService.findPassCountByStatus(OrderStatus.pass);
             log.info("中标公告的list"+list);
             log.info("中标公告的数量"+count);
@@ -249,7 +266,7 @@ public class ThirdPlatformController {
         //行业类别
         log.info("按照物料分类查询，当前状态："+status);
         List<fyPurchase> list = platformService.findLIstByStatusAndGoodsTypeAndBuyChannelId(buyChannelId, status, goodsType, pageNumber, pageSize);
-        if(Integer.parseInt(status)==OrderStatus.pass){
+        if(status!="" && Integer.parseInt(status)==OrderStatus.pass){
             log.info("按照物料分类查询，需要查询中标公司数量，当前状态："+status);
             list =platformService.findPassSupplierCountOfPassPur(list);
         }
