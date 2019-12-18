@@ -13,6 +13,11 @@
 	
 	<dependencies>
 		<dependency>
+			<groupId>com.mol</groupId>
+			<artifactId>mol_notification</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-quartz</artifactId>
 		</dependency>
@@ -64,9 +69,11 @@
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.mol</groupId>
-			<artifactId>mol_notification</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<groupId>com.taobao.top</groupId>
+			<artifactId>top-api-sdk-dev</artifactId>
+			<version>dingtalk-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/lib/taobao-sdk-java-auto_1479188381469-20190505.jar</systemPath>
 		</dependency>
 
 	</dependencies>
@@ -75,9 +82,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<!--<configuration>-->
-				<!--<includeSystemScope>true</includeSystemScope>-->
-				<!--</configuration>-->
+				<configuration>
+				<includeSystemScope>true</includeSystemScope>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
