@@ -235,13 +235,13 @@ ActController {
 
 
                 //1.给采购部门主管发短信，通知（P）
-                ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.议价负责人_PASS);
+                ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.议价负责人_PASS,NotificationConfig.通过图片);
                 //2.给选中的专家发短信，通知（E)
-                ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板(),NotificationConfig.通过,NotificationConfig.专家端_PASS);
+                ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板(),NotificationConfig.通过,NotificationConfig.专家端_PASS,NotificationConfig.通过图片);
                 //3.给发起采购的采购人员发短信，通知(p)
-                ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.采购人_PASS);
+                ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.采购人_PASS,NotificationConfig.通过图片);
                 //4.给供应商下的报价人发短信，通知(s)
-                ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.供应商_PASS);
+                ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.供应商_PASS,NotificationConfig.通过图片);
             }
         }else{
             //审批拒绝
@@ -256,13 +256,13 @@ ActController {
             //修改未选中的专家推荐表中的adopt
             actService.updataExpertRecommendNotChecked(pur.getId());
             //1.给议价负责人发短信，通知
-            ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.议价负责人_REFUSE);
+            ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.议价负责人_REFUSE,NotificationConfig.拒绝图片);
             //2.给选中的专家发短信，通知
-            ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家发送评审失败结果模板(),NotificationConfig.拒绝,NotificationConfig.专家端_REFUSE);
+            ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家发送评审失败结果模板(),NotificationConfig.拒绝,NotificationConfig.专家端_REFUSE,NotificationConfig.拒绝图片);
             //3.给发起采购的采购人员发短信，通知
-            ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.采购人_REFUSE);
+            ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.采购人_REFUSE,NotificationConfig.拒绝图片);
             //4.给供应商下的报价人发短信，通知
-            ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.供应商_REFUSE);
+            ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.供应商_REFUSE,NotificationConfig.拒绝图片);
 
         }
 

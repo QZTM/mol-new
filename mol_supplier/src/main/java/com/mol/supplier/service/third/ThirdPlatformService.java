@@ -172,9 +172,21 @@ public class ThirdPlatformService {
         return list;
     }
 
-//    public int findCount(String id) {
-//        return tpMapper.findCount(id);
-//    }
+    public List<fyPurchase> getAppOrgNameByPurId(List<fyPurchase> list) {
+        List<fyPurchase> newList = new ArrayList<>();
+        for (fyPurchase pu : list) {
+            fyPurchase fy = StatusUtils.getStatusIntegerToString(pu);
+
+            //单一来源，通过供应商id查询公司名称
+            AppAuthOrg t =new AppAuthOrg();
+            t.setId(pu.getOrgId());
+            AppAuthOrg appAuthOrg = appOrgMapper.selectOne(t);
+            fy.setPkSupplier(appAuthOrg.getOrgName());
+            newList.add(fy);
+        }
+
+        return newList;
+    }
 
     /**
      * 根据id,状态，行业类别  获取订单数量
@@ -408,10 +420,10 @@ public class ThirdPlatformService {
         return bdSupplierMapper.selectOne(t);
     }
 
-    public List<fyPurchase> findPassPurchByStatus(String supplieId,Integer pageNumber,Integer pageSize) {
+    public List<fyPurchase> findPassPurchByStatus(String status,Integer pageNumber,Integer pageSize) {
         PageHelper.startPage(pageNumber,pageSize);
 //        return fyPurchaseMapper.findListByStatus(pass+"",null,null);
-        return fyPurchaseMapper.findPurchaseInnerFyQuoteBySupplierId(supplieId);
+        return fyPurchaseMapper.findPurchaseInnerFyQuoteBySupplierId(status);
     }
 
 
@@ -494,5 +506,14 @@ public class ThirdPlatformService {
         t.setCreationTime(TimeUtil.getNowDateTime());
         int insert = suppliersalemanNewsMiddleMapper.insert(t);
         return insert;
+    }
+
+    public fyPurchase getPurStatusToChinese(fyPurchase pur) {
+       return StatusUtils.getStatusIntegerToString(pur);
+    }
+
+    public List<fyPurchase> findPur(String status, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        return fyPurchaseMapper.findListByStatus(status,null,null);
     }
 }

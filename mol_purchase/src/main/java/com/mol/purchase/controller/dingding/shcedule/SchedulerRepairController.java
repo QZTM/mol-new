@@ -111,6 +111,10 @@ public class SchedulerRepairController {
         ActHiProcinst ahp=schedulerRepairService.findActHiProcinstByBusinessKey(purId);
         //act_hi_varinst  查询结果
         ActHiVarinst ahv=schedulerRepairService.findActHiVarinstByProcInstId(ahp.getProcInstId());
+        if (ahv==null){
+            log.info("act_hi_varinst  查询结果为null");
+            return null;
+        }
         log.info("查询订单最终审批结果："+ahv.getText());
         List<ActHiActinst> list=new ArrayList<>();
         List<AppUser> userList=new ArrayList<>();
