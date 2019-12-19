@@ -6,6 +6,6 @@ import java.util.ArrayList;
 
 public interface AnnouncementListMapper
 {
-    ArrayList<AnnouncementEditPageben> AnnouncementMessage();//消息通知接口
+    ArrayList<AnnouncementEditPageben> AnnouncementMessage(String AuthorityStatus,String userid);//消息通知接口
     void DeleteAnnouncementList(String announcemenId,String messageType);//删除消息
 }

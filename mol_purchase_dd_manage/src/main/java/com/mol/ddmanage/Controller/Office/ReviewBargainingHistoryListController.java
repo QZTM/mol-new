@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 
 @RestController
@@ -20,8 +19,8 @@ public class ReviewBargainingHistoryListController
     @RequestMapping("/ShowList")
     public ArrayList<Push_history_list_ben> ShowList(@RequestParam String state, HttpServletRequest httpServletRequest)
     {
-        HttpSession httpSession= httpServletRequest.getSession();
-        ArrayList<Push_history_list_ben> push_history_bens=push_history_service.Push_history_list(state);
+       // HttpSession httpSession= httpServletRequest.getSession();
+        ArrayList<Push_history_list_ben> push_history_bens=push_history_service.Push_history_list(state,httpServletRequest);
         return push_history_bens;
     }
 }

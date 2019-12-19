@@ -166,16 +166,25 @@
             success: function (data) {
                 if (data.status==true)
                 {
-                    alert("角色保存成功")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('角色保存成功'+PeolpeItems[n].childNodes[1].innerText);
+                    });
                     return_top()
                 }
                 else
                 {
-                    alert("提交失败！")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交失败！'+PeolpeItems[n].childNodes[1].innerText);
+                    });
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('提交失败！'+PeolpeItems[n].childNodes[1].innerText);
+                });
             }
         });
     }
@@ -196,7 +205,6 @@
                     {
                       
                         var item=document.getElementById(val)
-                        console.log(item)
                          
                         if(item!=null && data[val]==="1")
                         {
@@ -210,11 +218,17 @@
                 }
                 else
                 {
-                    alert("提交失败！")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交失败！'+PeolpeItems[n].childNodes[1].innerText);
+                    });
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('提交失败！'+PeolpeItems[n].childNodes[1].innerText);
+                });
             }
         });
     }

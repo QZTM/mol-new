@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -17,9 +18,9 @@ public class AnnouncementListController
     @Resource
     AnnouncementListService announcementListService;
     @RequestMapping("/AnnouncementList")
-    public ArrayList<AnnouncementEditPageben> Announcement()//获取公告列表
+    public ArrayList<AnnouncementEditPageben> Announcement(HttpServletRequest httpServletRequest)//获取公告列表
     {
-       return announcementListService.AnnouncementList();
+       return announcementListService.AnnouncementList(httpServletRequest);
     }
     @RequestMapping("/DeleteAnnouncementList") //删除公告
     public Map DeleteAnnouncementList(@RequestParam String announcemenId, @RequestParam String messageType)//参数 公告id 消息类型 1消息通知 2任务安排 3公司新闻

@@ -82,6 +82,7 @@
     </dependencies>
 
 
+
     <!--全局配置-->
     <profiles>
         <!--##############################开发环境#######################################-->
@@ -119,27 +120,27 @@
                 <expertappsecret>kyAA_DBYE9-JlgYx0no_i_qp_sIfmS51_sDXXqY35Wh1YAgt3FW0jrHdrtlXkaqD</expertappsecret>
                 <!--管理后端配置-->
                 <managehttp>http://</managehttp>
-                <manageip>192.168.1.174</manageip>
+                <manageip>localhost</manageip>
                 <manageport>8085</manageport>
-                <managedomain>manage.vaiwan.com</managedomain>
+                <managedomain>fyycg66.vaiwan.com</managedomain>
                 <!--数据库配置-->
-                <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dburl>jdbc:mysql://140.249.22.202:3306/zkfy_test_1?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>root</dbusername>
                 <dbpassword>ald377</dbpassword>
                 <!--eureka服务器-->
                 <eurekaport>8700</eurekaport>
-                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <eurekaserverip>140.249.22.202</eurekaserverip>
                 <!--eureka服务器注册地址-->
-                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <eurekaserverurl>http://140.249.22.202:8700/eureka/</eurekaserverurl>
                 <!--redis配置-->
-                <redishost>192.168.1.171</redishost>
+                <redishost>140.249.22.202</redishost>
                 <redisport>6379</redisport>
                 <redispassword>ald377</redispassword>
             </properties>
             <!-- 这里代表默认使用dev环境配置文件 -->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+            <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
         </profile>
         <!--##########################################测试环境##################################################-->
         <profile>
@@ -299,9 +300,9 @@
                 <redisport>6379</redisport>
                 <redispassword>ald377</redispassword>
             </properties>
-            <activation>
+<!--            <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation>
+            </activation>-->
         </profile>
     </profiles>
 </project>

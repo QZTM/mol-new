@@ -1,10 +1,13 @@
 package com.mol.ddmanage.Service.Office;
 
 import com.mol.ddmanage.Ben.Office.ElectronicContractSigningListben;
+import com.mol.ddmanage.Ben.Permission.Dataviewingpermissionsben;
+import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
 import com.mol.ddmanage.mapper.Office.ElectronicContractSigningListMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,9 +18,12 @@ public class ElectronicContractSigningListService
 {
     @Resource
     ElectronicContractSigningListMapper electronicContractSigningListMapper;
-    public ArrayList<ElectronicContractSigningListben>GetElectronicContractSigningListLogic(String Contract_statu,String electronic_contract)
+    @Resource
+    VerificationPermissionService verificationPermissionService;
+    public ArrayList<ElectronicContractSigningListben>GetElectronicContractSigningListLogic(String Contract_statu, String electronic_contract, HttpServletRequest httpServletRequest)
     {
-        ArrayList<ElectronicContractSigningListben> contractSigningListbens=electronicContractSigningListMapper.GetElectronicContractSigningList( electronic_contract);
+        Dataviewingpermissionsben dataviewingpermissionsben = verificationPermissionService.DataviewingpermissionsLogic("electronicContract",httpServletRequest);//拿到权限
+        ArrayList<ElectronicContractSigningListben> contractSigningListbens=electronicContractSigningListMapper.GetElectronicContractSigningList(dataviewingpermissionsben.getAuthorityStatus(),dataviewingpermissionsben.getApp_userid(), electronic_contract);
         ArrayList<ElectronicContractSigningListben> contractSigningListbenss=new ArrayList<>();
 
         for (int n=0;n<contractSigningListbens.size();n++)//筛选签署状态

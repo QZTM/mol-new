@@ -7,5 +7,5 @@ import java.util.ArrayList;
 
 public interface PurchasOrderListMapper
 {
-    ArrayList<PurchasOrderListben> PurchasOrderListShow(@Param(value = "buy_channel_id") String buy_channel_id);
+    ArrayList<PurchasOrderListben> PurchasOrderListShow(@Param(value = "AuthorityStatus") String AuthorityStatus, @Param(value = "userid") String userid,@Param(value = "buy_channel_id") String buy_channel_id);
 }

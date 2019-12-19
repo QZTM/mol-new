@@ -38,6 +38,7 @@
         </form>
     </div>
 </div>
+<img id="landingimage"  src="/imge/landing.gif" style="display: none;height: 40px;width: 45px">
 <script src="/layui/layui.all.js"></script>
 <script th:inline="javascript" language="javascript" type="text/javascript">
 
@@ -82,7 +83,10 @@
 
                 },
                 error: function (data) {
-                    alert("获取审核议价信息失败")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取信息失败！');
+                    });
                 }
             });
         });
@@ -192,7 +196,10 @@
                     }
                 },
                 error: function (data) {
-                    alert("获取审核议价信息失败")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取信息失败！');
+                    });
                 }
             });
         });
@@ -221,7 +228,10 @@
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取信息失败！');
+                });
             }
         });
     }
@@ -248,7 +258,10 @@
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取信息失败！');
+                });
             }
         });
     }
@@ -270,7 +283,10 @@
             }
             if (!isNext)//判断是否符合标准
             {
-                alert('不接受此文件类型，只能上传格式为pdf的文档');
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('不接受此文件类型，只能上传格式为pdf的文档！');
+                });
                 file.value = null;
                 return false;
             }
@@ -283,6 +299,8 @@
                 files.set("purchase_id",[[${Oreder_number}]].toString().split(":")[1]);//采购单号
                 files.set("supplier_id",supplier_id);//供应商id
 
+                var landingimage=document.getElementById("landingimage")//上传合同时的加载图片
+                landingimage.style.display="block"
                 $.ajax({
                     url: "/ElectronicContractSigninginforController/Upload_Contract",
                     type: "post",
@@ -291,14 +309,21 @@
                     contentType: false,
                     success: function(data) //data.statu 0上传成功 1上传失败 2未注册 3未认证
                     {
+                        landingimage.style.display="none"
                         if (data.statu==="0")
                         {
-                            alert("上传合同成功")
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('上传合同成功！');
+                            });
                             location.reload();
                         }
                         else if (data.statu==="1")
                         {
-                            alert("上传合失败")
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('上传合同失败！');
+                            });
                         }
                         else if (data.statu==="2")//您的企业未注册法大大的账号，请注册！
                         {
@@ -313,7 +338,10 @@
                                     {
                                         if (data1.statu===true)
                                         {
-                                            alert("您的法大大账号注册成功！请重新上传")
+                                            layui.use('layer', function(){
+                                                var layer = layui.layer;
+                                                layer.msg('您的法大大账号注册成功！请重新上传！');
+                                            });
                                             e=null;
                                         }
                                     },
@@ -348,7 +376,9 @@
                             });
                         }
                     },
-                    error: function(e) {
+                    error: function(e)
+                    {
+                        landingimage.style.display="none"
                     }
                 });
             }

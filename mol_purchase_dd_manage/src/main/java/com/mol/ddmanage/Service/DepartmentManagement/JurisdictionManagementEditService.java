@@ -35,4 +35,28 @@ public class JurisdictionManagementEditService
           return map;
       }
    }
+
+   public Map UpdateDataviewingpermissionsLogic(AddJurisdictionben json)
+   {
+       Map map=new HashMap();
+       try
+       {
+           map.put("status",true);
+           jurisdictionManagementEditMapper.UpdateDataviewingpermissions(json);
+           return map;
+       }
+       catch (Exception e)
+       {
+           map.put("status",false);
+           return map;
+       }
+
+   }
+
+   public AddJurisdictionben GetDataviewingpermissionsLogic(String jurisdictionId)
+   {
+       AddJurisdictionben addJurisdictionben=new AddJurisdictionben();
+       addJurisdictionben= jurisdictionManagementEditMapper.GetDataviewingpermissions(jurisdictionId);
+       return   addJurisdictionben;
+   }
 }

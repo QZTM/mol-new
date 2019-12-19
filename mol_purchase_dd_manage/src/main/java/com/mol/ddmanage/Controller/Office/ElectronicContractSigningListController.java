@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 @RestController
@@ -23,8 +24,8 @@ public class ElectronicContractSigningListController
      * @return
      */
     @RequestMapping("/GetElectronicContractSigningList")//获取订单的合同列表
-    public ArrayList<ElectronicContractSigningListben> GetElectronicContractSigningList(@RequestParam String Contract_statu,@RequestParam String electronic_contract)
+    public ArrayList<ElectronicContractSigningListben> GetElectronicContractSigningList(@RequestParam String Contract_statu, @RequestParam String electronic_contract, HttpServletRequest httpServletRequest)
     {
-        return electronicContractSigningListService.GetElectronicContractSigningListLogic(Contract_statu, electronic_contract);
+        return electronicContractSigningListService.GetElectronicContractSigningListLogic(Contract_statu, electronic_contract,httpServletRequest);
     }
 }

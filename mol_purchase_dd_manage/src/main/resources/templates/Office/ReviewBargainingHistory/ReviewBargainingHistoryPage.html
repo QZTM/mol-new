@@ -212,7 +212,10 @@
                 });
             },
             error: function (data) {
-                alert("获取审核人信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取审核人信息失败！');
+                });
             }
         });
 
@@ -320,14 +323,20 @@
                         document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
                     },
                     error: function (data) {
-                        alert("获取审核议价信息失败")
+                        layui.use('layer', function(){
+                            var layer = layui.layer;
+                            layer.msg('获取审核议价信息失败！');
+                        });
                     }
                 });
 
 
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取审核议价信息失败！');
+                });
             }
         });
 

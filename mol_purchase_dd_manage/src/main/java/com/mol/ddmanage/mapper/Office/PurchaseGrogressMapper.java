@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PurchaseGrogressMapper
 {
-    List<Purchase_Grogress_list_ben> PurchaseGrogressList(@Param(value = "time1") String time1, @Param(value = "time2")String time2 ,@Param(value = "status") String status);
+    List<Purchase_Grogress_list_ben> PurchaseGrogressList(@Param(value = "AuthorityStatus") String AuthorityStatus,@Param(value = "userid") String userid,@Param(value = "time1") String time1, @Param(value = "time2")String time2 ,@Param(value = "status") String status);
 }

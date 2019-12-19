@@ -1,10 +1,13 @@
 package com.mol.ddmanage.Service.Office;
 
 import com.mol.ddmanage.Ben.Office.AnnouncementEditPageben;
+import com.mol.ddmanage.Ben.Permission.Dataviewingpermissionsben;
+import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
 import com.mol.ddmanage.mapper.Office.AnnouncementListMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +16,15 @@ import java.util.Map;
 public class AnnouncementListService
 {
     @Resource
+    VerificationPermissionService verificationPermissionService;
+    @Resource
     AnnouncementListMapper announcementListMapper;
-    public ArrayList<AnnouncementEditPageben> AnnouncementList()
+
+    public ArrayList<AnnouncementEditPageben> AnnouncementList(HttpServletRequest httpServletRequest)
     {
-       ArrayList<AnnouncementEditPageben> announcementEditPageben=announcementListMapper.AnnouncementMessage();
+
+       Dataviewingpermissionsben dataviewingpermissionsben =verificationPermissionService.DataviewingpermissionsLogic("notice",httpServletRequest);
+       ArrayList<AnnouncementEditPageben> announcementEditPageben=announcementListMapper.AnnouncementMessage(dataviewingpermissionsben.getAuthorityStatus(),dataviewingpermissionsben.getDingding_id());
        for (int n=0;n<announcementEditPageben.size();n++)
        {
            announcementEditPageben.get(n).setNumber(String.valueOf(n));

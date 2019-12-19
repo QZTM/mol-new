@@ -17,11 +17,12 @@ public class AddJurisdictionController
 {
     @Resource
     AddJurisdictionService addJurisdictionService;
-    @RequestMapping("/AddJurisdiction")
+    @RequestMapping("/AddJurisdiction")//添加一个角色
     public Map AddJurisdiction(@RequestBody AddJurisdictionben json, HttpServletRequest httpServletRequest)
     {
         Map map=new  HashMap();
         map.put("status",addJurisdictionService.AddJurisdictionLogic(json,httpServletRequest.getSession()));
         return map;
     }
+
 }

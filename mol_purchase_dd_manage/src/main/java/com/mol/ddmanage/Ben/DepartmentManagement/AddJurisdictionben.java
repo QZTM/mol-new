@@ -3,6 +3,7 @@ package com.mol.ddmanage.Ben.DepartmentManagement;
 public class AddJurisdictionben
 {
    private String jurisdictionId;
+   private String DataViewingPermissionsid;
    private String jurisdictionName;
     private String notice;
     private String history;
@@ -210,5 +211,13 @@ public class AddJurisdictionben
 
     public void setElectronicContract(String electronicContract) {
         this.electronicContract = electronicContract;
+    }
+
+    public String getDataViewingPermissionsid() {
+        return DataViewingPermissionsid;
+    }
+
+    public void setDataViewingPermissionsid(String dataViewingPermissionsid) {
+        DataViewingPermissionsid = dataViewingPermissionsid;
     }
 }

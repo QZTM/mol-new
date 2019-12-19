@@ -105,7 +105,10 @@
 				},
 				error: function (data)
 				{
-					alert("获取电子合同信息失败")
+					layui.use('layer', function(){
+						var layer = layui.layer;
+						layer.msg('获取电子合同信息失败！');
+					});
 				}
 			});
 

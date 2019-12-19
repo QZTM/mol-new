@@ -178,7 +178,10 @@
 
 			},
 			error: function (data) {
-				alert("获取审核议价信息失败")
+				layui.use('layer', function(){
+					var layer = layui.layer;
+					layer.msg('获取信息失败！');
+				});
 			}
 		});
 
@@ -219,7 +222,10 @@
 		}
 		else
 		{
-            alert("请选择日期")
+			layui.use('layer', function(){
+				var layer = layui.layer;
+				layer.msg('请选择日期！');
+			});
 		}
 	}
 	layui.use('table',LandingTable(100));
