@@ -1,11 +1,13 @@
 package com.mol.quartz.job;
 
+import com.mol.config.NotificationConfig;
 import com.mol.notification.SendNotification;
 import com.mol.quartz.config.Constant;
 import com.mol.quartz.entity.Purchase;
 import com.mol.quartz.mapper.PurchaseMapper;
 import com.mol.quartz.service.GetTokenService;
 import com.mol.quartz.service.PurchaseService;
+import entity.NotificationModel;
 import lombok.extern.java.Log;
 import org.apache.commons.lang.StringUtils;
 import org.quartz.Job;
@@ -36,6 +38,9 @@ public class ExpertReviewEndJob implements Job {
     @Autowired
     private GetTokenService getTokenService;
 
+
+    private SendNotification sendNotificationImp = SendNotification.getSendNotification();
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobDataMap data=context.getTrigger().getJobDataMap();
@@ -44,7 +49,7 @@ public class ExpertReviewEndJob implements Job {
         if(orderIdObj != null){
             orderId = (String) orderIdObj;
         }else{
-            log.warning("报价结束定时任务------找不到orderId");
+            log.warning("专家评审结束定时任务------找不到orderId");
             throw new RuntimeException("需要处理的报价结束任务参数异常------找不到orderId");
         }
         Purchase updatePurchase = new Purchase();
@@ -74,6 +79,18 @@ public class ExpertReviewEndJob implements Job {
             e.printStackTrace();
         }
         log.info("通过eureka获取到的token："+token);
-        SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token, constant.getPurchaseAgentId(),"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+
+        NotificationModel t = new NotificationModel();
+        t.setAgentId(constant.getPurchaseAgentId());
+        t.setContent(NotificationConfig.审批负责人_NEW);
+        t.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+        t.setMessageUrl(NotificationConfig.PURCHASE_APP);
+        t.setText("茉尔易购");
+        t.setTitle("新订单");
+        t.setToAllUser(false);
+        t.setToken(token);
+        t.setUserList(purchaseMainPersonDDId);
+        sendNotificationImp.sendOANotification(t);
+        //SendNotification.getSendNotification().sendOaFromE(purchaseMainPersonDDId,"",token, constant.getPurchaseAgentId(),"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
     }
 }
