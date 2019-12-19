@@ -97,7 +97,8 @@ public class SendNotificationImp implements SendNotification{
      * @return
      */
     @Override
-    public ServiceResult sendOaFromThird(String userIdList,Long agentId,String token){
+    public ServiceResult sendOaFromThird(String purId,String userIdList,Long agentId,String token){
+        log.info("发送邀请供应商报价通知 参数purid:"+purId+",ddId:"+userIdList);
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
         OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
@@ -107,7 +108,7 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://140.249.22.202:8083/index/findAll?ddId="+userIdList);
+        msg.getOa().setMessageUrl("http://"+Constant.getInstance().getSupplierDomain()+"/index/findAll?ddId="+userIdList+"&purId="+purId);
         //msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");

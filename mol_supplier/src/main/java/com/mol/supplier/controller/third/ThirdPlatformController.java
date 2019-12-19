@@ -7,6 +7,7 @@ import com.mol.supplier.config.OrderStatus;
 import com.mol.supplier.entity.MicroApp.DDUser;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
+import com.mol.supplier.entity.dingding.login.AppUser;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PageArray;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseArray;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
@@ -28,7 +29,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import util.TimeUtil;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +62,23 @@ public class ThirdPlatformController {
     private String htmlName = null;
 
     @RequestMapping("/findAll")
-    public String index(String pageName, ModelMap map,HttpSession session) {
+    public String index(String pageName, String ddId, String purId, ModelMap map, HttpSession session, HttpServletRequest request, HttpServletResponse res) {
         log.info(".../index/findAll");
+        if (ddId!=null && purId!=null ){
+            log.info("用户从钉钉通知点击进入供应商客户端，ddId:"+ddId+",purId:"+purId);
+            //根据钉钉id  查询用户信息，存储到session中
+            Salesman man = platformService.findSalesManId(ddId);
+            session.setAttribute("user",man);
+            Supplier su=platformService.findSupplierByOrgId(man.getPkSupplier());
+            session.setAttribute("supplier",su);
+//                request.getRequestDispatcher("/index/selectOne?id="+purId).forward(request,res);
+            try {
+                res.sendRedirect("http://"+request.getServerName()+"/index/selectOne?id="+purId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
         Object salesmanObj = session.getAttribute("user");
         if(salesmanObj == null){
             System.out.println("session中没有用户信息");
@@ -531,8 +551,6 @@ public class ThirdPlatformController {
         String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
         Supplier su=platformService.getSupplierById(supplierId);
 
-        DDUser ddUser = (DDUser)session.getAttribute("ddUser");
-        String ddUserId = ddUser.getUserid();
 
         if (su.getSupstateNormal()!=1){
             //供应商不是基础供应商
@@ -588,9 +606,12 @@ public class ThirdPlatformController {
     public ServiceResult getQuoteFromForm(QuoteModel quotes, HttpSession session) {
 
         String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
-        DDUser ddUser = (DDUser)session.getAttribute("ddUser");
-        String ddUserId = ddUser.getUserid();
 
+
+        Salesman salesman = (Salesman) session.getAttribute("user");
+        if (salesman==null){
+            return ServiceResult.failureMsg("服务器异常，请稍后重试！");
+        }
         //判断订单报价状态
         //1.status
         //2.dealTime
@@ -626,15 +647,10 @@ public class ThirdPlatformController {
             return ServiceResult.failureMsg("本次订单报价已经截止了");
         }
 
-
-
-
-
         if (quotes == null) {
             return null;
         }
-        //通过ddid查询对应人员id
-        Salesman salesman=platformService.findSalesManId(ddUserId);
+
         try{
             platformService.saveQuote(quotes, supplierId, salesman);
         }catch (Exception e){

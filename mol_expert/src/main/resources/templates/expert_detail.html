@@ -104,7 +104,7 @@
 <!--            <button  th:onclick="openorclose([[${ustat.current.key}]])" >展开</button>-->
             <img th:id="img+${ustat.current.key}"  src="/img/c.png" th:onclick="openorclose([[${ustat.current.key}]])" style="float: right;margin-right: 10px;width:20px ;height:20px;display: inline-block  ">
         </div>
-        <table th:id="tb+${ustat.current.key}" class="table table-hover" hidden="hidden" style="border-bottom: 1px solid #dddddd;font-size: 12px" >
+        <table th:id="tb+${ustat.current.key}" class="table table-hover" hidden="hidden" style="border-bottom: 1px solid #dddddd;font-size: 12px;margin-bottom: 3px" >
             <tr>
                 <td style="width: 13%">序号</td>
                 <td  style="width: 27%;">名称</td>
@@ -128,8 +128,8 @@
 
         </table>
         <div style="position: relative">
-            <input type="radio" th:id="ra+${ustat.current.key}" name="tuijian" th:value="${ustat.current.key}" title="推荐" onclick="checkradio(this.vlaue)" style="width: 20px;height: 20px;margin-left: 10px;margin-top:15px;float: left">
-            <span style="position: absolute;left: 40px;top: 15px">推荐</span>
+            <input type="radio" th:id="ra+${ustat.current.key}" name="tuijian" th:value="${ustat.current.key}" title="推荐" onclick="checkradio(this.vlaue)" style="width: 20px;height: 20px;margin-left: 10px;float: left;">
+            <span style="position: absolute;left: 35px;top: 5px">推荐</span>
         </div>
 
     </div>

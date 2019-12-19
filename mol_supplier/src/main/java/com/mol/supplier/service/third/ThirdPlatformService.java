@@ -5,6 +5,7 @@ import com.mol.supplier.config.NewsConfig;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.entity.dingding.login.AppAuthOrg;
+import com.mol.supplier.entity.dingding.login.AppUser;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.supplier.entity.dingding.solr.fyPurchase;
 import com.mol.supplier.entity.thirdPlatform.*;
@@ -14,6 +15,7 @@ import com.mol.supplier.mapper.dingding.org.AppOrgMapper;
 import com.mol.supplier.mapper.dingding.purchase.BdSupplierMapper;
 import com.mol.supplier.mapper.dingding.purchase.fyPurchaseDetailMapper;
 import com.mol.supplier.mapper.dingding.purchase.fyPurchaseMapper;
+import com.mol.supplier.mapper.dingding.user.AppUserMapper;
 import com.mol.supplier.mapper.dingding.workBench.PoOrderMapper;
 import com.mol.supplier.mapper.microApp.MicroSalesmanMapper;
 import com.mol.supplier.mapper.third.BdMarbasclassMapper;
@@ -70,6 +72,9 @@ public class ThirdPlatformService {
 
     @Autowired
     private SuppliersalemanNewsMiddleMapper suppliersalemanNewsMiddleMapper;
+
+    @Autowired
+    private AppUserMapper appUserMapper;
 
     //enter排版
     public List<Enter> findAll() {
@@ -515,5 +520,15 @@ public class ThirdPlatformService {
     public List<fyPurchase> findPur(String status, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
         return fyPurchaseMapper.findListByStatus(status,null,null);
+    }
+
+
+    public Supplier findSupplierByOrgId(String pkSupplier) {
+        if (pkSupplier==null){
+            throw new RuntimeException("供应商id不得为空");
+        }
+        Supplier t = new Supplier();
+        t.setPkSupplier(pkSupplier);
+        return bdSupplierMapper.selectOne(t);
     }
 }

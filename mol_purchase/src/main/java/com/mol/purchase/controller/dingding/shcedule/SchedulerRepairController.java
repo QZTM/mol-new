@@ -110,12 +110,7 @@ public class SchedulerRepairController {
         //查询ActHiProcinst
         ActHiProcinst ahp=schedulerRepairService.findActHiProcinstByBusinessKey(purId);
         //act_hi_varinst  查询结果
-        ActHiVarinst ahv=schedulerRepairService.findActHiVarinstByProcInstId(ahp.getProcInstId());
-        if (ahv==null){
-            log.info("act_hi_varinst  查询结果为null");
-            return null;
-        }
-        log.info("查询订单最终审批结果："+ahv.getText());
+
         List<ActHiActinst> list=new ArrayList<>();
         List<AppUser> userList=new ArrayList<>();
 
@@ -123,11 +118,41 @@ public class SchedulerRepairController {
         list=schedulerRepairService.getActHiActinstByPurId(purId);
         log.info("查询订单的审批人员id："+list);
         userList=schedulerRepairService.getAppUserByList(list);
+
+        ActHiVarinst ahv=schedulerRepairService.findActHiVarinstByProcInstId(ahp.getProcInstId());
+
+        if (userList==null){
+            log.info("E应用查看的订单还没有进入审批流程，暂无审批人员");
+            return ServiceResult.success(userList);
+        }
+        if (ahv==null){
+            log.info("act_hi_varinst  查询结果为null,订单开始审批，首位审批人员还未操作");
+            return ServiceResult.success(userList);
+        }
         if (ahv!=null && "pass".equals(ahv.getText())){
-            for (AppUser appUser : userList) {
-                appUser.setIfPass(true);
+            //分两种，一种是中途，一种是结束
+//            ActReProcdef arp=schedulerRepairService.findActReProcdefById(ahp.getProcDefId());
+//            AppPurchaseApprove apa=schedulerRepairService.findAppPurchaseApproveByKey(arp.getKey());
+//            int length = apa.getPurchaseApproveList().split(",").length;
+//            if (userList.size()==length){
+//
+//            }
+            fyPurchase pur = schedulerRepairService.getPurById(purId);
+            if (OrderStatus.PASS==Integer.parseInt(pur.getStatus())){
+                log.info("订单状态已修改为通过，所有审批人员全部操作完成");
+                for (AppUser appUser : userList) {
+                    appUser.setIfPass(true);
+                }
+            }else {
+                log.info("订单状态未修改为通过，部分审批人员没有操作完成");
+                for(int i=0;i<userList.size();i++){
+                    if (i!=userList.size()-1){
+                        userList.get(i).setIfPass(true);
+                    }
+                }
             }
         }else {
+            log.info("订单已被拒绝");
             for (int i=0;i<userList.size();i++){
                 if (i==userList.size()-1){
                     userList.get(i).setIfPass(false);
