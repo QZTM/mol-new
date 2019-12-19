@@ -1,37 +1,60 @@
 package com.mol.config;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  * 项目中的常量定义类
+ * @author ly
  */
+
 public class Constant {
-    /**
-     * 域名
-     */
-    //public static final String domain = "fyycg1.vaiwan.com";
-    public static final String EXPERT_DOMAIN = "140.249.22.202:8084";
 
-    public static final String PURCHASE_DOMAIN = "140.249.22.202:8082";
-    public static final String THIRD_DOMAIN = "140.249.22.202:8082";
-    //public static final String domain = "fyycg1.vaiwan.com";
+    @Getter
+    private String expertDomain ;
 
-    /**
-     * E应用的agentdId，登录开发者后台可查看
-     */
-    public static final Long AGENTID = 272636313L;
+    @Getter
+    private String purchaseDomain;
 
-    /**
-     * 第三方报价平台agentdId
-     */
-    public static final long AGENTID_THIRDPLAT=280740196L;
+    @Getter
+    private String supplierDomain;
 
-    /**
-     *专家端agentId
-     */
-    public static final long AGENTID_EXPERT=300343663L;
+    @Getter
+    private Long expertAgentId;
 
+    @Getter
+    private Long purchaseAgentId;
 
+    @Getter
+    private Long supplierAgentId;
 
+    public Constant(){
+        Properties prop = new Properties();
+        try {
+            prop.load(Constant.class.getResourceAsStream("/notificationApplication.properties"));
+            this.setPurchaseDomain(prop.getProperty("purchasedomain"));
+            this.setPurchaseAgentId(Long.parseLong(prop.getProperty("purchaseagentid")));
+            this.setExpertDomain(prop.getProperty("expertdomain"));
+            this.setExpertAgentId(Long.parseLong(prop.getProperty("expertagentid")));
+            this.setSupplierDomain(prop.getProperty("supplierdomain"));
+            this.setSupplierAgentId(Long.parseLong(prop.getProperty("supplieragentid")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private static Constant constant = new Constant();
+
+    public static synchronized Constant getInstance(){
+        if(constant == null){
+            return new Constant();
+        }else{
+            return constant;
+        }
+    }
 
     /**
      * 采购渠道常量
@@ -52,14 +75,27 @@ public class Constant {
     public static Long  orderorederStartNum = 1L;
 
 
+    private void setExpertDomain(String expertDomain) {
+        this.expertDomain = expertDomain;
+    }
 
+    private void setPurchaseDomain(String purchaseDomain) {
+        this.purchaseDomain = purchaseDomain;
+    }
 
+    public void setSupplierDomain(String supplierDomain) {
+        this.supplierDomain = supplierDomain;
+    }
 
+    private void setExpertAgentId(Long expertAgentId) {
+        this.expertAgentId = expertAgentId;
+    }
 
+    private void setPurchaseAgentId(Long purchaseAgentId) {
+        this.purchaseAgentId = purchaseAgentId;
+    }
 
-
-
-
-
-
+    private void setSupplierAgentId(Long supplierAgentId) {
+        this.supplierAgentId = supplierAgentId;
+    }
 }

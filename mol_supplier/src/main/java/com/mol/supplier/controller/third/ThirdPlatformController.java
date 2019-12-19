@@ -7,6 +7,7 @@ import com.mol.supplier.config.OrderStatus;
 import com.mol.supplier.entity.MicroApp.DDUser;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
+import com.mol.supplier.entity.dingding.login.AppUser;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PageArray;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseArray;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
@@ -28,7 +29,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import util.TimeUtil;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +62,23 @@ public class ThirdPlatformController {
     private String htmlName = null;
 
     @RequestMapping("/findAll")
-    public String index(String pageName, ModelMap map,HttpSession session) {
+    public String index(String pageName, String ddId, String purId, ModelMap map, HttpSession session, HttpServletRequest request, HttpServletResponse res) {
         log.info(".../index/findAll");
+        if (ddId!=null && purId!=null ){
+            log.info("用户从钉钉通知点击进入供应商客户端，ddId:"+ddId+",purId:"+purId);
+            //根据钉钉id  查询用户信息，存储到session中
+            Salesman man = platformService.findSalesManId(ddId);
+            session.setAttribute("user",man);
+            Supplier su=platformService.findSupplierByOrgId(man.getPkSupplier());
+            session.setAttribute("supplier",su);
+//                request.getRequestDispatcher("/index/selectOne?id="+purId).forward(request,res);
+            try {
+                res.sendRedirect("http://"+request.getServerName()+"/index/selectOne?id="+purId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
         Object salesmanObj = session.getAttribute("user");
         if(salesmanObj == null){
             System.out.println("session中没有用户信息");
@@ -99,6 +119,17 @@ public class ThirdPlatformController {
                 buyId = 6 + "";
                 break;
         }
+        //查询五条最新公告
+        List<fyPurchase> passPurList = platformService.findPassPurchByStatus(OrderStatus.pass + "", 1, 5);
+        map.addAttribute("notice",passPurList);
+
+
+        //获取最新的五个采购
+        List<fyPurchase> newEstPurList = platformService.findPur(OrderStatus.waitingQuote+"",1,5);
+        //获取公司的名称
+        newEstPurList=platformService.getAppOrgNameByPurId(newEstPurList);
+
+        map.addAttribute("newEst",newEstPurList);
 
 
         List<fyPurchase> orderList = platformService.findList(buyId, 1, 5);
@@ -165,7 +196,7 @@ public class ThirdPlatformController {
         if (htmlName=="error_enter"){
             return htmlName;
         }
-        List<fyPurchase> list = null;
+        List<fyPurchase> list = new ArrayList<>();
         int count = 0;
 
         //进入茉尔资讯
@@ -179,8 +210,14 @@ public class ThirdPlatformController {
         //进入中标公告
         if (htmlName == "index_zbgg") {
             log.info("查询中标公告");
-            list =platformService.findPassPurchByStatus(supplier.getPkSupplier(),pageNumber,pageSize);
-            list =platformService.findPassSupplierCountOfPassPur(list);
+            List<fyPurchase> lists =platformService.findPassPurchByStatus(OrderStatus.pass+"",pageNumber,pageSize);
+            lists =platformService.findPassSupplierCountOfPassPur(lists);
+            //将订单状态改为中文
+
+            for (fyPurchase pur : lists) {
+                fyPurchase p = platformService.getPurStatusToChinese(pur);
+                list.add(p);
+            }
             count=platformService.findPassCountByStatus(OrderStatus.pass);
             log.info("中标公告的list"+list);
             log.info("中标公告的数量"+count);
@@ -249,7 +286,7 @@ public class ThirdPlatformController {
         //行业类别
         log.info("按照物料分类查询，当前状态："+status);
         List<fyPurchase> list = platformService.findLIstByStatusAndGoodsTypeAndBuyChannelId(buyChannelId, status, goodsType, pageNumber, pageSize);
-        if(Integer.parseInt(status)==OrderStatus.pass){
+        if(status!="" && Integer.parseInt(status)==OrderStatus.pass){
             log.info("按照物料分类查询，需要查询中标公司数量，当前状态："+status);
             list =platformService.findPassSupplierCountOfPassPur(list);
         }
@@ -507,15 +544,13 @@ public class ThirdPlatformController {
 
 
     /**
-     * 前往我要报价页面，获取当前页面的物品id
+     * 前往报价页面，获取当前页面的物品id
      */
     @RequestMapping("/quote")
     public String toGetQuote(String id, ModelMap map, HttpSession session) {
         String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
         Supplier su=platformService.getSupplierById(supplierId);
 
-        DDUser ddUser = (DDUser)session.getAttribute("ddUser");
-        String ddUserId = ddUser.getUserid();
 
         if (su.getSupstateNormal()!=1){
             //供应商不是基础供应商
@@ -571,9 +606,12 @@ public class ThirdPlatformController {
     public ServiceResult getQuoteFromForm(QuoteModel quotes, HttpSession session) {
 
         String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
-        DDUser ddUser = (DDUser)session.getAttribute("ddUser");
-        String ddUserId = ddUser.getUserid();
 
+
+        Salesman salesman = (Salesman) session.getAttribute("user");
+        if (salesman==null){
+            return ServiceResult.failureMsg("服务器异常，请稍后重试！");
+        }
         //判断订单报价状态
         //1.status
         //2.dealTime
@@ -609,15 +647,10 @@ public class ThirdPlatformController {
             return ServiceResult.failureMsg("本次订单报价已经截止了");
         }
 
-
-
-
-
         if (quotes == null) {
             return null;
         }
-        //通过ddid查询对应人员id
-        Salesman salesman=platformService.findSalesManId(ddUserId);
+
         try{
             platformService.saveQuote(quotes, supplierId, salesman);
         }catch (Exception e){

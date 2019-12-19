@@ -2,6 +2,8 @@ package com.mol.purchase.entity.dingding.login;
 
 import lombok.Data;
 
+import javax.persistence.Transient;
+
 @Data
 public class AppUser {
 
@@ -51,4 +53,8 @@ public class AppUser {
      * 是否是E应用管理员
      */
     private Integer ifAdmin;
+
+    @Transient
+    //在E应用中 判断在工作流中审批通过或者拒绝 true==通过 false==拒绝
+    private Boolean ifPass;
 }

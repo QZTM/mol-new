@@ -35,7 +35,7 @@ public class MicroLoginService {
         request.setHttpMethod("GET");
         OapiUserGetuserinfoResponse response = null;
         try {
-            response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            response = client.execute(request, microTokenService.getToken());
         } catch (ApiException e) {
             throw new RuntimeException("根据免登授权码和access_token获取用户信息时出错！");
         }
@@ -59,7 +59,7 @@ public class MicroLoginService {
         request.setUserid(userId);
         request.setHttpMethod("GET");
         try {
-            OapiUserGetResponse response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            OapiUserGetResponse response = client.execute(request, microTokenService.getToken());
             if(response.isSuccess()){
                 return response;
             }else{
@@ -82,7 +82,7 @@ public class MicroLoginService {
         request.setId(deptId+"");
         request.setHttpMethod("GET");
         try {
-            OapiDepartmentGetResponse response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            OapiDepartmentGetResponse response = client.execute(request, microTokenService.getToken());
             return response;
         } catch (ApiException e) {
             e.printStackTrace();
@@ -101,7 +101,7 @@ public class MicroLoginService {
         request.setId(1+"");
         request.setHttpMethod("GET");
         try {
-            OapiDepartmentGetResponse response = client.execute(request, microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY));
+            OapiDepartmentGetResponse response = client.execute(request, microTokenService.getToken());
             return response;
         } catch (ApiException e) {
             e.printStackTrace();
@@ -123,7 +123,7 @@ public class MicroLoginService {
 
 
     public String  getToken() {
-        String token = microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY);
+        String token = microTokenService.getToken();
         System.out.println(token);
         return token;
     }

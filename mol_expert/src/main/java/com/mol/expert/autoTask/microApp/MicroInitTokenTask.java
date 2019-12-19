@@ -20,7 +20,7 @@ public class MicroInitTokenTask implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        microTokenService.getToken(MicroTokenService.MICROAPPTOKENKEY);
-        microJsapiTicketService.getJsApiTicket(MicroJsapiTicketService.MICROAPPJSAPITICKETKEY);
+        microTokenService.getToken();
+        microJsapiTicketService.getJsApiTicket();
     }
 }

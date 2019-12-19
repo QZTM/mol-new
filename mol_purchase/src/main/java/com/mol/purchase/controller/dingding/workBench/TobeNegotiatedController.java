@@ -70,7 +70,7 @@ public class TobeNegotiatedController {
             //获取负责的采购途径buychannelId
             List<String > buyChannelList=loginService.getBuyChannelIdArrFromAppOrgMidList(appOrgMidList);
             log.info("当前登录人负责议价的采购途径:"+buyChannelList);
-            list=negotiatedService.findListByOrgIdAndBuychannelAndStatus(orgId,status,buyChannelList,pageNum,pageSize);
+            list=negotiatedService.findListByOrgIdAndBuychannelAndStatus(orgId,status,secondStatus, buyChannelList,pageNum,pageSize);
             if (pageNum==1){
                 //首页添加
                 List<fyPurchase> listIfOk = negotiatedService.findListIfOk(orgId, status, secondStatus, userId, pageNum, pageSize);
@@ -190,7 +190,7 @@ public class TobeNegotiatedController {
         log.info("待议价  查询订单信息："+pur);
 
         pur=negotiatedService.getStaffName(pur);
-        log.info("待议价  查询订单的发起人："+pur);
+        log.info("待议价  查询订单的发起人："+pur.getStaffId());
         map.put("fyPurchase",pur);
 
         //报价信息

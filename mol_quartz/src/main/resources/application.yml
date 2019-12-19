@@ -1,5 +1,6 @@
 server:
-  port: 8701
+  port: @quartzport@
+  ip: @quartzip@
   tomcat:
     uri-encoding: utf-8
     max-http-post-size: 1048576000
@@ -17,10 +18,10 @@ spring:
     druid:
       type: com.alibaba.druid.pool.DruidDataSource
       filters: stat
-      driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://140.249.22.202:3306/zkfy_test_1?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
-      username: root
-      password: ald377
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: @dburl@
+      username: @dbusername@
+      password: @dbpassword@
       initial-size: 1
       min-idle: 1
       max-active: 20
@@ -40,6 +41,7 @@ spring:
     auto-startup: true
     jdbc:
       initialize-schema: never
+      schema: classpath:/sql/quartztables.sql
     overwrite-existing-jobs: true
   application:
     name: mol-quartz
@@ -47,36 +49,19 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://140.249.22.202:8700/eureka/
+      defaultZone: @eurekaserverurl@
   instance:
     prefer-ip-address: true
-    #ip-address: 127.0.0.1
-    #non-secure-port: 8701
-#    properties:
-#      org:
-#        quartz:
-#          scheduler:
-#            instanceName: MyScheduler
-#            instanceId: AUTO
-#          threadPool:
-#            class: org.quartz.simpl.SimpleThreadPool
-#            thread-count: 10
-#            thread-priority: 5
-#            threadsInheritContextClassLoaderOfInitializingThread: true
-#          jobStore:
-#            misfire-threshold: 50000
-#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-#            isClustered: true
-#            clusterCheckinInterval: 15000
-#            useProperties: true
-#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-#            tablePrefix: QRTZ_
+    instance-id=${server:ip}:${server:port}:
 
-
-
-
-
+supplieragentid: @supplieragentid@
+expertagentid: @expertagentid@
+purchaseagentid: @purchaseagentid@
 
 logging:
   level:
     com.mol.quartz.mapper: debug
+  file: /usr/local/log/${spring.application.name}/${spring.application.name}.log
+  file.max-history: 60
+
+

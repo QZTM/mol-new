@@ -4,8 +4,10 @@ import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.mol.config.Constant;
+import com.mol.config.NotificationConfig;
 import com.mol.config.URLConstant;
 import com.taobao.api.ApiException;
+import entity.NotificationModel;
 import entity.ServiceResult;
 import lombok.extern.java.Log;
 import util.TimeUtil;
@@ -35,7 +37,11 @@ public class SendNotificationImp implements SendNotification{
      */
     @Override
     public ServiceResult sendOaFromE(String userIdList,String userName,String token,long agentId ) {
-        return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+        //服务器
+        //return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/purchase");
+
+        //本地
+        return sendOaFromE(userIdList,userName,token,agentId,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！",NotificationConfig.审批图片,"eapp://pages/purchase/purchase");
     }
 
 
@@ -72,10 +78,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功:"+rsp.getMessage());
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
+            return ServiceResult.failure("发送失败:"+rsp);
         }
 
     }
@@ -83,18 +89,16 @@ public class SendNotificationImp implements SendNotification{
 
 
 
-
-
-
     /**
      * 第三方报价平台发布
-     * @param userIdList 发送人id的string ，如 111,222
+     * @param userIdList 发送人钉钉id的string ，如 111,222
      * @param agentId 应用agentId
      * @param token
      * @return
      */
     @Override
-    public ServiceResult sendOaFromThird(String userIdList,Long agentId,String token){
+    public ServiceResult sendOaFromThird(String purId,String userIdList,Long agentId,String token){
+        log.info("发送邀请供应商报价通知 参数purid:"+purId+",ddId:"+userIdList);
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
         OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
@@ -104,14 +108,14 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://140.249.22.202:8083/index/findAll");
+        msg.getOa().setMessageUrl("http://"+Constant.getInstance().getSupplierDomain()+"/index/findAll?ddId="+userIdList+"&purId="+purId);
         //msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setContent(TimeUtil.getNowDateTime()+"有新的采购订单来了，快去报价吧！");
-        msg.getOa().getBody().setImage("http://"+Constant.THIRD_DOMAIN+"/static/upload/imgs/supplier/ask.png");
+        msg.getOa().getBody().setImage(NotificationConfig.报价图片);
         msg.getOa().getBody().setTitle("新订单");
         msg.setMsgtype("oa");
         messageRequest.setMsg(msg);
@@ -120,10 +124,10 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
-            return ServiceResult.success("发送成功:"+rsp.getMessage());
+            return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
-            return ServiceResult.failure("发送失败:"+rsp.getErrmsg());
+            return ServiceResult.failure("发送失败:"+rsp);
         }
     }
 
@@ -145,7 +149,7 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://"+ Constant.EXPERT_DOMAIN +"/expert/findAll");
+        msg.getOa().setMessageUrl("http://"+ Constant.getInstance().getExpertDomain() +"/expert/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
@@ -165,5 +169,37 @@ public class SendNotificationImp implements SendNotification{
             return ServiceResult.failure("发送失败:"+rsp);
         }
     }
+
+    @Override
+    public OapiMessageCorpconversationAsyncsendV2Response sendOANotification(NotificationModel notificationModel) {
+        DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
+
+        OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
+        messageRequest.setUseridList(notificationModel.getUserList());
+        messageRequest.setAgentId(notificationModel.getAgentId());
+        messageRequest.setToAllUser(notificationModel.getToAllUser());
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
+        msg.getOa().setMessageUrl(notificationModel.getMessageUrl());
+        msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
+        msg.getOa().getHead().setText(notificationModel.getText());
+        msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
+        msg.getOa().getBody().setContent(notificationModel.getContent());
+        msg.getOa().getBody().setImage(notificationModel.getImage());
+        msg.getOa().getBody().setTitle(notificationModel.getTitle());
+        msg.setMsgtype(notificationModel.getMsgType());
+        messageRequest.setMsg(msg);
+
+        OapiMessageCorpconversationAsyncsendV2Response rsp = null;
+        try {
+            rsp = client.execute(messageRequest,notificationModel.getToken());
+            return rsp;
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return rsp;
+        }
+    }
+
 
 }

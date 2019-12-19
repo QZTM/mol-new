@@ -63,7 +63,7 @@ public interface fyPurchaseMapper extends BaseMapper<fyPurchase> {
 
     int updataApprovalEndTime(String purId, String time);
 
-    List<fyPurchase> findListByOrgIdAndBuychannelAndStatus(@Param("orgId") String orgId,@Param("status") String status, @Param("list") List<String> buyChannelList);
+    List<fyPurchase> findListByOrgIdAndBuychannelAndStatus(@Param("orgId") String orgId,@Param("status") String status,@Param("statusSecond")String statusSecond, @Param("list") List<String> buyChannelList);
 
     List<fyPurchase> findFyPurchaseByNegotiatePersonNotNullAndOrgId(String orgId);
 }

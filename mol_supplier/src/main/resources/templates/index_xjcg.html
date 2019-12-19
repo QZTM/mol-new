@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta charset="UTF-8">
     <title>询价采购</title>
@@ -118,7 +118,7 @@
             <p th:switch="${er.buyChannelId}">单号:<span th:text="${er.orderNumber}">0000001</span>&nbsp;&nbsp;类型&nbsp;<span th:case="3">战略采购</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span></p>
             <p style="" th:if="${er.expertReview=='true'}">需支付评审奖励<text th:text="${er.expertReward}" style="color: red;"></text>元</p>
             <span class="label label-primary " th:text="${er.goodsType}"></span>
-            <span class="label label-warning " th:text="${er.status}"></span>
+<!--            <span class="label label-warning " th:text="${er.status}"></span>-->
             <span style="float: right;margin-right: 3px" class=" glyphicon-time list_down" aria-hidden="true" th:text="${er.createTime}"></span>
         </a>
     </div>

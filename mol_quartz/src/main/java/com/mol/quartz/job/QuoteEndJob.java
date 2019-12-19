@@ -1,5 +1,6 @@
 package com.mol.quartz.job;
 
+import com.mol.config.NotificationConfig;
 import com.mol.notification.SendNotification;
 import com.mol.quartz.config.Constant;
 import com.mol.quartz.entity.Purchase;
@@ -8,6 +9,7 @@ import com.mol.quartz.mapper.ExpertUserMapper;
 import com.mol.quartz.mapper.PurchaseMapper;
 import com.mol.quartz.service.GetTokenService;
 import com.mol.quartz.service.PurchaseService;
+import entity.NotificationModel;
 import lombok.extern.java.Log;
 import org.apache.commons.lang.StringUtils;
 import org.quartz.DisallowConcurrentExecution;
@@ -31,10 +33,11 @@ public class QuoteEndJob implements Job{
 
 
 	@Autowired
+	private Constant constant;
+	@Autowired
 	private PurchaseService purchaseService;
 
-	@Autowired
-	SendNotification sendNotificationImp;
+	private SendNotification sendNotificationImp = SendNotification.getSendNotification();
 
 	@Autowired
 	private PurchaseMapper purchaseMapper;
@@ -118,7 +121,6 @@ public class QuoteEndJob implements Job{
 				updatePurchase.setExpertTime(TimeUtil.getNowDateTime());
 				purchaseMapper.updateByPrimaryKeySelective(updatePurchase);
 				addJobHandler.addExpertReviewEndJob(orderId,AddJobHandler.EXPERTREVIEWDELAY);
-				//todo:给所属行业类别的专家发送通知
 				//1.获取该行业类别
 				//2.查询所属该行业类别的钉钉id list
 				//3.发送通知
@@ -143,7 +145,18 @@ public class QuoteEndJob implements Job{
 						break;
 					}
 					log.info("给专家"+expertId+"发送通知...");
-					sendNotificationImp.sendOaFromExpert(expertId, Constant.AGENTID_EXPERT,token);
+					NotificationModel t = new NotificationModel();
+					t.setAgentId(constant.getExpertAgentId());
+					t.setContent(NotificationConfig.专家端_NEW);
+					t.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+					t.setMessageUrl(NotificationConfig.EXPERT_APP);
+					t.setText("茉尔易购");
+					t.setTitle("新订单");
+					t.setToAllUser(false);
+					t.setToken(token);
+					t.setUserList(expertId);
+					sendNotificationImp.sendOANotification(t);
+					//sendNotificationImp.sendOaFromExpert(expertId, constant.getExpertAgentId(),token);
 				}
 
 
@@ -169,7 +182,19 @@ public class QuoteEndJob implements Job{
 					e.printStackTrace();
 				}
 				log.info("通过eureka获取到的token："+token);
-				sendNotificationImp.sendOaFromE(purchaseMainPersonDDId,"",token,Constant.AGENTID,"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
+
+				NotificationModel t = new NotificationModel();
+				t.setAgentId(constant.getPurchaseAgentId());
+				t.setContent(NotificationConfig.审批负责人_NEW);
+				t.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+				t.setMessageUrl(NotificationConfig.PURCHASE_APP);
+				t.setText("茉尔易购");
+				t.setTitle("新订单");
+				t.setToAllUser(false);
+				t.setToken(token);
+				t.setUserList(purchaseMainPersonDDId);
+				sendNotificationImp.sendOANotification(t);
+				//sendNotificationImp.sendOaFromE(purchaseMainPersonDDId,"",token,constant.getPurchaseAgentId(),"审批",TimeUtil.getNowDateTime()+"有新的采购订单需要您审批，点击查看吧！","http://140.249.22.202:8082/static/upload/imgs/supplier/ask.png","eapp://pages/purchase/workbench/tobeapproved/tobeapproved");
 			}
 		}
 

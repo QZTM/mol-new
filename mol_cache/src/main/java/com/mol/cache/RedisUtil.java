@@ -5,8 +5,10 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -20,10 +22,16 @@ public class RedisUtil {
     private  RedisUtil() {
         // jedispool为null则初始化，
         if (pool == null) {
-            String ip = "127.0.0.1";
-            //String ip = "140.249.22.202";
-            String password = "ald377";
-            int port = 6379;
+
+            Properties prop = new Properties();
+            try {
+                prop.load(RedisUtil.class.getResourceAsStream("/redis.properties"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String ip = prop.getProperty("host");
+            String password = prop.getProperty("password");
+            int port = Integer.parseInt(prop.getProperty("port"));
             JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
             // 如果赋值为-1，则表示不限制；如果pool已经分配了maxTotal个jedis实例，则此时pool的状态为exhausted(耗尽）.
             jedisPoolConfig.setMaxTotal(300);

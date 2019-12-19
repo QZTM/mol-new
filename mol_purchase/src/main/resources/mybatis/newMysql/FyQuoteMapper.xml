@@ -32,4 +32,19 @@
     <select id="findSupplierIdListByPurId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.FyQuote">
         SELECT DISTINCT pk_supplier_id FROM fy_quote WHERE id in (SELECT quote_id FROM `fy_purchase_detail` where fy_purchase_id =#{id})
     </select>
+    <select id="getBigDataBySuppliedAndpkMaterialId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.dingding.purchase.workBench.BigDataStar">
+        SELECT
+            bm.NAME AS NAME,
+            fq.quote AS norigprice,
+            fq.creationtime AS dmakedate,
+            fq.pk_supplier_id AS pkSupplier
+        FROM
+            fy_quote fq
+            LEFT JOIN bd_material bm ON fq.pk_material_id = bm.pk_material
+        WHERE
+            fq.pk_material_id =#{pkMaterialId}
+            and fq.pk_supplier_id=#{supplierId}
+        ORDER BY
+            fq.creationtime ASC
+    </select>
 </mapper>

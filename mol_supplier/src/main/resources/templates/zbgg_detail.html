@@ -43,72 +43,47 @@
         如有疑问请拨打：<text  style="color: red">111111111111</text>
     </div>
     <!--产品名称开始-->
-    <div style="text-align: center;border: 1px solid #eeeeee;font-size: 14px;padding-top: 6px;clear: both;">
+    <div style="font-size: 12px;padding-top: 3px;clear: both;">
+        <span style="float:left;padding-left: 7px;width: 40%;text-align: left">
+            <p style="color: red;">已报价商家:<span th:text="${quoteCount}" style="color: black;"></span></p>
 
-        <div  class="col-xs-4 col-md-4">
-            <p style="text-align: center;">已报价商家:<span style="color: red;" th:text="${quoteCount}">
-				14
-			</span></p>
-        </div>
-        <div >
-            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">
-
-			</span></p>
-        </div>
+        </span>
+        <span style="float: right;width: 46%;text-align: center" >
+            <p style="color: red;">&nbsp;发布日期:<span th:text="${pur.createTime}" style="color: black;"></span></p>
+        </span>
     </div>
     <!--产品名称结束-->
     <!--发布日期开始-->
-    <div style="padding-top: 6px" >
-        <!--        <div  class="col-xs-3 col-md-3">-->
-        <!--            <p style="text-align: center;">要求商家:<span style="color: red;" th:text="${quoNum}">-->
-        <!--			</span></p>-->
-        <!--        </div>-->
-
-        <span style="float:left;font-size: 10px;padding-left: 10px;width: 24%">
+    <div style="padding-top: 10px;font-size: 12px;text-align: center" >
+        <span style="float:left;padding-left: 7px;width: 24%;text-align: left">
             <p style="color: blue;">类型:<span th:text="${pur.goodsType}" style="color: black;"></span></p>
-
         </span>
-        <span style="font-size: 10px;float: left;width: 20%" >
+
+        <span style="float: left;width: 24%;text-align: center" >
             <p style="color: blue;">&nbsp;状态:<span th:text="${pur.status}" style="color: black;"></span></p>
         </span>
 
-        <span style="font-size: 10px;float: left;width: 28%" >
+        <span style="float: left;width: 26%;text-align: center" >
             <p style="color: blue;">&nbsp;付款方式:<span th:text="${payMent}" style="color: black;"></span></p>
         </span>
 
-        <span style="font-size: 10px;float: left;width: 24%" >
+        <span style="float: left;width: 24%;text-align: right" >
             <p style="color: blue;">&nbsp;供货周期:<span th:text="${supplyCycle}" style="color: black;"></span><span style="color: black;">天</span></p>
         </span>
-        <!--        <div  class="col-xs-4 col-md-4">-->
-        <!--            <p style="text-align: center;">付款方式:<span style="color: red;" th:text="${payMent}">-->
-        <!--				货到付款-->
-        <!--			</span></p>-->
-        <!--        </div>-->
-        <!--        <div  class="col-xs-4 col-md-4">-->
-        <!--        <p style="text-align: center;">供货周期:<span style="color: red;" th:text="${supplyCycle}">-->
-        <!--				30-->
-        <!--			</span>天</p>-->
-        <!--        </div>-->
-        <!--        <div class="col-xs-6 col-md-6">-->
-        <!--            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">-->
-
-        <!--			</span></p>-->
-        <!--        </div>-->
-
     </div>
     <!--发布日期结束-->
 
     <!--编号开始-->
     <div style="border: 1px solid #eeeeee;clear: both;">
-         <span style="float:left;padding-left: 9px;font-size: 12px;padding-top: 6px">
+         <span style="float:left;padding-left: 7px;font-size: 12px;padding-top: 6px">
             <p>编号&nbsp;:&nbsp;<span th:text="${pur.orderNumber}"></span></p>
 
         </span>
-        <span style="font-size: 12px;float: right;padding-right: 72px;padding-top: 6px" >
+        <span style="font-size: 12px;float: right;padding-right:8px;padding-top: 6px" >
 <!--            -->
             <!--    查询到的专家的电话号码放到此处        -->
             <!--            -->
-            <p>技术支持&nbsp;: &nbsp;<span  th:text="${tst}" style="color: blue;">11111</span></p>
+            <p>技术支持&nbsp;: &nbsp;<span  th:text="${tst}">11111</span></p>
         </span>
     </div>
     <!--编号结束-->
@@ -134,24 +109,24 @@
     </div>
     <!--表格结束-->
 
-    <div style="margin-left: 16px;font-size: 12px;clear: both;">
+    <div style="margin-left: 7px;font-size: 12px;clear: both;">
         <!--详情需求pdf-->
-        <div style="float: left;font-size: 12px">
+        <div style="float: left;">
             <a href="#">详情需求PDF</a>
         </div>
         <!--截止日期-->
-        <div style="font-size: 12px;color: #ff0000;float: right;padding-right: 43px">
+        <div style="color: #ff0000;float: right;padding-right: 8px">
             <span>截止日期：</span>
             <span th:text="${dealLine}">2019-6-9 18:00:00</span>
         </div>
     </div>
 
     <!-- 备注开始 -->
-    <div id="1" style="clear: both;margin: 12px 15px 0px 15px;">
-        <p >
+    <div id="1" style="clear: both;">
+        <p  style="padding-top: 6px;padding-left: 7px">
             备注说明:
         </p>
-        <textarea style="height: 160px;width: 100%;" readonly="readonly" th:text="${remakes}"></textarea>
+        <textarea style="width: 100%;padding-left: 7px"  readonly="readonly" th:text="${remakes}"></textarea>
     </div>
     <!-- 备注结束 -->
 
@@ -164,11 +139,11 @@
 
     <!--</div>-->
 
-    <div th:each="en,f:${supplier}" style="clear: both;margin: 3px 0px 3px 10px ">
-        <div style="color: red;">
+    <div th:each="en,f:${supplier}" style="clear: both; margin-top: 10px">
+        <div style="color: red;padding-left: 7px">
             中标公司<span th:text="${f.index+1}"></span>
         </div>
-        <div style="color: red;" th:text="${en.name}">
+        <div style="color: red;padding-left: 7px" th:text="${en.name}">
 
         </div>
         <div>

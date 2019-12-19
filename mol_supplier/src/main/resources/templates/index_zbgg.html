@@ -99,7 +99,7 @@
             <span style="float: right;margin-right: 6px" >中标公司<text th:text="${er.passSuppCount}" style="color: red;"></text>家</span>
             <p th:switch="${er.buyChannelId}">单号:&nbsp;<span th:text="${er.orderNumber}">0000001</span>&nbsp;&nbsp;类型&nbsp;<span th:case="3">战略采购</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span><span th:case="6">加工维修</span></p>
             <span class="label label-primary " th:text="${er.goodsType}"></span>
-            <span class="label label-warning " >采购结束</span>
+            <span class="label label-warning " th:text="${er.status}">采购结束</span>
             <span style="float: right;margin-right: 18px" class=" glyphicon-time list_down" aria-hidden="true" th:text="${er.createTime}"></span>
         </a>
     </div>

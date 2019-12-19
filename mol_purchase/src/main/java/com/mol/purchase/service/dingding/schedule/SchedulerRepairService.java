@@ -7,6 +7,7 @@ import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiActinst;
 import com.mol.purchase.entity.activiti.ActHiComment;
 import com.mol.purchase.entity.activiti.ActHiProcinst;
+import com.mol.purchase.entity.activiti.ActHiVarinst;
 import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
@@ -18,6 +19,7 @@ import com.mol.purchase.mapper.newMysql.QuotePayresultMapper;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiActinstMapper;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiCommentMapper;
 import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiProcinstMapper;
+import com.mol.purchase.mapper.newMysql.dingding.activiti.ActHiVarinstMapper;
 import com.mol.purchase.mapper.newMysql.dingding.org.AppOrgMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.BdSupplierMapper;
 import com.mol.purchase.mapper.newMysql.dingding.purchase.fyPurchaseDetailMapper;
@@ -86,6 +88,9 @@ public class SchedulerRepairService {
 
     @Autowired
     private QuotePayresultMapper quotePayresultMapper;
+
+    @Autowired
+    private ActHiVarinstMapper actHiVarinstMapper;
 
     @Autowired
     private TYOOSUtil tyoosUtil;
@@ -238,4 +243,17 @@ public class SchedulerRepairService {
         tyoosUtil.listObj(bucket,key);
     }
 
+    public ActHiProcinst findActHiProcinstByBusinessKey(String purId) {
+        if (purId!=null){
+            return actHiProcinstMapper.getProByPurId(purId);
+        }
+        return null;
+    }
+
+    public ActHiVarinst findActHiVarinstByProcInstId(String procInstId) {
+        if (procInstId!=null){
+            return actHiVarinstMapper.findActHiVarinstByProcInstId(procInstId);
+        }
+        return null;
+    }
 }
