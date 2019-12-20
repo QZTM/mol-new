@@ -200,62 +200,149 @@
                 <redisport>6379</redisport>
                 <redispassword>ald377</redispassword>
             </properties>
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
         </profile>
-        <!--*********************************************正式环境**************************************************-->
+        <!--*********************************************正式环境1**************************************************-->
         <profile>
-            <id>prod</id>
+            <id>prod1</id>
             <properties>
-                <activatedProperties>prod</activatedProperties>
+                <activatedProperties>prod1</activatedProperties>
                 <!--purchase小程序参数-->
                 <purchasehttp>http://</purchasehttp>
-                <purchaseip>192.168.1.171</purchaseip>
+                <purchaseip>172.31.17.89</purchaseip>
                 <purchaseport>8082</purchaseport>
-                <purchasedomain>purchase.vaiwan.com</purchasedomain>
-                <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
-                <purchaseagentid>330159066</purchaseagentid>
-                <purchaseappkey>dingfps4ilpbxa6wmw0z</purchaseappkey>
-                <purchaseappsecret>_GXmOidlkjda-vZzxdy24WSI7wcKlDsoQqCp-vNORdhWdNjaoYvsKlgjvJfgsBhf</purchaseappsecret>
+                <purchasedomain>139.129.240.48</purchasedomain>
+                <purchasecorpid>ding6ef23b66fc0611a335c2f4657eb6378f</purchasecorpid>
+                <purchaseagentid>272636313</purchaseagentid>
+                <purchaseappkey>dingihxujkflumjcssad</purchaseappkey>
+                <purchaseappsecret>xkThrr4omCZiswyF1NzlOtl0tfaL5fRMZ5wR8Pe6cUAVmSu08ewxH6p9RW_CHjum</purchaseappsecret>
                 <!--supplier微应用参数-->
                 <supplierhttp>http://</supplierhttp>
-                <supplierip>192.168.1.173</supplierip>
+                <supplierip>172.31.17.90</supplierip>
                 <supplierport>8083</supplierport>
-                <supplierdomain>supplier.vaiwan.com</supplierdomain>
+                <supplierdomain>114.215.24.113</supplierdomain>
                 <suppliercorpid>ding6ef23b66fc0611a335c2f4657eb6378f</suppliercorpid>
-                <supplieragentid>280301722</supplieragentid>
-                <supplierappkey>dingahkyew1sw286fzdb</supplierappkey>
-                <supplierappsecret>8L568tbt80tvR8VXFHqs-adOn7vI5WciHEnapOKlUHeyDTOEvWCtw4M3qOBJrKxr</supplierappsecret>
+                <supplieragentid>280740196</supplieragentid>
+                <supplierappkey>ding8y9wfet5dxnobbpm</supplierappkey>
+                <supplierappsecret>qrbdorINEMrMLTiflvQFQ57i2qQfx8Akm6aw-0rsbpbTCoedHs60cpNZjGq4EWGH</supplierappsecret>
                 <elasticsearchhostlist>140.249.22.202:9200</elasticsearchhostlist>
                 <!--专家端微应用配置-->
                 <experthttp>http://</experthttp>
-                <expertip>192.168.1.172</expertip>
+                <expertip>172.31.17.91</expertip>
                 <expertport>8084</expertport>
-                <expertdomain>expert.vaiwan.com</expertdomain>
+                <expertdomain>118.190.88.46</expertdomain>
                 <expertcorpid>ding6ef23b66fc0611a335c2f4657eb6378f</expertcorpid>
-                <expertagentid>331964659</expertagentid>
-                <expertappkey>dingpwqrgpz2ijiyzgzu</expertappkey>
-                <expertappsecret>kyAA_DBYE9-JlgYx0no_i_qp_sIfmS51_sDXXqY35Wh1YAgt3FW0jrHdrtlXkaqD</expertappsecret>
+                <expertagentid>300343663</expertagentid>
+                <expertappkey>dingidfnb67q9iqngk3v</expertappkey>
+                <expertappsecret>d8O5t76ImQ8Wtk66OIaVyKQcBQg_hK4D3o0hrI2PDQkg7th3eBiLjbMqi9AjKCwg</expertappsecret>
                 <!--管理后端配置-->
                 <managehttp>http://</managehttp>
-                <manageip>192.168.1.174</manageip>
+                <manageip>172.31.17.88</manageip>
                 <manageport>8085</manageport>
-                <managedomain>manage.vaiwan.com</managedomain>
+                <managedomain>118.190.141.175</managedomain>
                 <!--定时任务端配置-->
-                <quartzip>127.0.0.1</quartzip>
+                <quartzip>172.31.17.89</quartzip>
                 <quartzport>8701</quartzport>
                 <!--数据库配置-->
-                <dburl>jdbc:mysql://192.168.1.178:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
-                <dbusername>root</dbusername>
-                <dbpassword>ald377</dbpassword>
+                <dburl>jdbc:mysql://rm-m5e03h5q1182r0o9p90130.mysql.rds.aliyuncs.com:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>mol</dbusername>
+                <dbpassword>!!mo$l20#19==P+W+D</dbpassword>
                 <!--eureka服务器-->
                 <eurekaport>8700</eurekaport>
-                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <eurekaserverip1>172.31.17.91</eurekaserverip1>
+                <eurekaserverip2>172.31.17.88</eurekaserverip2>
                 <!--eureka服务器注册地址-->
-                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <eurekaserverurl>http://172.31.17.91:8700/eureka/,http://172.31.17.88:8700/eureka/</eurekaserverurl>
                 <!--redis配置-->
-                <redishost>192.168.1.171</redishost>
-                <redisport>6379</redisport>
+                <redis1host>172.31.17.89</redis1host>
+                <redis1port>7000</redis1port>
+                <redis2host>172.31.17.89</redis2host>
+                <redis2port>7001</redis2port>
+                <redis3host>172.31.17.89</redis3host>
+                <redis3port>7002</redis3port>
+                <redis4host>172.31.17.90</redis4host>
+                <redis4port>7003</redis4port>
+                <redis5host>172.31.17.90</redis5host>
+                <redis5port>7004</redis5port>
+                <redis6host>172.31.17.90</redis6host>
+                <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+        </profile>
+        <!--*********************************************正式环境2**************************************************-->
+        <profile>
+            <id>prod2</id>
+            <properties>
+                <activatedProperties>prod2</activatedProperties>
+                <!--purchase小程序参数-->
+                <purchasehttp>http://</purchasehttp>
+                <purchaseip>172.31.17.89</purchaseip>
+                <purchaseport>8082</purchaseport>
+                <purchasedomain>139.129.240.48</purchasedomain>
+                <purchasecorpid>ding6ef23b66fc0611a335c2f4657eb6378f</purchasecorpid>
+                <purchaseagentid>272636313</purchaseagentid>
+                <purchaseappkey>dingihxujkflumjcssad</purchaseappkey>
+                <purchaseappsecret>xkThrr4omCZiswyF1NzlOtl0tfaL5fRMZ5wR8Pe6cUAVmSu08ewxH6p9RW_CHjum</purchaseappsecret>
+                <!--supplier微应用参数-->
+                <supplierhttp>http://</supplierhttp>
+                <supplierip>172.31.17.90</supplierip>
+                <supplierport>8083</supplierport>
+                <supplierdomain>114.215.24.113</supplierdomain>
+                <suppliercorpid>ding6ef23b66fc0611a335c2f4657eb6378f</suppliercorpid>
+                <supplieragentid>280740196</supplieragentid>
+                <supplierappkey>ding8y9wfet5dxnobbpm</supplierappkey>
+                <supplierappsecret>qrbdorINEMrMLTiflvQFQ57i2qQfx8Akm6aw-0rsbpbTCoedHs60cpNZjGq4EWGH</supplierappsecret>
+                <elasticsearchhostlist>140.249.22.202:9200</elasticsearchhostlist>
+                <!--专家端微应用配置-->
+                <experthttp>http://</experthttp>
+                <expertip>172.31.17.91</expertip>
+                <expertport>8084</expertport>
+                <expertdomain>118.190.88.46</expertdomain>
+                <expertcorpid>ding6ef23b66fc0611a335c2f4657eb6378f</expertcorpid>
+                <expertagentid>300343663</expertagentid>
+                <expertappkey>dingidfnb67q9iqngk3v</expertappkey>
+                <expertappsecret>d8O5t76ImQ8Wtk66OIaVyKQcBQg_hK4D3o0hrI2PDQkg7th3eBiLjbMqi9AjKCwg</expertappsecret>
+                <!--管理后端配置-->
+                <managehttp>http://</managehttp>
+                <manageip>172.31.17.88</manageip>
+                <manageport>8085</manageport>
+                <managedomain>118.190.141.175</managedomain>
+                <!--定时任务端配置-->
+                <quartzip>172.31.17.89</quartzip>
+                <quartzport>8701</quartzport>
+                <!--数据库配置-->
+                <dburl>jdbc:mysql://rm-m5e03h5q1182r0o9p90130.mysql.rds.aliyuncs.com:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>mol</dbusername>
+                <dbpassword>!!mo$l20#19==P+W+D</dbpassword>
+                <!--eureka服务器-->
+                <eurekaport>8700</eurekaport>
+                <eurekaserverip1>172.31.17.91</eurekaserverip1>
+                <eurekaserverip2>172.31.17.88</eurekaserverip2>
+                <!--eureka服务器注册地址-->
+                <eurekaserverurl>http://172.31.17.91:8700/eureka/,http://172.31.17.88:8700/eureka/</eurekaserverurl>
+                <!--redis配置-->
+                <redis1host>172.31.17.89</redis1host>
+                <redis1port>7000</redis1port>
+                <redis2host>172.31.17.89</redis2host>
+                <redis2port>7001</redis2port>
+                <redis3host>172.31.17.89</redis3host>
+                <redis3port>7002</redis3port>
+                <redis4host>172.31.17.90</redis4host>
+                <redis4port>7003</redis4port>
+                <redis5host>172.31.17.90</redis5host>
+                <redis5port>7004</redis5port>
+                <redis6host>172.31.17.90</redis6host>
+                <redis6port>7005</redis6port>
+                <redispassword>ald377</redispassword>
+            </properties>
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
         </profile>
         <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-lyYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->
         <profile>
@@ -304,17 +391,28 @@
                 <dbpassword>ald377</dbpassword>
                 <!--eureka服务器-->
                 <eurekaport>8700</eurekaport>
-                <eurekaserverip>192.168.1.172</eurekaserverip>
+                <eurekaserverip1>172.31.17.91</eurekaserverip1>
+                <eurekaserverip2>172.31.17.88</eurekaserverip2>
                 <!--eureka服务器注册地址-->
-                <eurekaserverurl>http://192.168.1.172:8700/eureka/</eurekaserverurl>
+                <eurekaserverurl>http://192.168.1.172:8700/eureka/,http://192.168.1.174:8700/eureka/</eurekaserverurl>
                 <!--redis配置-->
-                <redishost>192.168.1.171</redishost>
-                <redisport>6379</redisport>
+                <redis1host>192.168.1.172</redis1host>
+                <redis1port>7000</redis1port>
+                <redis2host>192.168.1.172</redis2host>
+                <redis2port>7001</redis2port>
+                <redis3host>192.168.1.172</redis3host>
+                <redis3port>7002</redis3port>
+                <redis4host>192.168.1.174</redis4host>
+                <redis4port>7003</redis4port>
+                <redis5host>192.168.1.174</redis5host>
+                <redis5port>7004</redis5port>
+                <redis6host>192.168.1.174</redis6host>
+                <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
         </profile>
     </profiles>
 </project>
