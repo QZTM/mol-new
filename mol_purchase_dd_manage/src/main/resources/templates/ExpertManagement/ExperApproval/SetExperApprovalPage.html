@@ -156,7 +156,11 @@
                 $("#img_other_documents_two").attr("src","data:image/png;base64,"+data.other_documents_two);
             },
             error:function(data){
-                alert('响应失败！');
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('相应失败');
+                });
+
             }
         });
     }
@@ -170,7 +174,6 @@
             processData: false,
             contentType: false,
             success: function(data) {
-                alert("123456")
             },
             error: function(e) {
                 console.log(e);
@@ -255,11 +258,17 @@
                 dataType:'json',
                 url: "/ExperManagement/SetExperApproval/PassOrReject",
                 success: function(data) {
-                    alert(data.status);
+                    layer.open({
+                        title: '提示'
+                        ,content: data.status
+                    });
                     parent.close_Details_page();
                 },
                 error:function(data){
-                    alert('提交失败');
+                    layer.open({
+                        title: '提示'
+                        ,content: '提交失败'
+                    });
                 }
             });
         }
@@ -274,11 +283,17 @@
                 dataType:'json',
                 url: "/ExperManagement/SetExperApproval/PassOrReject",
                 success: function(data) {
-                    alert(data.status);
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg(data.status);
+                    });
                     parent.close_Details_page();
                 },
                 error:function(data){
-                    alert('提交失败');
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交失败');
+                    });
                 }
             });
         }

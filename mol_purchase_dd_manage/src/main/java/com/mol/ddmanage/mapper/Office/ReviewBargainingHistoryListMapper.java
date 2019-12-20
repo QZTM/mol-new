@@ -7,5 +7,5 @@ import java.util.ArrayList;
 
 public interface ReviewBargainingHistoryListMapper
 {
-    ArrayList<Push_history_list_ben> Set_Push_history_list(@Param(value = "status") String status);
+    ArrayList<Push_history_list_ben> Set_Push_history_list(@Param(value = "AuthorityStatus") String AuthorityStatus,@Param(value = "userid") String userid,@Param(value = "status") String status);
 }

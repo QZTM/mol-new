@@ -250,7 +250,10 @@
             },
             error:function(data)
             {
-                alert('响应失败！');
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('相应失败！');
+                });
             }
         });
         for (var n=1;n<=6;n++)
@@ -279,7 +282,10 @@
                 processData: false,
                 contentType: false,
                 success: function(data) {
-                  alert("123456")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交成功！');
+                    });
                 },
                 error: function(e) {
                     console.log(e);
@@ -314,7 +320,10 @@
         }
         else
         {
-            alert("最多只能上传5个文件")
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                layer.msg('最多只能上传5个文件！');
+            });
         }
     }
 
@@ -337,13 +346,19 @@
             var size = fileSize / 1024;
             if (size > fileMaxSize)
             {
-                alert("图片大小不能大于2MB！");
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('图片大小不能大于2MB！');
+                });
                 file.value = "";
                 return false;
             }
             else if (size <= 0)
             {
-                alert("图片大小不能为0MB！");
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('图片大小不能为0MB！');
+                });
                 file.value = "";
                 return false;
             }
@@ -365,7 +380,10 @@
                     }
                     if (!isNext)//判断是否符合标准
                     {
-                        alert('不接受此文件类型，只能上传格式为jpg或者png的图片');
+                        layui.use('layer', function(){
+                            var layer = layui.layer;
+                            layer.msg('不接受此文件类型，只能上传格式为jpg或者png的图片！');
+                        });
                         file.value = "";
                         return false;
                     }

@@ -90,7 +90,10 @@
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取信息失败！');
+                });
             }
         });
     }
@@ -183,7 +186,10 @@
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取信息失败！');
+                });
             }
         });
     }
@@ -197,8 +203,10 @@
         {
             if (PeolpeItems[n].childNodes[3].innerText==e.childNodes[5].innerText)//检测到已经添加的该人员不能重复添加
             {
-                console.log("此角色已添加员工")
-                alert('此角色已添加员工 '+PeolpeItems[n].childNodes[1].innerText)
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('此角色已添加员工 '+PeolpeItems[n].childNodes[1].innerText);
+                });
                 return;
             }
         }
@@ -251,11 +259,17 @@
                     }
                     else
                     {
-                        alert("提交失败！")
+                        layui.use('layer', function(){
+                            var layer = layui.layer;
+                            layer.msg('提交失败！'+PeolpeItems[n].childNodes[1].innerText);
+                        });
                     }
                 },
                 error: function (data) {
-                    alert("获取审核议价信息失败")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交失败！'+PeolpeItems[n].childNodes[1].innerText);
+                    });
                 }
             });
         });

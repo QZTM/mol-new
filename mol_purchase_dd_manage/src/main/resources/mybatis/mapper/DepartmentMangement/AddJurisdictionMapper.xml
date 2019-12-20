@@ -3,8 +3,8 @@
 <mapper namespace="com.mol.ddmanage.mapper.DepartmentMangement.AddJurisdictionMapper">
 
     <insert id="AddJurisdictionMapper" parameterType="com.mol.ddmanage.Ben.DepartmentManagement.AddJurisdictionben">
-        insert into bac_position(jurisdictionId,jurisdictionName,notice,history,bargaining,telephoneRecording,purchaseProgress,contract,electronicContract,department,`position`,staff,expertInfor,expertApproval,purchase,supplierManage,supplierApproval,approvalSet,bargainingSet,logSee,creatTime,creadStaff,status)
-        values (#{jurisdictionId},#{jurisdictionName},#{notice},#{history},#{bargaining},#{telephoneRecording},#{purchaseProgress},#{contract},#{electronicContract},#{department},#{position},#{staff},#{expertInfor},#{expertApproval},#{purchase},#{supplierManage},#{supplierApproval},#{approvalSet},#{bargainingSet},#{logSee},#{creatTime},#{creadStaff},1)
+        insert into bac_position(jurisdictionId,DataViewingPermissionsid,jurisdictionName,notice,history,bargaining,telephoneRecording,purchaseProgress,contract,electronicContract,department,`position`,staff,expertInfor,expertApproval,purchase,supplierManage,supplierApproval,approvalSet,bargainingSet,logSee,creatTime,creadStaff,status)
+        values (#{jurisdictionId},#{DataViewingPermissionsid},#{jurisdictionName},#{notice},#{history},#{bargaining},#{telephoneRecording},#{purchaseProgress},#{contract},#{electronicContract},#{department},#{position},#{staff},#{expertInfor},#{expertApproval},#{purchase},#{supplierManage},#{supplierApproval},#{approvalSet},#{bargainingSet},#{logSee},#{creatTime},#{creadStaff},1)
     </insert>
     <select id="test1" resultType="com.mol.ddmanage.Ben.DepartmentManagement.AddJurisdictionben" parameterType="java.util.ArrayList">
         select * from bac_jurisdiction
@@ -19,11 +19,16 @@
     </select>
 
     <insert id="Insert_admin" >
- insert into bac_position(jurisdictionId,jurisdictionName,notice,history,bargaining,telephoneRecording,purchaseProgress,contract,electronicContract,department,`position`,staff,expertInfor,expertApproval,purchase,supplierManage,supplierApproval,approvalSet,bargainingSet,logSee,creatTime,creadStaff,status)
-        values (#{jurisdictionId},#{jurisdictionName},1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,#{creatTime},#{creadStaff},1)
+ insert into bac_position(jurisdictionId,DataViewingPermissionsid,jurisdictionName,notice,history,bargaining,telephoneRecording,purchaseProgress,contract,electronicContract,department,`position`,staff,expertInfor,expertApproval,purchase,supplierManage,supplierApproval,approvalSet,bargainingSet,logSee,creatTime,creadStaff,status)
+        values (#{jurisdictionId},#{DataViewingPermissionsid},#{jurisdictionName},1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,#{creatTime},#{creadStaff},1)
 
     </insert>
     <insert id="insert_bac_user_position">
         insert into  bac_user_position (id,ddUserId,jurisdictionId) values (#{id},#{ddUserId},#{jurisdictionId})
+    </insert>
+
+    <insert id="AddDataviewingpermissions" parameterType="com.mol.ddmanage.Ben.DepartmentManagement.AddJurisdictionben">
+        insert into bac_dataviewingpermissions(DataViewingPermissionsid,notice,history,bargaining,telephoneRecording,purchaseProgress,contract,electronicContract,department,`position`,staff,expertInfor,expertApproval,purchase,supplierManage,supplierApproval,approvalSet,bargainingSet,logSee,creatTime,creadStaff,status)
+        values (#{DataViewingPermissionsid},#{notice},#{history},#{bargaining},#{telephoneRecording},#{purchaseProgress},#{contract},#{electronicContract},#{department},#{position},#{staff},#{expertInfor},#{expertApproval},#{purchase},#{supplierManage},#{supplierApproval},#{approvalSet},#{bargainingSet},#{logSee},#{creatTime},#{creadStaff},1)
     </insert>
 </mapper>

@@ -143,7 +143,10 @@
                     Process()//专家审核 采购部议价等流程
                 },
                 error: function (data) {
-                    alert("获取审核议价信息失败")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取信息失败！');
+                    });
                 }
             });
         });
@@ -164,7 +167,10 @@
                     document.getElementById("Merchant_number").innerText="已报价公司:"+data.length+"家";
                 },
                 error: function (data) {
-                    alert("获取审核议价信息失败")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取信息失败！');
+                    });
                 }
             });
 
@@ -281,13 +287,19 @@
                             Log_Process("list5",data,"审批日志")
                         },
                         error: function (data) {
-                            alert("获取审批日志失败")
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('获取审批日志失败！');
+                            });
                         }
                     });
 
                 },
                 error: function (data) {
-                    alert("获取审核议价信息失败")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取信息失败！');
+                    });
                 }
             });
         }

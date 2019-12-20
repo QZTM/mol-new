@@ -2,7 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mol.ddmanage.mapper.Office.AnnouncementListMapper">
      <select id="AnnouncementMessage" resultType="com.mol.ddmanage.Ben.Office.AnnouncementEditPageben">
-       select bac_announcemen.*,(select bac_user.userName from bac_user where bac_user.ddUserId=bac_announcemen.creaduserid)creadName from bac_announcemen where 0=0;
+       select bac_announcemen.*,(select bac_user.userName from bac_user where bac_user.ddUserId=bac_announcemen.creaduserid)creadName from bac_announcemen
+       where
+       <if test="AuthorityStatus==1">
+           creaduserid=#{userid}
+       </if>
+       <if test="AuthorityStatus==0">
+           0=0;
+       </if>
+
      </select>
     <delete id="DeleteAnnouncementList">
         delete from bac_announcemen where announcemenId=#{announcemenId}

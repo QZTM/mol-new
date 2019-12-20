@@ -1,10 +1,13 @@
 package com.mol.ddmanage.Service.PurchasOrderManagement;
 
+import com.mol.ddmanage.Ben.Permission.Dataviewingpermissionsben;
 import com.mol.ddmanage.Ben.PurchasOrderManagement.PurchasOrderListben;
+import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
 import com.mol.ddmanage.mapper.PurchasOrderManagement.PurchasOrderListMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 @Service
@@ -12,9 +15,12 @@ public class PurchasOrderListService
 {
     @Resource
     PurchasOrderListMapper purchasOrderListMapper;
-    public ArrayList<PurchasOrderListben>  PurchasOrderListShow(String buy_channel_id)
+    @Resource
+    VerificationPermissionService verificationPermissionService;
+    public ArrayList<PurchasOrderListben>  PurchasOrderListShow(String buy_channel_id, HttpServletRequest httpServletRequest)
     {
-        ArrayList<PurchasOrderListben>purchasOrderListbens=purchasOrderListMapper.PurchasOrderListShow(buy_channel_id);
+        Dataviewingpermissionsben dataviewingpermissionsben = verificationPermissionService.DataviewingpermissionsLogic("purchase",httpServletRequest);//拿到查看数据的权限
+        ArrayList<PurchasOrderListben>purchasOrderListbens=purchasOrderListMapper.PurchasOrderListShow(dataviewingpermissionsben.getAuthorityStatus(),dataviewingpermissionsben.getApp_userid(),buy_channel_id);
         for (int n=0;n<purchasOrderListbens.size();n++)
         {
             purchasOrderListbens.get(n).setNumber(String.valueOf(n));//添加编号

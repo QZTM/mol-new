@@ -9,4 +9,5 @@ public interface jurisdictionManagementListMapper
     ArrayList<jurisdictionManagementben> GetPositionList();
     void DeleteJurisdiction(String jurisdictionId);
     void Deleteuser_position(String jurisdictionId);
+    void Deleteuser_dataviewingpermissions(String jurisdictionId);
 }

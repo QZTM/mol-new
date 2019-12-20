@@ -12,8 +12,10 @@ public interface AddJurisdictionMapper {
 
     Map select_Super_administrator(String jurisdictionName);
 
-    void Insert_admin(String jurisdictionId,String jurisdictionName,String creatTime,String creadStaff);
+    void Insert_admin(String jurisdictionId,String DataViewingPermissionsid,String jurisdictionName,String creatTime,String creadStaff);
 
     void insert_bac_user_position(String id,String ddUserId,String jurisdictionId);
+
+    void AddDataviewingpermissions(AddJurisdictionben addJurisdictionben);
 
 }

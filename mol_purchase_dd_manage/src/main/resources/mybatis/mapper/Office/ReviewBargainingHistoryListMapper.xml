@@ -21,11 +21,21 @@
         from fy_purchase
         where
         <if test="status != 100">
-            status=#{status}
+            <if test="AuthorityStatus==1">
+                status=#{status} and staff_id=#{userid}
+            </if>
+            <if test="AuthorityStatus==0">
+                status=#{status}
+            </if>
         </if>
 
         <if test="status == 100">
-            status!=#{status}
+            <if test="AuthorityStatus==1">
+                status!=#{status} and staff_id=#{userid}
+            </if>
+            <if test="AuthorityStatus==0">
+                status!=#{status}
+            </if>
         </if>
     </select>
 

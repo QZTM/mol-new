@@ -6,4 +6,6 @@ import java.util.Map;
 public interface VerificationPermissionMapper
 {
     ArrayList<Map> VerificationPermission(String userid);
+
+    ArrayList<Map> Dataviewingpermissions(String userid);
 }

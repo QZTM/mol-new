@@ -6,4 +6,8 @@ public interface JurisdictionManagementEditMapper
 {
     AddJurisdictionben GetJurisdictionPosition(String jurisdictionId);
     void UpdateJurisdiction(AddJurisdictionben json);
+
+    void UpdateDataviewingpermissions(AddJurisdictionben json);
+
+    AddJurisdictionben GetDataviewingpermissions(String jurisdictionId);
 }

@@ -49,6 +49,14 @@
 	</script>
 </div>
 
+<!--<div class="demoTable">
+	搜索ID：
+	<div class="layui-inline">
+		<input class="layui-input" name="id" id="demoReload" autocomplete="off">
+	</div>
+	<button class="layui-btn" data-type="reload">搜索</button>
+</div>-->
+
 <!--详情页显示-->
 <div id="Details">
 	<iframe  id="subWin"  style="width: 98.2%;height: 750px;border: none;overflow-x:hidden ;overflow-y: hidden"><!--width: 1670px-->
@@ -77,6 +85,7 @@
 		$("#Details").animate({width:"50%"}, 0);//收起
 		document.getElementById("datagridview").style.display="block";
 		document.getElementById("Details").style.display="none";
+		location.reload();//刷新页面
 	}
 
 	layui.use('table', function(){
@@ -107,11 +116,40 @@
 							,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
 						]
 					]
+					,limit:20
 					,page: true
 				});
+
+
+
+/*				var $ = layui.$, active = {
+					reload: function(){
+						var demoReload = $('#demoReload');
+
+						//执行重载
+						table.reload('testReload', {
+							page: {
+								curr: 1 //重新从第 1 页开始
+							}
+							,where: {
+								key: {
+									id: demoReload.val()
+								}
+							}
+						}, 'data');
+					}
+				};
+
+				$('.demoTable .layui-btn').on('click', function(){
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});*/
 			},
 			error: function (data) {
-				alert("获取信息失败")
+				layui.use('layer', function(){
+					var layer = layui.layer;
+					layer.msg('获取信息失败！');
+				});
 			}
 		});
 
@@ -161,11 +199,17 @@
 						success: function (Data) {
 							if (Data.statu==false)
 							{
-								alert("删除公告失败")
+								layui.use('layer', function(){
+									var layer = layui.layer;
+									layer.msg('删除公告失败！');
+								});
 							}
 						},
 						error: function (data) {
-							alert("删除公告失败")
+							layui.use('layer', function(){
+								var layer = layui.layer;
+								layer.msg('删除公告失败！');
+							});
 						}
 					});
 
@@ -184,6 +228,7 @@
 				});
 			}
 		});
+
 	});
 </script>
 </body>

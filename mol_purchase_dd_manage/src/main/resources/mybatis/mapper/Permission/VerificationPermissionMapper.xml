@@ -4,7 +4,16 @@
 
     <select id="VerificationPermission" resultType="java.util.Map">
 SELECT bac_position.*
-FROM bac_position,bac_user_position
-WHERE bac_position.jurisdictionId=bac_user_position.jurisdictionId and bac_user_position.ddUserId=#{userid}
+FROM bac_user_position
+JOIN bac_position ON bac_position.jurisdictionId=bac_user_position.jurisdictionId
+WHERE bac_user_position.ddUserId=#{userid}
+    </select>
+
+    <select id="Dataviewingpermissions" resultType="java.util.Map">
+        SELECT bac_dataviewingpermissions.*
+FROM bac_user_position
+JOIN bac_position ON  bac_user_position.jurisdictionId=bac_position.jurisdictionId
+JOIN bac_dataviewingpermissions ON bac_position.DataViewingPermissionsid=bac_dataviewingpermissions.DataViewingPermissionsid
+WHERE bac_user_position.ddUserId=#{userid}
     </select>
 </mapper>

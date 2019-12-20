@@ -1,20 +1,26 @@
 package com.mol.ddmanage.Service.Office;
 
 import com.mol.ddmanage.Ben.Office.Purchase_Grogress_list_ben;
+import com.mol.ddmanage.Ben.Permission.Dataviewingpermissionsben;
+import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
 import com.mol.ddmanage.mapper.Office.PurchaseGrogressMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
 public class Purchase_Grogress_Service
 {
     @Resource
+    VerificationPermissionService verificationPermissionService;
+    @Resource
     PurchaseGrogressMapper purchaseGrogressMapper;
-    public List<Purchase_Grogress_list_ben> PurchaseGrogressList(String time1,String time2, String status)
+    public List<Purchase_Grogress_list_ben> PurchaseGrogressList(String time1, String time2, String status, HttpServletRequest httpServletRequest)
     {
-        List<Purchase_Grogress_list_ben> purchase_grogress_list_bens=purchaseGrogressMapper.PurchaseGrogressList(time1,time2,status);
+        Dataviewingpermissionsben dataviewingpermissionsben = verificationPermissionService.DataviewingpermissionsLogic("purchaseProgress",httpServletRequest);//拿到权限
+        List<Purchase_Grogress_list_ben> purchase_grogress_list_bens=purchaseGrogressMapper.PurchaseGrogressList(dataviewingpermissionsben.getAuthorityStatus(),dataviewingpermissionsben.getApp_userid(),time1,time2,status);
         for (int n=0;n<purchase_grogress_list_bens.size();n++)
         {
             purchase_grogress_list_bens.get(n).setNumber(String.valueOf(n));

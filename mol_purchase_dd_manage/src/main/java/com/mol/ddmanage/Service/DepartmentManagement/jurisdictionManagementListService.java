@@ -37,8 +37,10 @@ public class jurisdictionManagementListService
         Map map=new HashMap();
         try
         {
+            jurisdictionManagement.Deleteuser_dataviewingpermissions(jurisdictionId);//删除角色对应的角色数据查看权限
             jurisdictionManagement.DeleteJurisdiction(jurisdictionId);//删除角色
             jurisdictionManagement.Deleteuser_position(jurisdictionId);//删除角色对应的人员权限
+
             map.put("status",true);
             return map;
         }

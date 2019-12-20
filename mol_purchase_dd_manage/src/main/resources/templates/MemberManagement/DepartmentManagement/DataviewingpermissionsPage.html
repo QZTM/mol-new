@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<link rel="stylesheet" href="/layui/css/layui.css">
+<script src="/echarts.min.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+<body onload="Start_lainding()"><!--采购订单--><!--width 1700-->
+<div style="width: 100%;height: 60px;margin: 24px;">
+    <div style="width: 90%; height: 40px;">
+        <div style="float:left; width: 150px;height: 35px;background-color:#2D93CA;border-radius: 6px;font-size: 20px;text-align:center;color:#fbfbfb;">
+            <p style="margin-top: 3px">数据查看权限</p>
+        </div>
+        <div style="float: right;border-radius: 6px;background-color:#eb7350;color:#fbfbfb;width: 120px;height:35px;font-size: 24px;text-align: center;cursor:pointer" onclick="return_top()">
+            <p>返 回</p>
+        </div>
+    </div>
+</div>
+<div>
+    <hr class="layui-bg-green">
+</div>
+ <div style="width: 100%;padding: 25px;height: 600px">
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>内部公告</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="notice" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>推送历史</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="history" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>审核议价</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="bargaining" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>通话记录</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="telephoneRecording" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>采购进度</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="purchaseProgress" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>采购合同</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="contract" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>电子合同签署</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="electronicContract" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>部门管理</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="department" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>岗位设置</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="position" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>员工设置</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="staff" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>专家信息管理</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="expertInfor" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>专家审核</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="expertApproval" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>采购订单</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="purchase" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>供应商管理</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="supplierManage" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>供应商审核</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="supplierApproval" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>审批流程设置</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="approvalSet" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>议价流程设置</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="bargainingSet" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+     <div style="width: 20%;height: 70px;float: left;margin: 24px">
+         <div style="font-size: 18px;width: 40%;height: 100%;float: left;text-align: center">
+             <p>登录日志</p>
+         </div>
+         <div style="width: 60%;height: 100%;float: left">
+             <select id="logSee" style="font-size: 12px;width: 100%; height: 26px;" class="select"><!--width: 120px-->
+                 <option value ="1" >全部</option>
+                 <option value ="2">个人</option>
+             </select>
+         </div>
+     </div>
+
+ </div>
+<div>
+    <hr class="layui-bg-green">
+</div>
+
+<div style="width: 100%; height: 40px;">
+    <div onclick="saveSet()" style="float:right; margin-right: 12px;width: 120px;height: 35px;background-color:#009688;border-radius: 6px;font-size: 20px;text-align:center;color:#fbfbfb;cursor:pointer;">
+        <p style="margin-top: 3px">保存设置</p>
+    </div>
+</div>
+
+
+
+<script src="/layui/layui.all.js"></script>
+
+<script th:inline="javascript">
+     function Start_lainding()
+     {
+         GetDataviewingpermissions();
+     }
+
+    function GetDataviewingpermissions() {
+
+        $.ajax({
+            type: 'POST',
+            url: '/jurisdictionManagementEditController/GetDataviewingpermissions',
+            dataType: 'json',
+            data:{'jurisdictionId':[[${jurisdictionId}]]},//,characterName:document.getElementById("characterName").value
+            //headers:{'Content-type':'application/json'},
+            success: function (data) {
+                if (data!=null)
+                {
+                   // var inputs=document.getElementsByClassName("inputs")
+                    for(var val in data)
+                    {
+                        var item=document.getElementById(val)
+
+                        if(item!=null && data[val]==="1")
+                        {
+                            item.options[1].selected=true
+                        }
+                        else if (item!=null && data[val]==="0")
+                        {
+                            item.options[0].selected=true
+                        }
+                    }
+                }
+                else
+                {
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取数据失败！');
+                    });
+                }
+            },
+            error: function (data) {
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取数据失败！');
+                });
+            }
+        });
+    }
+
+     function saveSet()
+     {
+         layer.confirm('是否提交？', function(){
+
+             var selects=document.getElementsByClassName("select")
+             var datass={};
+             for (var n=0;n<selects.length;n++)
+             {
+                 datass[selects[n].id]=selects[n].selectedIndex
+             }
+             datass["jurisdictionId"]=[[${jurisdictionId}]];
+             var json=JSON.stringify(datass);
+             console.log(json)
+
+             $.ajax({
+                 type: 'POST',
+                 url: '/jurisdictionManagementEditController/Updatedataviewingpermissions',
+                 dataType: 'json',
+                 data:json,//,characterName:document.getElementById("characterName").value
+                 headers:{'Content-type':'application/json'},
+                 success: function (data) {
+                     if (data.status==true)
+                     {
+                         layui.use('layer', function(){
+                             var layer = layui.layer;
+                             layer.msg('权限保存成功');
+                         });
+                         parent.close_Details_page();
+                     }
+                     else
+                     {
+                         layui.use('layer', function(){
+                             var layer = layui.layer;
+                             layer.msg('提交失败！');
+                         });
+                     }
+                 },
+                 error: function (data) {
+                     layui.use('layer', function(){
+                         var layer = layui.layer;
+                         layer.msg('提交失败！');
+                     });
+                 }
+             });
+
+             layer.close(index)
+         });
+
+     }
+     function return_top()//返回上一层
+     {
+         layer.confirm('退出后数据不会保存', function(){
+             parent.close_Details_page();
+             layer.close(index)
+         });
+     }
+
+</script>
+</body>
+</html>

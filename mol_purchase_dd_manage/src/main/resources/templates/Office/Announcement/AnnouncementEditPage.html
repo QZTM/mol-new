@@ -214,7 +214,10 @@
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取信息失败！'+PeolpeItems[n].childNodes[1].innerText);
+                });
             }
         });
     }
@@ -228,8 +231,10 @@
         {
             if (PeolpeItems[n].childNodes[3].innerText==e.childNodes[5].innerText)//检测到已经添加的该人员不能重复添加
             {
-                console.log("此角色已添加员工")
-                alert('此角色已添加员工 '+PeolpeItems[n].childNodes[1].innerText)
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('此角色已添加员工 '+PeolpeItems[n].childNodes[1].innerText);
+                });
                 return;
             }
         }
@@ -298,16 +303,25 @@
                     success: function (data) {
                         if (data.statu==true)
                         {
-                            alert("角色保存成功")
-                            return_top()
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('发布成功 ');
+                            });
+                            parent.close_Details_page();
                         }
                         else
                         {
-                            alert("提交失败！")
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('提交失败！');
+                            });
                         }
                     },
                     error: function (data) {
-                        alert("获取审核议价信息失败")
+                        layui.use('layer', function(){
+                            var layer = layui.layer;
+                            layer.msg('提交失败！');
+                        });
                     }
                 });
             }
@@ -326,16 +340,25 @@
                     success: function (data) {
                         if (data.statu==true)
                         {
-                            alert("公告发布成功")
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('公告发布成功！');
+                            });
                             return_top()
                         }
                         else
                         {
-                            alert("提交失败！")
+                            layui.use('layer', function(){
+                                var layer = layui.layer;
+                                layer.msg('提交失败！');
+                            });
                         }
                     },
                     error: function (data) {
-                        alert("获取审核议价信息失败")
+                        layui.use('layer', function(){
+                            var layer = layui.layer;
+                            layer.msg('提交失败！');
+                        });
                     }
                 });
             }

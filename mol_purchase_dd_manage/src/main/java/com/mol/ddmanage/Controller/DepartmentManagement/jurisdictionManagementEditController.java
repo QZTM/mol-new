@@ -27,4 +27,16 @@ public class jurisdictionManagementEditController
        return jurisdictionManagementEditService.UpdateJurisdictionLogic(json);
     }
 
+    @RequestMapping("/Updatedataviewingpermissions")//更新角色查看数据的权限
+    public Map Updatedataviewingpermissions(@RequestBody AddJurisdictionben json)
+    {
+        return jurisdictionManagementEditService.UpdateDataviewingpermissionsLogic(json);
+    }
+
+    @RequestMapping("/GetDataviewingpermissions")
+    public AddJurisdictionben GetDataviewingpermissions(@RequestParam String jurisdictionId)//获取角色的查看数据权限
+    {
+        return jurisdictionManagementEditService.GetDataviewingpermissionsLogic(jurisdictionId);
+    }
+
 }

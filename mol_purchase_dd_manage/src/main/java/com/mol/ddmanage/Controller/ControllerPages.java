@@ -28,7 +28,7 @@ public class ControllerPages {
     @RequestMapping("/new_file")//测试首页框架
     public String new_file(@RequestParam Map map , HttpSession httpSession)
     {
-        httpSession.setAttribute("userid","083216482529129838");
+        httpSession.setAttribute("userid","083216482529129838");//083216482529129838
         return "new_file";
     }
 
@@ -218,6 +218,14 @@ public class ControllerPages {
             return "Permission/NotVerificationPage";
         }
     }
+
+    @RequestMapping("/DataviewingpermissionsPage")//角色查看数据的权限
+    public String DataviewingpermissionsPage(@RequestParam Map map,Model model)
+    {
+        model.addAttribute("jurisdictionId",map.get("jurisdictionId").toString());
+        return "MemberManagement/DepartmentManagement/DataviewingpermissionsPage";
+    }
+
 
     @RequestMapping("/jurisdictionManagementList")//岗位设置#
     public String JobManagement(HttpServletRequest httpServletRequest)

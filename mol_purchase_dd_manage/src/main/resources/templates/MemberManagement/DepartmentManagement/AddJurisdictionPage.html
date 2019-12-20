@@ -158,16 +158,25 @@
             success: function (data) {
                 if (data.status==true)
                 {
-                    alert("角色保存成功")
-                    return_top()
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('角色保存成功');
+                    });
+                    parent.close_Details_page();
                 }
                 else
                 {
-                    alert("提交失败！")
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交失败！');
+                    });
                 }
             },
             error: function (data) {
-                alert("获取审核议价信息失败")
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('提交失败！');
+                });
             }
         });
     }

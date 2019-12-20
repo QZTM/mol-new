@@ -6,7 +6,7 @@
         select * from bac_position where jurisdictionId=#{jurisdictionId}
     </select>
     <update id="UpdateJurisdiction" parameterType="com.mol.ddmanage.Ben.DepartmentManagement.AddJurisdictionben">
-     update `bac_position` set  notice=#{notice},
+     update `bac_position` set
        notice=#{notice},
        history=#{history},
        bargaining=#{bargaining},
@@ -27,4 +27,31 @@
        approvalSet=#{logSee}
      where  jurisdictionId=#{jurisdictionId};
     </update>
+
+    <update id="UpdateDataviewingpermissions" parameterType="com.mol.ddmanage.Ben.DepartmentManagement.AddJurisdictionben">
+     update bac_dataviewingpermissions set
+       notice=#{notice},
+       history=#{history},
+       bargaining=#{bargaining},
+       telephoneRecording=#{telephoneRecording},
+       purchaseProgress=#{purchaseProgress},
+       contract=#{contract},
+       electronicContract=#{electronicContract},
+       department=#{department},
+       `position`=#{position},
+       staff=#{staff},
+       expertInfor=#{expertInfor},
+       expertApproval=#{expertApproval},
+       purchase=#{purchase},
+       supplierManage=#{supplierManage},
+       supplierApproval=#{supplierApproval},
+       approvalSet=#{approvalSet},
+       approvalSet=#{bargainingSet},
+       approvalSet=#{logSee}
+     where  DataViewingPermissionsid=(select bac_position.DataViewingPermissionsid from bac_position where bac_position.jurisdictionId=#{jurisdictionId})
+    </update>
+
+    <select id="GetDataviewingpermissions" resultType="com.mol.ddmanage.Ben.DepartmentManagement.AddJurisdictionben">
+        select * from bac_dataviewingpermissions where DataViewingPermissionsid=(select bac_position.DataViewingPermissionsid from bac_position where bac_position.jurisdictionId=#{jurisdictionId})
+    </select>
 </mapper>

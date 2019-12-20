@@ -15,4 +15,7 @@
     <delete id="Deleteuser_position">
         delete from bac_user_position where jurisdictionId=#{jurisdictionId}
     </delete>
+    <delete id="Deleteuser_dataviewingpermissions">
+        delete from bac_dataviewingpermissions where DataViewingPermissionsid=(select bac_position.DataViewingPermissionsid from bac_position where bac_position.jurisdictionId=#{jurisdictionId})
+    </delete>
 </mapper>
