@@ -100,7 +100,7 @@
     <div class="list-group" style="margin-bottom: 6px;font-size: 12px" th:each="er,in:${newEst}">
         <a th:href="@{'/index/selectOne?id='+${er.id}}" class="list-group-item">
             <div  th:switch="${er.buyChannelId}">
-                *&nbsp;<span th:case="3">战略采购</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span>
+                *&nbsp;<span th:case="3">战略采购</span><span th:case="4">询价采购</span><span th:case="5">单一采购</span><span th:case="6">加工维修</span>
             </div>
             <div>
                 *&nbsp;<span th:text="${er.pkSupplier}">枣庄星联信息科技有限公司</span>

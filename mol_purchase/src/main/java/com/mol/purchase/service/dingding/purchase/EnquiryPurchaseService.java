@@ -259,21 +259,35 @@ public class EnquiryPurchaseService {
      * @return
      */
     public List<SupplierSalesman> findSaleManList(List<Supplier> list) {
-        List<SupplierSalesman > ssL=new ArrayList<>();
+        List<SupplierSalesman> salesmanList = new ArrayList<>();
         if (list!=null && list.size()>0){
-//            SupplierSalesman e =new SupplierSalesman();
-            Example e=new Example(SupplierSalesman.class);
             for (Supplier supplier : list) {
-                e.and().andEqualTo("pkSupplier",supplier.getPkSupplier());
-                List<SupplierSalesman> supplierSalesmenlist = bdSupplierSalesmanMapper.selectByExample(e);
-                if (supplierSalesmenlist!=null && supplierSalesmenlist.size()>0){
-                    ssL.addAll(supplierSalesmenlist);
+                SupplierSalesman t = new SupplierSalesman();
+                t.setPkSupplier(supplier.getPkSupplier());
+                List<SupplierSalesman> select = bdSupplierSalesmanMapper.select(t);
+                if (select!=null && select.size()>0){
+                    salesmanList.addAll(select);
                 }
+                select=null;
             }
-            return ssL;
-        }else {
-            return ssL;
         }
+        return salesmanList;
+
+//        List<SupplierSalesman > ssL=new ArrayList<>();
+//        if (list!=null && list.size()>0){
+////            SupplierSalesman e =new SupplierSalesman();
+//            Example e=new Example(SupplierSalesman.class);
+//            for (Supplier supplier : list) {
+//                e.and().andEqualTo("pkSupplier",supplier.getPkSupplier());
+//                List<SupplierSalesman> supplierSalesmenlist = bdSupplierSalesmanMapper.selectByExample(e);
+//                if (supplierSalesmenlist!=null && supplierSalesmenlist.size()>0){
+//                    ssL.addAll(supplierSalesmenlist);
+//                }
+//            }
+//            return ssL;
+//        }else {
+//            return ssL;
+//        }
 
     }
 
@@ -313,14 +327,14 @@ public class EnquiryPurchaseService {
             List<String> manIdList=findSaleIdList(saleManList);
             //发送通知消息
             for (String s : manIdList) {
-                sendNotification.sendOaFromThird(stobj.getId(),s, Constant.getInstance().getSupplierAgentId(),tokenService.getMicroToken());
+                Long supplierAgentId = Constant.getInstance().getSupplierAgentId();
+                sendNotification.sendOaFromThird(stobj.getId(),s, supplierAgentId,tokenService.getMicroToken());
             }
             //查询人员的电话
             List<String> manPhoneList= findSalePhoneList(saleManList);
             for (String phone : manPhoneList) {
                 sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.提醒供应商报价模板(),phone);
             }
-            logger.info("询价采购---短信，通知发送成功："+list);
         }
     }
 

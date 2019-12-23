@@ -19,7 +19,7 @@ import com.mol.quartz.entity.DuridBean;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @Configuration
-@PropertySource("classpath:application.yml")
+@PropertySource("classpath:application.properties")
 @ConfigurationProperties(prefix = "spring.datasource.druid")
 @MapperScan(basePackages = DuridDatasource.PACKAGE, sqlSessionFactoryRef = "sqlSessionFactory")
 public class DuridDatasource {

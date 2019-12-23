@@ -1,15 +1,9 @@
 package com.mol.cache;
 
-import redis.clients.jedis.BinaryClient;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.*;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author tengfei
@@ -17,44 +11,88 @@ import java.util.Set;
  * @date 2018/7/13 下午4:15
  */
 public class RedisUtil {
-    private JedisPool pool = null;
+    private JedisCluster jedis = null;
     private volatile static RedisUtil redisUtil;
-    private  RedisUtil() {
-        // jedispool为null则初始化，
-        if (pool == null) {
+//    private  RedisUtil() {
+//        // jedispool为null则初始化，
+//        if (pool == null) {
+//
+//            Properties prop = new Properties();
+//            try {
+//                prop.load(RedisUtil.class.getResourceAsStream("/redis.properties"));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            String ip = prop.getProperty("host");
+//            String password = prop.getProperty("password");
+//            int port = Integer.parseInt(prop.getProperty("port"));
+//            JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+//            // 如果赋值为-1，则表示不限制；如果pool已经分配了maxTotal个jedis实例，则此时pool的状态为exhausted(耗尽）.
+//            jedisPoolConfig.setMaxTotal(300);
+//            // 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例
+//            jedisPoolConfig.setMaxIdle(10);
+//            jedisPoolConfig.setMinIdle(5);
+//            // 表示当borrow(引入)一个jedis实例时，最大的等待时间，如果超过等待时间，则直接抛出JedisConnectionException；
+//            jedisPoolConfig.setMaxWaitMillis(1000*200);
+//            // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
+//            //jedisPoolConfig.setTestOnBorrow(true);
+//            //jedisPoolConfig.setTestWhileIdle(true);
+//            //jedisPoolConfig.setTestOnReturn(true);
+//            //表示idle object evitor两次扫描之间要sleep的毫秒数
+//            //表示idle object evitor每次扫描的最多的对象数
+//            //jedisPoolConfig.setNumTestsPerEvictionRun(200);
+//            //jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
+//            //表示一个对象至少停留在idle状态的最短时间，然后才能被idle object evitor扫描并驱逐；这一项只有在timeBetweenEvictionRunsMillis大于0时才有意义
+//            //jedisPoolConfig.setMinEvictableIdleTimeMillis(30000);
+//            //pool = new JedisPool(jedisPoolConfig, ip, port, 10000, password);
+//            // redis 未设置密码
+//            pool = new JedisPool(jedisPoolConfig, ip, port, 10000 ,password);
+//        }
+//    }
 
+
+
+
+    private  RedisUtil() {
+        // jedisCluster为null则初始化，
+        if (jedis == null) {
             Properties prop = new Properties();
             try {
                 prop.load(RedisUtil.class.getResourceAsStream("/redis.properties"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            String ip = prop.getProperty("host");
-            String password = prop.getProperty("password");
-            int port = Integer.parseInt(prop.getProperty("port"));
+            // 第一步：使用JedisCluster对象。需要一个Set<HostAndPort>参数。Redis节点的列表。
+            Set<HostAndPort> nodes = new HashSet<>();
+             nodes.add(new HostAndPort(prop.getProperty("1host"), Integer.parseInt(prop.getProperty("1port"))));
+             nodes.add(new HostAndPort(prop.getProperty("2host"), Integer.parseInt(prop.getProperty("2port"))));
+             nodes.add(new HostAndPort(prop.getProperty("3host"), Integer.parseInt(prop.getProperty("3port"))));
+             nodes.add(new HostAndPort(prop.getProperty("4host"), Integer.parseInt(prop.getProperty("4port"))));
+             nodes.add(new HostAndPort(prop.getProperty("5host"), Integer.parseInt(prop.getProperty("5port"))));
+             nodes.add(new HostAndPort(prop.getProperty("6host"), Integer.parseInt(prop.getProperty("6port"))));
+            //jedisCluster = new JedisCluster(nodes);
+            // Jedis连接池配置
             JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-            // 如果赋值为-1，则表示不限制；如果pool已经分配了maxTotal个jedis实例，则此时pool的状态为exhausted(耗尽）.
-            jedisPoolConfig.setMaxTotal(300);
-            // 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例
-            jedisPoolConfig.setMaxIdle(10);
-            jedisPoolConfig.setMinIdle(5);
-            // 表示当borrow(引入)一个jedis实例时，最大的等待时间，如果超过等待时间，则直接抛出JedisConnectionException；
-            jedisPoolConfig.setMaxWaitMillis(1000*200);
-            // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
-            //jedisPoolConfig.setTestOnBorrow(true);
-            //jedisPoolConfig.setTestWhileIdle(true);
-            //jedisPoolConfig.setTestOnReturn(true);
-            //表示idle object evitor两次扫描之间要sleep的毫秒数
-            //表示idle object evitor每次扫描的最多的对象数
-            //jedisPoolConfig.setNumTestsPerEvictionRun(200);
-            //jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
-            //表示一个对象至少停留在idle状态的最短时间，然后才能被idle object evitor扫描并驱逐；这一项只有在timeBetweenEvictionRunsMillis大于0时才有意义
-            //jedisPoolConfig.setMinEvictableIdleTimeMillis(30000);
-            //pool = new JedisPool(jedisPoolConfig, ip, port, 10000, password);
-            // redis 未设置密码
-            pool = new JedisPool(jedisPoolConfig, ip, port, 10000 ,password);
+            // 最大空闲连接数, 默认8个
+            jedisPoolConfig.setMaxIdle(100);
+            // 最大连接数, 默认8个
+            jedisPoolConfig.setMaxTotal(500);
+            //最小空闲连接数, 默认0
+            jedisPoolConfig.setMinIdle(0);
+            // 获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
+            // 设置2秒
+            jedisPoolConfig.setMaxWaitMillis(2000);
+            //对拿到的connection进行validateObject校验
+            jedisPoolConfig.setTestOnBorrow(true);
+            jedis = new JedisCluster(nodes, jedisPoolConfig);
         }
     }
+
+
+
+
+
+
 
     /**
      * 获取指定key的值,如果key不存在返回null，如果该Key存储的不是字符串，会抛出一个错误
@@ -63,9 +101,7 @@ public class RedisUtil {
      * @return
      */
     public String get(String key) {
-        Jedis jedis = getJedis();
-        String value = null;
-        value = jedis.get(key);
+        String value = jedis.get(key);
         return value;
     }
 
@@ -77,7 +113,6 @@ public class RedisUtil {
      * @return
      */
     public String set(String key, String value) {
-        Jedis jedis = getJedis();
         return jedis.set(key, value);
     }
 
@@ -88,7 +123,6 @@ public class RedisUtil {
      * @return
      */
     public Long del(String... keys) {
-        Jedis jedis = getJedis();
         return jedis.del(keys);
     }
 
@@ -100,7 +134,6 @@ public class RedisUtil {
      * @return
      */
     public Long append(String key, String str) {
-        Jedis jedis = getJedis();
         return jedis.append(key, str);
     }
 
@@ -111,7 +144,6 @@ public class RedisUtil {
      * @return
      */
     public Boolean exists(String key) {
-        Jedis jedis = getJedis();
         return jedis.exists(key);
     }
 
@@ -123,7 +155,6 @@ public class RedisUtil {
      * @return
      */
     public Long setnx(String key, String value) {
-        Jedis jedis = getJedis();
         return jedis.setnx(key, value);
     }
 
@@ -136,7 +167,6 @@ public class RedisUtil {
      * @return
      */
     public String setex(String key, int seconds, String value) {
-        Jedis jedis = getJedis();
         return jedis.setex(key, seconds, value);
     }
 
@@ -149,7 +179,6 @@ public class RedisUtil {
      * @return
      */
     public Long setrange(String key, int offset, String str) {
-        Jedis jedis = getJedis();
         return jedis.setrange(key, offset, str);
     }
 
@@ -160,7 +189,6 @@ public class RedisUtil {
      * @return
      */
     public List<String> mget(String... keys) {
-        Jedis jedis = getJedis();
         return jedis.mget(keys);
     }
 
@@ -171,7 +199,6 @@ public class RedisUtil {
      * @return
      */
     public String mset(String... keysValues) {
-        Jedis jedis = getJedis();
         return jedis.mset(keysValues);
     }
 
@@ -182,7 +209,6 @@ public class RedisUtil {
      * @return
      */
     public Long msetnx(String... keysValues) {
-        Jedis jedis = getJedis();
         return jedis.msetnx(keysValues);
     }
 
@@ -194,7 +220,6 @@ public class RedisUtil {
      * @return
      */
     public String getSet(String key, String value) {
-        Jedis jedis = getJedis();
         return jedis.getSet(key, value);
     }
 
@@ -207,7 +232,6 @@ public class RedisUtil {
      * @return
      */
     public String getrange(String key, int startOffset, int endOffset) {
-        Jedis jedis = getJedis();
         return jedis.getrange(key, startOffset, endOffset);
     }
 
@@ -218,7 +242,6 @@ public class RedisUtil {
      * @return
      */
     public Long incr(String key) {
-        Jedis jedis = getJedis();
         return jedis.incr(key);
     }
 
@@ -230,7 +253,6 @@ public class RedisUtil {
      * @return
      */
     public Long incrBy(String key, long integer) {
-        Jedis jedis = getJedis();
         return jedis.incrBy(key, integer);
     }
 
@@ -241,7 +263,6 @@ public class RedisUtil {
      * @return
      */
     public Long decr(String key) {
-        Jedis jedis = getJedis();
         return jedis.decr(key);
     }
 
@@ -253,7 +274,6 @@ public class RedisUtil {
      * @return
      */
     public Long decrBy(String key, long integer) {
-        Jedis jedis = getJedis();
         return jedis.decrBy(key, integer);
     }
 
@@ -264,7 +284,6 @@ public class RedisUtil {
      * @return
      */
     public Long strLen(String key) {
-        Jedis jedis = getJedis();
         return jedis.strlen(key);
     }
 
@@ -277,7 +296,6 @@ public class RedisUtil {
      * @return
      */
     public Long hsetnx(String key, String field, String value) {
-        Jedis jedis = getJedis();
         return jedis.hsetnx(key, field, value);
     }
 
@@ -290,7 +308,6 @@ public class RedisUtil {
      * @return
      */
     public Long hset(String key, String field, String value) {
-        Jedis jedis = getJedis();
         return jedis.hset(key, field, value);
     }
 
@@ -302,7 +319,6 @@ public class RedisUtil {
      * @return
      */
     public String hmset(String key, Map<String, String> hash) {
-        Jedis jedis = getJedis();
         return jedis.hmset(key, hash);
     }
 
@@ -314,7 +330,6 @@ public class RedisUtil {
      * @return
      */
     public String hget(String key, String failed) {
-        Jedis jedis = getJedis();
         return jedis.hget(key, failed);
     }
 
@@ -326,7 +341,6 @@ public class RedisUtil {
      * @return
      */
     public Long expire(String key, int seconds) {
-        Jedis jedis = getJedis();
         return jedis.expire(key, seconds);
     }
 
@@ -338,7 +352,6 @@ public class RedisUtil {
      * @return
      */
     public List<String> hmget(String key, String... fields) {
-        Jedis jedis = getJedis();
         return jedis.hmget(key, fields);
     }
 
@@ -351,7 +364,6 @@ public class RedisUtil {
      * @return
      */
     public Long hincrby(String key, String field, Long value) {
-        Jedis jedis = getJedis();
         return jedis.hincrBy(key, field, value);
     }
 
@@ -363,7 +375,6 @@ public class RedisUtil {
      * @return
      */
     public Boolean hexists(String key, String field) {
-        Jedis jedis = getJedis();
         return jedis.hexists(key, field);
     }
 
@@ -374,7 +385,6 @@ public class RedisUtil {
      * @return
      */
     public Long hlen(String key) {
-        Jedis jedis = getJedis();
         return jedis.hlen(key);
     }
 
@@ -386,7 +396,6 @@ public class RedisUtil {
      * @return
      */
     public Long hdel(String key, String... fields) {
-        Jedis jedis = getJedis();
         return jedis.hdel(key, fields);
     }
 
@@ -397,7 +406,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> hkeys(String key) {
-        Jedis jedis = getJedis();
         return jedis.hkeys(key);
     }
 
@@ -408,7 +416,6 @@ public class RedisUtil {
      * @return
      */
     public List<String> hvals(String key) {
-        Jedis jedis = getJedis();
         return jedis.hvals(key);
     }
 
@@ -419,7 +426,6 @@ public class RedisUtil {
      * @return
      */
     public Map<String, String> hgetall(String key) {
-        Jedis jedis = getJedis();
         return jedis.hgetAll(key);
     }
 
@@ -431,7 +437,6 @@ public class RedisUtil {
      * @return 返回list的value个数
      */
     public Long lpush(String key, String... strs) {
-        Jedis jedis = getJedis();
         return jedis.lpush(key, strs);
     }
 
@@ -443,7 +448,6 @@ public class RedisUtil {
      * @return 返回list的value个数
      */
     public Long rpush(String key, String... strs) {
-        Jedis jedis = getJedis();
         return jedis.rpush(key, strs);
     }
 
@@ -458,7 +462,6 @@ public class RedisUtil {
      */
     public Long linsert(String key, BinaryClient.LIST_POSITION where,
                         String pivot, String value) {
-        Jedis jedis = getJedis();
         return jedis.linsert(key, where, pivot, value);
     }
 
@@ -472,7 +475,6 @@ public class RedisUtil {
      * @return 成功返回OK
      */
     public String lset(String key, Long index, String value) {
-        Jedis jedis = getJedis();
         return jedis.lset(key, index, value);
     }
 
@@ -485,7 +487,6 @@ public class RedisUtil {
      * @return 返回被删除的个数
      */
     public Long lrem(String key, long count, String value) {
-        Jedis jedis = getJedis();
         return jedis.lrem(key, count, value);
     }
 
@@ -498,7 +499,6 @@ public class RedisUtil {
      * @return 成功返回OK
      */
     public String ltrim(String key, long start, long end) {
-        Jedis jedis = getJedis();
         return jedis.ltrim(key, start, end);
     }
 
@@ -510,7 +510,6 @@ public class RedisUtil {
      */
     public synchronized String lpop(String key) {
 
-        Jedis jedis = getJedis();
         return jedis.lpop(key);
     }
 
@@ -521,7 +520,6 @@ public class RedisUtil {
      * @return
      */
     synchronized public String rpop(String key) {
-        Jedis jedis = getJedis();
         return jedis.rpop(key);
     }
 
@@ -534,7 +532,6 @@ public class RedisUtil {
      * @return
      */
     public String rpoplpush(String srckey, String dstkey) {
-        Jedis jedis = getJedis();
         return jedis.rpoplpush(srckey, dstkey);
     }
 
@@ -546,7 +543,6 @@ public class RedisUtil {
      * @return 如果没有返回null
      */
     public String lindex(String key, long index) {
-        Jedis jedis = getJedis();
         return jedis.lindex(key, index);
     }
 
@@ -557,7 +553,6 @@ public class RedisUtil {
      * @return
      */
     public Long llen(String key) {
-        Jedis jedis = getJedis();
         return jedis.llen(key);
     }
 
@@ -571,7 +566,6 @@ public class RedisUtil {
      * @return
      */
     public List<String> lrange(String key, long start, long end) {
-        Jedis jedis = getJedis();
         return jedis.lrange(key, start, end);
     }
 
@@ -583,7 +577,6 @@ public class RedisUtil {
      * @return 添加成功的个数
      */
     public Long sadd(String key, String... members) {
-        Jedis jedis = getJedis();
         return jedis.sadd(key, members);
     }
 
@@ -595,7 +588,6 @@ public class RedisUtil {
      * @return 删除的个数
      */
     public Long srem(String key, String... members) {
-        Jedis jedis = getJedis();
         return jedis.srem(key, members);
     }
 
@@ -606,7 +598,6 @@ public class RedisUtil {
      * @return
      */
     public String spop(String key) {
-        Jedis jedis = getJedis();
         return jedis.spop(key);
     }
 
@@ -618,7 +609,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> sdiff(String... keys) {
-        Jedis jedis = getJedis();
         return jedis.sdiff(keys);
     }
 
@@ -631,7 +621,6 @@ public class RedisUtil {
      * @return
      */
     public Long sdiffstore(String dstkey, String... keys) {
-        Jedis jedis = getJedis();
         return jedis.sdiffstore(dstkey, keys);
     }
 
@@ -642,7 +631,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> sinter(String... keys) {
-        Jedis jedis = getJedis();
         return jedis.sinter(keys);
     }
 
@@ -654,7 +642,6 @@ public class RedisUtil {
      * @return
      */
     public Long sinterstore(String dstkey, String... keys) {
-        Jedis jedis = getJedis();
         return jedis.sinterstore(dstkey, keys);
     }
 
@@ -665,7 +652,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> sunion(String... keys) {
-        Jedis jedis = getJedis();
         return jedis.sunion(keys);
     }
 
@@ -677,7 +663,6 @@ public class RedisUtil {
      * @return
      */
     public Long sunionstore(String dstkey, String... keys) {
-        Jedis jedis = getJedis();
         return jedis.sunionstore(dstkey, keys);
     }
 
@@ -690,7 +675,6 @@ public class RedisUtil {
      * @return
      */
     public Long smove(String srckey, String dstkey, String member) {
-        Jedis jedis = getJedis();
         return jedis.smove(srckey, dstkey, member);
     }
 
@@ -701,7 +685,6 @@ public class RedisUtil {
      * @return
      */
     public Long scard(String key) {
-        Jedis jedis = getJedis();
         return jedis.scard(key);
     }
 
@@ -713,7 +696,6 @@ public class RedisUtil {
      * @return
      */
     public Boolean sismember(String key, String member) {
-        Jedis jedis = getJedis();
         return jedis.sismember(key, member);
     }
 
@@ -724,7 +706,6 @@ public class RedisUtil {
      * @return
      */
     public String srandmember(String key) {
-        Jedis jedis = getJedis();
         return jedis.srandmember(key);
     }
 
@@ -735,7 +716,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> smembers(String key) {
-        Jedis jedis = getJedis();
         return jedis.smembers(key);
     }
 
@@ -750,7 +730,6 @@ public class RedisUtil {
      * @return
      */
     public Long zadd(String key, double score, String member) {
-        Jedis jedis = getJedis();
         return jedis.zadd(key, score, member);
     }
 
@@ -762,7 +741,6 @@ public class RedisUtil {
      * @return
      */
     public Long zrem(String key, String... members) {
-        Jedis jedis = getJedis();
         return jedis.zrem(key, members);
     }
 
@@ -775,7 +753,6 @@ public class RedisUtil {
      * @return
      */
     public Double zincrby(String key, double score, String member) {
-        Jedis jedis = getJedis();
         return jedis.zincrby(key, score, member);
     }
 
@@ -788,7 +765,6 @@ public class RedisUtil {
      * @return
      */
     public Long zrank(String key, String member) {
-        Jedis jedis = getJedis();
         return jedis.zrank(key, member);
     }
 
@@ -801,7 +777,6 @@ public class RedisUtil {
      * @return
      */
     public Long zrevrank(String key, String member) {
-        Jedis jedis = getJedis();
         return jedis.zrevrank(key, member);
     }
 
@@ -816,7 +791,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> zrevrange(String key, long start, long end) {
-        Jedis jedis = getJedis();
         return jedis.zrevrange(key, start, end);
     }
 
@@ -829,7 +803,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> zrangebyscore(String key, String max, String min) {
-        Jedis jedis = getJedis();
         return jedis.zrevrangeByScore(key, max, min);
     }
 
@@ -842,7 +815,6 @@ public class RedisUtil {
      * @return
      */
     public Set<String> zrangeByScore(String key, double max, double min) {
-        Jedis jedis = getJedis();
         return jedis.zrevrangeByScore(key, max, min);
     }
 
@@ -855,7 +827,6 @@ public class RedisUtil {
      * @return
      */
     public Long zcount(String key, String min, String max) {
-        Jedis jedis = getJedis();
         return jedis.zcount(key, min, max);
     }
 
@@ -866,7 +837,6 @@ public class RedisUtil {
      * @return
      */
     public Long zcard(String key) {
-        Jedis jedis = getJedis();
         return jedis.zcard(key);
     }
 
@@ -878,7 +848,6 @@ public class RedisUtil {
      * @return
      */
     public Double zscore(String key, String member) {
-        Jedis jedis = getJedis();
         return jedis.zscore(key, member);
     }
 
@@ -891,7 +860,6 @@ public class RedisUtil {
      * @return
      */
     public Long zremrangeByRank(String key, long start, long end) {
-        Jedis jedis = getJedis();
         return jedis.zremrangeByRank(key, start, end);
     }
 
@@ -904,22 +872,9 @@ public class RedisUtil {
      * @return
      */
     public Long zremrangeByScore(String key, double start, double end) {
-        Jedis jedis = getJedis();
         return jedis.zremrangeByScore(key, start, end);
     }
 
-    /**
-     * 返回满足pattern表达式的所有key
-     * keys(*)
-     * 返回所有的key
-     *
-     * @param pattern
-     * @return
-     */
-    public Set<String> keys(String pattern) {
-        Jedis jedis = getJedis();
-        return jedis.keys(pattern);
-    }
 
     /**
      * 通过key判断值得类型
@@ -928,7 +883,6 @@ public class RedisUtil {
      * @return
      */
     public String type(String key) {
-        Jedis jedis = getJedis();
         return jedis.type(key);
     }
 
@@ -939,9 +893,6 @@ public class RedisUtil {
         }
     }
 
-    private Jedis getJedis() {
-        return pool.getResource();
-    }
 
     public static RedisUtil getRedisUtil() {
         if (redisUtil == null) {
