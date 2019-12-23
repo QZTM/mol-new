@@ -137,7 +137,7 @@ public class FadadaCallBackController {
         //如果有记录，则更改状态：
         if(authRecord != null) {
             if(authRecord.getStatus().equals(status)) {
-                return "forward:/microApp/my/show";
+                return "forward:/my/show";
             }
 
             if(("2".equals(authenticationType) && "4".equals(status)) ||  ("1".equals(authenticationType) && "2".equals(status))) {
@@ -161,7 +161,7 @@ public class FadadaCallBackController {
         }
         //申请实名证书：
         //ContractHandler.ApplyCert(paraMap.get("customerId").toString(),paraMap.get("transactionNo").toString());//申请实名证书
-        return "forward:/microApp/my/show";
+        return "forward:/my/show";
     }
 
 
