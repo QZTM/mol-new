@@ -10,6 +10,7 @@
 
 
 
+
 	<body onload="landing()"><!--width:1679px-->
 		<div style="width:100%; height: 1000px;"><!--width: 1679px-->
 			<div style="margin: 24px;"><!--日期-->
@@ -119,20 +120,7 @@
 						<div style="width: 100%; height: 40px; color: #0C0C0C;border-radius: 12px;font-size: 28px;text-align: center;"><!--width: 360px-->
 							<font>内部公告</font>
 						</div>
-						<!--<div style="width: 340px; height: auto; background-color:burlywood;border-radius: 12px; margin-top: 18px; padding: 10px;">
-							<div style="height: auto;">
-							  <div style=" color: #FBFBFB;font-size: 20px;">
-								<font style="margin-top: 12px">
-									2019年06月13日09:38
-								</font>
-							  </div>
-							  <div  style="margin-top: 12px; color: #FBFBFB;font-size: 14px;word-break: break-all;word-wrap: break-word;">
-								<font></font>
-							  </div>
-							</div>
-					
-						</div>-->
-						
+
 					</div>
 					
 				</div>
@@ -150,28 +138,19 @@
 						<div id="history_money_chart" style="border:1px solid #B2B2B2;float: left;width: 60%;height:400px; margin: 3px"><!--单品采购历史价格width: 1600px-->
 						</div>
 						<div id="history_money_context" style="border:1px solid #B2B2B2;float: left;width: 18%;height:400px;margin: 3px;font-size: 18px"><!--单品采购历史价格width: 1600px-->
-<!--							<p id="money_context_1" style="margin:10px;width: 90%;">
-								轴承1 本次采购价格: 90 元 ↑10% ERP 上次采购价格: 75 元
-							</p>
-							<p id="money_context_2" style="width: 90%;margin:10px;">
-								时间：2019-8-15
-							</p>
-							<p id="money_context_3" style="width: 90%;margin:10px;">
-								单号：201908150001
-							</p>
-							<p id="money_context_4" style="width: 90%;margin:10px;">
-								报价公司： 山东友邦有限公司
-							</p>
-							<p id="money_context_5" style="width: 90%;margin:10px;">
-								原因： 物料涨价
-							</p>-->
+
 						</div>
 					</div>
 				</div>
+
 				<div style="width: 47%;height:600px;float:left; margin-top: 10px;display:inline;border:1px solid #B2B2B2"><!--width:790px-->
-					<div>
-						<a>供应商基数统计图</a>
+					<div class="layui-inline">
+						<label class="layui-form-label">新增供应商</label>
+						<div class="layui-input-inline">
+							<input type="text" class="layui-input" onchange="NewAddSupplier(this)" id="test3"  placeholder="选择日期">
+						</div>
 					</div>
+
 					<div id="supplier_number" style="width: 100%;height:400px;"><!--供应商人数-->
 
 					</div>
@@ -188,14 +167,16 @@
 
 		</div>
 
+
 		<script src="/layui/layui.all.js"></script>
+
 	<script>
-		//注意：折叠面板 依赖 element 模块，否则无法进行功能性操作
+/*		//注意：折叠面板 依赖 element 模块，否则无法进行功能性操作
 		layui.use('element', function(){
 			var element = layui.element;
 
 			//…
-		});
+		});*/
 	</script>
 
 		<script>
@@ -224,12 +205,7 @@
 					}
 				});
 			});*/
-			function dingdinglanding()
-			{
-				console.log(dd)
 
-
-			}
 
 			function select_change(e)//下拉选择的相应事件
 			{
@@ -255,7 +231,7 @@
 					 }
 					},
 					error:function (data) {
-						console.log(data);
+						//console.log(data);
 						layui.use('layer', function(){
 							var layer = layui.layer;
 							layer.msg('获取信息失败！');
@@ -406,7 +382,6 @@
 					},
 					error:function (data)
 					{
-						console.log(data);
 						layui.use('layer', function(){
 							var layer = layui.layer;
 							layer.msg('获取信息失败！');
@@ -484,72 +459,19 @@
 						item[i].style="margin-top: 5px; width: 100%;height: 20%;font-size: 20px;color: #fbfbfb;background-color: #2D93CA"
 						var myChart_0 = echarts.init(document.getElementById('history_money_chart'));
 
-						var option_0= {
-							tooltip: {
-								trigger: 'axis',
-								axisPointer: {
-									type: 'cross',
-									crossStyle: {
-										color: '#999'
-									}
-								}
-							},
-							toolbox: {
-								feature: {
-									dataView: {show: true, readOnly: false},
-									magicType: {show: true, type: ['line', 'bar']},
-									restore: {show: true},
-									saveAsImage: {show: true}
-								}
-							},
-							legend: {
-								data:['单月价格','平均价格']
-							},
-							xAxis: [
-								{
-									type: 'category',
-									data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-									axisPointer: {
-										type: 'shadow'
-									}
-								}
-							],
-							yAxis: [
-								{
-									type: 'value',
-									name: '单月价格',
-									min: 0,
-									// max: 250,
-									interval: 20000,
-									axisLabel: {
-										formatter: '{value} 元'
-									}
-								},
-								{
-									type: 'value',
-									name: '平均价格',
-									min: 0,
-									//  max: 25,
-									interval: 20000,
-									axisLabel: {
-										formatter: '{value}元'
-									}
-								}
-							],
-							series: [
-								{
-									name:'单月价格',
-									type:'bar',
-									data:History_prices[i]
-								},
 
-								{
-									name:'',
-									type:'line',
-									yAxisIndex: 0,
-									data:[0.0, 0.0,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-								}
-							]
+						var option_0= {
+							xAxis: {
+								type: 'category',
+								data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+							},
+							yAxis: {
+								type: 'value'
+							},
+							series: [{
+								data: History_prices[i],
+								type: 'bar'
+							}]
 						};
 						myChart_0.setOption(option_0)
 
@@ -568,10 +490,16 @@
 
 
 		</script>
+	
+	    
 
 		<script type="text/javascript">
 			// 基于准备好的dom，初始化echarts实例
 
+			function NewAddSupplier(e) //更新新增的供应商
+			{
+				alert(123)
+			}
 			var myChart = echarts.init(document.getElementById('supplier_number'));
 			var supplier_money = echarts.init(document.getElementById('supplier_money'));
 
@@ -628,6 +556,19 @@
 			myChart.setOption(option);
 			supplier_money.setOption(option_1);
 		</script>
+	<script>
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+
+			//年月选择器
+			laydate.render({
+				elem: '#test3'
+				,type: 'month'
+			});
+
+		});
+	</script>
+
 		
 	</body>
 </html>
