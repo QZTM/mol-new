@@ -5,6 +5,7 @@ import com.mol.notification.SendNotification;
 import com.mol.purchase.config.Constant;
 import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiProcinst;
+import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
 import com.mol.purchase.service.activiti.ActService;
@@ -181,16 +182,32 @@ ActController {
         logger.info("完成个人审批任务 审批人信息："+user);
         actService.completeTask(taskId,processInsId,variables,comment,name);
 
+        //1.订单ID
+        ActHiProcinst hiProcinst=actService.getActHiprocinstByProcInstId(processInsId);
+        logger.info("完成个人任务后查询到的订单id:"+hiProcinst.getBusinessKey());
+
+        //2.订单
+        fyPurchase pur=actService.findPurchaseById(hiProcinst.getBusinessKey());
 
 
         if (result.equals("pass")){
             logger.info("当前审批任务通过");
+
+            AppUser appUser = actService.getAppUserByUserDingId(user.getUserid());
+            logger.info("当前审批任务通过,通过ddId查询当前用户，查询到的用户id："+appUser.getId());
+            AppAuthOrg aao=actService.getAppOrgById(appUser.getAppAuthOrgId());
+            logger.info("当前审批任务通过,通过当前用户Id查询所属公司，查询到的公司id："+aao.getId());
+            AppOrgBuyChannelApproveMiddle aobca = actService.findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(aao.getId(),pur.getBuyChannelId()+"");
+            logger.info("当前审批任务通过,通过公司id和采购途径id查询中间表，查询到的中间表id："+aobca.getId());
+            AppPurchaseApprove apa=actService.getAppPurchaseApproveById(aobca.getPurchaseApproveId());
+            logger.info("当前审批任务通过,通过中间表查询审批负责人表，查询到的审批负责人表id："+apa.getId());
+
             //去获取下一个审批人的id
-            String sendUserId=actService.getNextSendUserId(user);
+            String sendUserId=actService.getNextSendUserId(appUser.getId(),apa.getPurchaseApproveList());
             logger.info("下一个审批人的id："+sendUserId);
 
 
-            if (sendUserId!="" || sendUserId==null){
+            if (sendUserId!="" || sendUserId==null ){
                 logger.info("当前任务完成，向下一审批人发通知:"+sendUserId);
                 //给下个任务处理人发通知和短信
                 AppUser appUserById = actService.findAppUserById(sendUserId);
@@ -204,11 +221,8 @@ ActController {
 
                 //审批任务完成
                 //查询订单相关信息
-                //1.订单ID
-                ActHiProcinst hiProcinst=actService.getActHiprocinstByProcInstId(processInsId);
-                logger.info("审批通过后查询到的订单id:"+hiProcinst.getBusinessKey());
-                //2.订单
-                fyPurchase pur=actService.findPurchaseById(hiProcinst.getBusinessKey());
+
+
                 //3.订单详情
                 List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
                 logger.info("修改专家推荐的采纳状态");
@@ -247,10 +261,6 @@ ActController {
             //审批拒绝
             logger.info("当前审批任务状态为拒绝");
             //查询订单相关信息
-            //1.订单ID
-            ActHiProcinst hiProcinst=actService.getActHiprocinstByProcInstId(processInsId);
-            //2.订单
-            fyPurchase pur=actService.findPurchaseById(hiProcinst.getBusinessKey());
             //3.订单详情
             List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
             //修改未选中的专家推荐表中的adopt
