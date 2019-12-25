@@ -2,12 +2,14 @@ package com.mol.ddmanage.Service;
 
 import com.mol.ddmanage.Ben.Purchase_track_ben;
 import com.mol.ddmanage.Ben.Supplier_Review_ben;
+import com.mol.ddmanage.Ben.Workench.GetProductTypeben;
 import com.mol.ddmanage.Util.DataUtil;
 import com.mol.ddmanage.mapper.GetPurchaseMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,6 +125,98 @@ public class Get_Purchase_inforService
       get_purchase.Get_this_month_Supplier_number_mapper("","");
 
       return integers;
+    }
+
+
+    public Map GetNewSupplierViewLogic(String times)
+    {
+        if (times.equals(""))
+        {
+            times=DataUtil.GetNowSytemTime().split("-")[0]+DataUtil.GetNowSytemTime().split("-")[1];
+        }
+        Map data=new HashMap();
+        try
+        {
+            ArrayList<Integer> newsuppliernum=new ArrayList<Integer>();//存储一个月中每天的供应商新增数
+            ArrayList<Integer> numberDay= new ArrayList<>();//这个月的天数标记
+            times=times.replace("-","");
+            Map GetMonth= DataUtil.GetMonth(times);//获取本月的第一个月和最后一个月的日期
+
+            Integer Monthnumber= Integer.valueOf ((GetMonth.get("time2").toString()).split("-")[2]);//获取这个月一共有多少天
+
+            ArrayList<Map> Suppliers= get_purchase.GetNewSupplierView(GetMonth.get("time1").toString(),GetMonth.get("time2").toString());
+
+            for (int n=1;n<=Monthnumber;n++)
+            {
+                Integer n_1=0;
+                for (Map item : Suppliers)
+                {
+                    String ss=((item.get("regist_time").toString()).split("-")[2]).substring(0,2);
+                    if (n==Integer.valueOf(ss))
+                    {
+                        n_1++;
+                    }
+                }
+                newsuppliernum.add(n_1);
+                numberDay.add(n);
+            }
+            data.put("newsuppliernum",newsuppliernum);
+            data.put("numberDay",numberDay);
+            return data;
+
+        }
+        catch (Exception e)
+        {
+           System.out.println(e.toString());
+            return data;
+        }
+    }
+
+
+    public Map GetProductTypeLogic(String times)
+    {
+        Map map=new HashMap();
+        try
+        {
+            if (times.equals(""))
+            {
+                times=DataUtil.GetNowSytemTime().split("-")[0]+DataUtil.GetNowSytemTime().split("-")[1];
+            }
+            times=times.replace("-","");//去掉日期里的-
+            Map GetMonth= DataUtil.GetMonth(times);//获取本月的第一个月和最后一个月的日期
+
+            ArrayList<String> MaterialsType=get_purchase.GetMaterialsType();//获取产品类
+            ArrayList<Object> Prices=new ArrayList<>();//存放各个产品类的采购金额
+            ArrayList<GetProductTypeben> getProductTypebens=get_purchase.GetProductType(GetMonth.get("time1").toString(),GetMonth.get("time2").toString());//获取这个时间范围内的采购金额
+
+
+            for (int n=0;n<MaterialsType.size();n++)//遍历产品类
+            {
+                double Price=0;
+                for (int n_1=0;n_1<getProductTypebens.size();n_1++)//遍历采购金额
+                {
+                    if (getProductTypebens.get(n_1).getGoods_type().equals(MaterialsType.get(n)))
+                    {
+                        Price=Price+Double.valueOf(getProductTypebens.get(n_1).getQuote());
+                    }
+                }
+            }
+            MaterialsType.add("产品采购金额");
+            Prices.add("产品采购金额");
+
+            Collections.reverse(MaterialsType);
+            Collections.reverse(Prices);
+
+            map.put("MaterialsType",MaterialsType);
+            map.put("Prices",Prices);
+
+            return map;
+        }
+        catch (Exception e)
+        {
+
+            return map;
+        }
     }
 
 

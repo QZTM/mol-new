@@ -1,19 +1,21 @@
 package com.mol.supplier.config;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * 项目中的常量定义类
  */
+@Component
+@Configuration
+
 public class Constant {
-    @Value("${httppotocol}")
-    public static String http ;
-    /**
-     * 域名
-     */
-    @Value("${domain}")
-    public static String domain ;
-    //public static final String domain = "fyycg2.vaiwan.com";
+
+
     /**
      * 企业corpid, 需要修改成开发者所在企业
      */
@@ -49,10 +51,7 @@ public class Constant {
     //线上审批模板id   processCode=PROC-18D734DC-C7A2-4984-9226-050C06E61147
     public static final String ONLINEPUR_PROCESS_CODE="PROC-18D734DC-C7A2-4984-9226-050C06E61147";
 
-    /**
-     * 回调host
-     */
-    public static final String CALLBACK_URL_HOST = domain;
+
 
     /**
      * 采购渠道常量

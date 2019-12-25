@@ -1,7 +1,9 @@
 package com.mol.ddmanage.Service.Tools;
 
 import com.mol.ddmanage.Util.HttpCommunication;
+import com.mol.ddmanage.client.purchase.PurchaseClient;
 import com.mol.ddmanage.mapper.Tools.ApprovalProcessinforMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import util.IdWorker;
 
@@ -13,6 +15,10 @@ import java.util.Map;
 @Service
 public class ApprovalProcessinforService
 {
+
+    @Autowired
+    private PurchaseClient purchaseClient;
+
     @Resource
     ApprovalProcessinforMapper approvalProcessinforMapper;
     public Map GetApprovalInforLogic(String id)
@@ -91,8 +97,8 @@ public class ApprovalProcessinforService
             approvalProcessinforMapper.updata_fy_buy_channel(buy_channel_id,status);//更新审批状态表
 
            // HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=1111&processId=testname&processName=test1&orgId=1202851016954982400&buyChannelId="+buy_channel_id);
-          String nnn=  HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(id)+"&processId=process"+ new  IdWorker().nextId() +"&processName=processName"+String.valueOf(id)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(id));
-
+          //String nnn=  HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(id)+"&processId=process"+ new  IdWorker().nextId() +"&processName=processName"+String.valueOf(id)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(id));
+            String nnn= purchaseClient.deploy("n"+String.valueOf(id),new  IdWorker().nextId()+"","processName"+String.valueOf(id),"1202851016954982400",String.valueOf(id));
             map.put("statu",true);
             return map;
         }

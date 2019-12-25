@@ -4,6 +4,7 @@ import com.mol.fadada.handler.RegistAndAuthHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import com.mol.supplier.config.Constant;
+import com.mol.supplier.config.MicroAttr;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
@@ -38,6 +39,9 @@ public class EContractRegistAndAuthController {
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private MicroAttr microAttr;
 
     @RequestMapping("/checkRegist")
     @ResponseBody
@@ -102,12 +106,12 @@ public class EContractRegistAndAuthController {
     @ResponseBody
     public ServiceResult getAuthUrl(String customerId, String authType,HttpSession session) {
         Supplier supplier = microUserService.getSupplierFromSession(session);
-        log.info("getAuthUrl:...customerId:"+customerId+",authType:"+authType);
+        log.info("getAuthUrl:...customerId:"+customerId+",authType:"+authType+",domain:"+microAttr.getDomain());
         ServiceResult sr = new ServiceResult();
         if ("1".equals(authType)) {
-             sr = RegistAndAuthHandler.getAuthPersonurl(customerId, "http://"+Constant.domain + "/fddCallback/personAuth", "http://"+Constant.domain + "/fddCallback/personAuthTo?customerId="+customerId);
+             sr = RegistAndAuthHandler.getAuthPersonurl(customerId, "http://"+microAttr.getDomain() + "/fddCallback/personAuth", "http://"+microAttr.getDomain() + "/fddCallback/personAuthTo?customerId="+customerId);
         } else if ("2".equals(authType)) {
-             sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, "http://"+Constant.domain + "/fddCallback/orgAuth", "http://"+Constant.domain + "/fddCallback/orgAuthTo?customerId="+customerId);
+             sr = RegistAndAuthHandler.getAuthCompanyurl(customerId, "http://"+microAttr.getDomain() + "/fddCallback/orgAuth", "http://"+microAttr.getDomain() + "/fddCallback/orgAuthTo?customerId="+customerId);
         }
         if(sr.isSuccess()) {
             Map paraMap = (HashMap)sr.getResult();

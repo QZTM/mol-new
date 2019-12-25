@@ -25,12 +25,15 @@ public class MicroDdJsApiAuthService {
     @Autowired
     private MicroAttr microAttr;
 
+    @Autowired
+    private PageUrlUtils pageUrlUtils;
+
 
     public Map getAuthMap(HttpServletRequest request){
         /**
          * 随机字符串
          */
-        String url = PageUrlUtils.getPageUrl(request);
+        String url = pageUrlUtils.getPageUrl(request);
         return getAuthMap(url);
     }
 

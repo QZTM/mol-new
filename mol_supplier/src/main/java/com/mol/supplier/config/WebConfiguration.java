@@ -1,6 +1,7 @@
 package com.mol.supplier.config;
 
 import com.mol.supplier.interceptor.SessionInterceptor;
+import lombok.extern.java.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import util.UploadUtils;
 
 @Configuration
+@Log
 public class WebConfiguration implements WebMvcConfigurer {
 
     //spring拦截器加载在springcontentText之前，所以这里用@Bean提前加载。否则会导致过滤器中的@AutoWired注入为空
@@ -19,9 +21,9 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        System.out.println("supplier-session拦截器启动");
+        log.info("supplier-session拦截器启动");
         registry.addInterceptor(jwtInterceptor())
-                .excludePathPatterns("static/**/**","static/**","/microApp/login/**","/callbackto","/error","/callback","**/img/**","/index/findAll","**/js/**","**/css/**","/static/upload/**","/pdf/**","/templates/**","/css/**","/js/**","/img/**","/layui/**","/actuator/**","/msg/**","/microApp/**/**","/microApp/regist/**","/pay/alipay/callback","/fddCallback/**")
+                .excludePathPatterns("static/**/**","static/**","/microApp/login/**","/callbackto","/error","/callback","**/img/**","/index/findAll","**/js/**","**/css/**","/static/upload/**","/pdf/**","/templates/**","/css/**","/js/**","/img/**","/layui/**","/actuator/**","/msg/**","/microApp/**/**","/microApp/regist/**","/pay/alipay/callback","/fddCallback/**","/molsupplier/**")
                 .addPathPatterns("/**");
     }
 
