@@ -3,7 +3,6 @@ package com.mol.supplier.controller.microApp;
 import com.alibaba.fastjson.JSONObject;
 import com.mol.pay.Alipay;
 import com.mol.pay.entity.AlipayCreateInfo;
-import com.mol.supplier.config.Constant;
 import com.mol.supplier.config.MicroAttr;
 import com.mol.supplier.entity.MicroApp.AlipayTemplates;
 import com.mol.supplier.entity.MicroApp.Supplier;
@@ -54,11 +53,6 @@ public class MicroAlipayController {
 
     @Autowired
     private MicroAttr microAttr;
-
-
-
-    private final String PAY_CALLBACK_URL = "http://"+microAttr.getDomain()+"/pay/alipay/callback";
-
 
     /**
      * 钉钉微应用获取支付字符串用于发起支付宝支付
@@ -115,7 +109,7 @@ public class MicroAlipayController {
         if(!StringUtils.isEmpty(money)){
             createPayInfo.setTotalAmount(money);
         }
-        createPayInfo.setCallbackUrl(PAY_CALLBACK_URL);
+        createPayInfo.setCallbackUrl("http://"+microAttr.getDomain()+"/pay/alipay/callback");
         try {
             Map payInfoMap = microAlipayService.getAlipayInfo(createPayInfo).get();
             log.info("/getCreateInfo:"+payInfoMap.get(Alipay.MAPKEY_PAYINFO));
