@@ -6,12 +6,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import util.TimeUtil;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 /**
  * 钉钉微应用参数
@@ -45,6 +40,19 @@ public class MicroAttr {
     @Setter
     @Value("${server.port}")
     private String port ;
+
+    @Getter
+    @Setter
+    @Value("${httppotocol}")
+    public String http ;
+
+    /**
+     * 域名
+     */
+    @Getter
+    @Setter
+    @Value("${domain}")
+    public String domain ;
 
     //供应商认证完成
     public static final Integer  SUPSTATE_SUCCESS = 1;

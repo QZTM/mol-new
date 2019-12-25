@@ -624,14 +624,14 @@
         /*验证是否上传了供应商协议*/
         var protocolUploaded = $("#protocol_file_input").attr('upload');
         console.log(protocolUploaded);
-        if(protocolUploaded != 1){
-            setTimeout(function(){
-                $("#protocol_file_input").click();
-            },1000)
-            alertMsg("请上传战略供应商协议！");
-            $("#subBtn").removeAttr('disabled');
-            return ;
-        }
+        // if(protocolUploaded != 1){
+        //     setTimeout(function(){
+        //         $("#protocol_file_input").click();
+        //     },1000)
+        //     alertMsg("请上传战略供应商协议！");
+        //     $("#subBtn").removeAttr('disabled');
+        //     return ;
+        // }
 
         /*手机号码*/
         var phoneNum = $("#phoneNumInput-jc").val();

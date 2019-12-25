@@ -52,9 +52,12 @@ public class MicroAlipayController {
     @Autowired
     private QuotePayresultMapper quotePayresultMapper;
 
+    @Autowired
+    private MicroAttr microAttr;
 
 
-    private static final String PAY_CALLBACK_URL = "http://"+Constant.domain+"/pay/alipay/callback";
+
+    private final String PAY_CALLBACK_URL = "http://"+microAttr.getDomain()+"/pay/alipay/callback";
 
 
     /**

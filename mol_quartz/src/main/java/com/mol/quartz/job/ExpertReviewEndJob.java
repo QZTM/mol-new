@@ -83,7 +83,7 @@ public class ExpertReviewEndJob implements Job {
         NotificationModel t = new NotificationModel();
         t.setAgentId(constant.getPurchaseAgentId());
         t.setContent(NotificationConfig.审批负责人_NEW);
-        t.setImage(NotificationConfig.评审图片);
+        t.setImage(NotificationConfig.议价图片);
         t.setMessageUrl(NotificationConfig.PURCHASE_APP);
         t.setText("茉尔易购");
         t.setTitle("新订单");
