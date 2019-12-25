@@ -24,5 +24,20 @@
         select  * from  bd_supplier where supstate='1' and #{time_end}>last_update_time and last_update_time>#{time_start}
     </select>
 
+    <select id="GetNewSupplierView" resultType="java.util.Map">
+        select bd_supplier.regist_time from bd_supplier where #{time2}>regist_time and regist_time>#{time1}
+    </select>
+
+    <select id="GetMaterialsType" resultType="java.lang.String">
+        select bd_marbasclass.name from bd_marbasclass where  bd_marbasclass.pk_parent="~";
+    </select>
+    <select id="GetProductType" resultType="com.mol.ddmanage.Ben.Workench.GetProductTypeben">
+       SELECT fy_purchase.goods_type ,fy_quote.quote
+FROM fy_purchase
+LEFT JOIN fy_purchase_detail ON fy_purchase.id=fy_purchase_detail.fy_purchase_id AND fy_purchase_detail.quote_id IS NOT NULL AND fy_purchase_detail.quote_id!=''
+LEFT JOIN fy_quote ON fy_quote.id=fy_purchase_detail.quote_id
+WHERE fy_purchase.`status`="7" AND #{time2}>create_time and create_time>#{time1}
+    </select>
+
 
 </mapper>
