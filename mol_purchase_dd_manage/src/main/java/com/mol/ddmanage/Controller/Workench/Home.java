@@ -34,4 +34,15 @@ public class Home
       get_purchase_inforService.Get_this_month_Supplier_number();
       return get_purchase_inforService.Get_Supplier_Review_Service();
   }
+
+  @RequestMapping("/GetNewSupplierView")
+  public Map GetNewSupplierView(@RequestParam String times)
+  {
+      return get_purchase_inforService.GetNewSupplierViewLogic(times);
+  }
+  @RequestMapping("/GetProductType")
+  public Map GetProductType(@RequestParam String times)
+  {
+    return  get_purchase_inforService.GetProductTypeLogic(times);
+  }
 }

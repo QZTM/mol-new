@@ -144,13 +144,12 @@
 				</div>
 
 				<div style="width: 47%;height:600px;float:left; margin-top: 10px;display:inline;border:1px solid #B2B2B2"><!--width:790px-->
-					<div class="layui-inline">
-						<label class="layui-form-label">新增供应商</label>
-						<div class="layui-input-inline">
-							<input type="text" class="layui-input" onchange="NewAddSupplier(this)" id="test3"  placeholder="选择日期">
-						</div>
+					<div class="layui-inline" style="margin-top: 12px;margin-left: 36px">
+						    <label style="font-size: 20px" >新增供应商月份</label>
+							<div class="layui-input-inline">
+								<input type="text" class="layui-input"  id="test3"  placeholder="选择日期">
+							</div>
 					</div>
-
 					<div id="supplier_number" style="width: 100%;height:400px;"><!--供应商人数-->
 
 					</div>
@@ -171,12 +170,8 @@
 		<script src="/layui/layui.all.js"></script>
 
 	<script>
-/*		//注意：折叠面板 依赖 element 模块，否则无法进行功能性操作
-		layui.use('element', function(){
-			var element = layui.element;
 
-			//…
-		});*/
+
 	</script>
 
 		<script>
@@ -189,6 +184,41 @@
 				Get_purchase_infor(0);
 				Get_real_time();//获取正在审核的采购订单
 				Get_Supplier_review_real_time()//获取供应商审核进程
+
+
+				$.ajax({//加载本月新增供应商基数
+					type: 'POST',
+					url: '/Purchase_infor/GetNewSupplierView',
+					dataType: 'json',
+					data:{times:""},
+					// headers:{  'eticket': app.globalData.eticket},
+					success: function (data) {
+						GetSuppliernum(data.newsuppliernum,data.numberDay)
+					},
+					error: function (data) {
+						layui.use('layer', function(){
+							var layer = layui.layer;
+							layer.msg("获取新增供应商统计图数据失败");
+						});
+					}
+				});
+
+				$.ajax({//加载本月产品采购金额
+					type: 'POST',
+					url: '/Purchase_infor/GetProductType',
+					dataType: 'json',
+					data:{times:""},
+					// headers:{  'eticket': app.globalData.eticket},
+					success: function (data) {
+						GetProductType(data.MaterialsType,data.Prices)//获取当月产品类采购金额
+					},
+					error: function (data) {
+						layui.use('layer', function(){
+							var layer = layui.layer;
+							layer.msg("获取新增供应商统计图数据失败");
+						});
+					}
+				});
 				//dingdinglanding();
 			}//
 
@@ -361,19 +391,7 @@
 							divitem.style.marginTop="20px"
 							divitem.class='layui-colla-item';
 							var div = document.getElementById("announcement");
-/*							divitem.innerHTML =
-									'<div style="width: 95%; height: auto; background-color:burlywood;border-radius: 12px; margin-top: 18px; padding: 10px;">'+
-									'<div style="height: auto;">'+
-									'<div style=" color: #FBFBFB;font-size: 20px;">'+
-									'<font style="margin-top: 12px">'+
-									data[i].titl+
-									'</font>'+
-									'</div>'+
-									'<div  style="margin-top: 12px; color: #FBFBFB;font-size: 14px;word-break: break-all;word-wrap: break-word;">'+
-									'<font>'+data[i].text+'</font>'+
-									'</div>'+
-									'</div>'+
-									'</div>'*/
+
 							divitem.innerHTML=
 							    '<h2 class="layui-colla-title">'+data[i].titl+'</h2>'+
 							    '<div class="layui-colla-content layui-show">'+data[i].text+'</div>'
@@ -487,86 +505,104 @@
 			}
 
 
+			function GetSuppliernum(newsuppliernum,numberDay)
+			{
+				// 基于准备好的dom，初始化echarts实例
+				var myChart = echarts.init(document.getElementById('supplier_number'));
+				// 新增供应商图谱
+				var option = {
+					xAxis: {
+						type: 'category',
+						boundaryGap: false,
+						data:numberDay, //['1月','1月','1月','1月','1月','1月','2月', '3月', '4月', '5月', '6月', '7月', '本月']
+					},
+					yAxis: {
+						type: 'value'
+					},
+					series: [{
+						data: newsuppliernum,//[11,222,333,444,555,666,820, 932, 901, 934, 1290, 1330, 1320],
+						type: 'line',
+						areaStyle: {}
+					}]
+				};
 
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+			}
+			
+			function GetProductType(MaterialsType,Prices) //获取当月产品类采购金额
+			{
+				var supplier_money = echarts.init(document.getElementById('supplier_money'));
+				//商品类别采购金额图谱
+				var option_1= {
+					legend: {},
+					tooltip: {},
+					dataset: {
+						source: [
+							MaterialsType/*[ '产品类', '设备类', '配件类','材料类','酒店类','应税劳务']*/,
+							Prices/*['9月份', 99, 85.8, 93.7,11,213,234]*/,
+							// ['Milk Tea', 83.1, 73.4, 55.1],
+							// ['Cheese Cocoa', 86.4, 65.2, 82.5],
+							// ['Walnut Brownie', 72.4, 53.9, 39.1]
+						]
+					},
+					xAxis: {type: 'category'},
+					yAxis: {},
+					// Declare several bar series, each will be mapped
+					// to a column of dataset.source by default.
+					series: [
+						{type: 'bar'},
+						{type: 'bar'},
+						{type: 'bar'},
+						{type: 'bar'},
+						{type: 'bar'},
+						{type: 'bar'}
+					]
+				};
+				supplier_money.setOption(option_1);
+			}
 
 		</script>
-	
-	    
 
 		<script type="text/javascript">
-			// 基于准备好的dom，初始化echarts实例
 
-			function NewAddSupplier(e) //更新新增的供应商
-			{
-				alert(123)
-			}
-			var myChart = echarts.init(document.getElementById('supplier_number'));
-			var supplier_money = echarts.init(document.getElementById('supplier_money'));
-
-
-			// 指定图表的配置项和数据
-			var option = {
-				xAxis: {
-					type: 'category',
-					boundaryGap: false,
-					data: ['1月','1月','1月','1月','1月','1月','2月', '3月', '4月', '5月', '6月', '7月', '本月']
-				},
-				yAxis: {
-					type: 'value'
-				},
-				series: [{
-					data: [11,222,333,444,555,666,820, 932, 901, 934, 1290, 1330, 1320],
-					type: 'line',
-					areaStyle: {}
-				}]
-			};
-
-
-
-			var option_1= {
-				legend: {},
-				tooltip: {},
-				dataset: {
-					source: [
-						['product', '产品类', '设备类', '配件类','材料类','酒店类','应税劳务'],
-						['9月份', 99, 85.8, 93.7,11,213,234],
-						// ['Milk Tea', 83.1, 73.4, 55.1],
-						// ['Cheese Cocoa', 86.4, 65.2, 82.5],
-						// ['Walnut Brownie', 72.4, 53.9, 39.1]
-					]
-				},
-				xAxis: {type: 'category'},
-				yAxis: {},
-				// Declare several bar series, each will be mapped
-				// to a column of dataset.source by default.
-				series: [
-					{type: 'bar'},
-					{type: 'bar'},
-					{type: 'bar'},
-					{type: 'bar'},
-					{type: 'bar'},
-					{type: 'bar'}
-				]
-			};
-
-
-
-			// 使用刚指定的配置项和数据显示图表。
-
-			myChart.setOption(option);
-			supplier_money.setOption(option_1);
 		</script>
 	<script>
-		layui.use('laydate', function(){
+
+		layui.use('laydate', function(){//获取新增供应商的时间选择月份
 			var laydate = layui.laydate;
 
-			//年月选择器
 			laydate.render({
 				elem: '#test3'
 				,type: 'month'
-			});
+				,done: function(value, date, endDate){
+					console.log(value); //得到日期生成的值，如：2017-08-18
+					console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+					console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
 
+					$.ajax({
+						type: 'POST',
+						url: '/Purchase_infor/GetNewSupplierView',
+						dataType: 'json',
+						 data:{times:value},
+						// headers:{  'eticket': app.globalData.eticket},
+						success: function (data) {
+							console.log(data.newsuppliernum)
+							console.log(data.numberDay)
+							GetSuppliernum(data.newsuppliernum,data.numberDay)
+
+						},
+						error: function (data) {
+							layui.use('layer', function(){
+								var layer = layui.layer;
+								layer.msg("获取新增供应商统计图数据失败");
+							});
+						}
+					});
+				}
+			});
 		});
+
 	</script>
 
 		

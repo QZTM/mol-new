@@ -1,7 +1,9 @@
 package com.mol.ddmanage.Controller;
 
+import com.mol.ddmanage.Service.LoginService;
 import com.mol.ddmanage.Service.Office.ReviewBargainingHistoryPageService;
 import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -19,6 +21,8 @@ public class ControllerPages {
 
     @Resource
     VerificationPermissionService verificationPermissionService;//验证访问人权限
+    @Autowired
+    LoginService loginService;
     @RequestMapping("/DingdingOaLogin")
     public String GetLoginCode()
     {
@@ -29,7 +33,26 @@ public class ControllerPages {
     public String new_file(@RequestParam Map map , HttpSession httpSession)
     {
         httpSession.setAttribute("userid","083216482529129838");//083216482529129838
-        return "new_file";
+        return "newfile";
+
+    }
+
+    @RequestMapping("/verificationLogin")//扫描二维码登录
+    public String  user_login(@RequestParam Map map, HttpSession session, Model model)
+    {
+        Map map1=loginService.LoginService_dingding(map,session);
+       // Map map1=loginService.LoginOAService_dingding(map,session);
+       if ((Boolean) map1.get("rest")!=false)
+       {
+           model.addAttribute("name",map1.get("name").toString());//登录人的名子
+
+           return "newfile.html";
+       }
+       else
+       {
+           return "newfile.html";
+       }
+        //return "new_file";
     }
 
     @RequestMapping("/Home")//首页
