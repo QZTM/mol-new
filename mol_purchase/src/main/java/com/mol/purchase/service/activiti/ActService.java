@@ -52,6 +52,7 @@ import org.springframework.stereotype.Service;
 import com.mol.purchase.mapper.newMysql.dingding.org.AppOrgMapper;
 import com.mol.purchase.mapper.newMysql.dingding.user.AppUserMapper;
 import org.springframework.util.concurrent.ListenableFuture;
+import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
 import util.TimeUtil;
 
@@ -497,9 +498,13 @@ public class ActService {
 
     //查询user
     public AppUser getAppUserByUserDingId(String userid) {
-        AppUser user = new AppUser();
-        user.setDdUserId(userid);
-        return  appUserMapper.selectOne(user);
+        if (userid!=null){
+            Example e = new Example(AppUser.class);
+            e.and().andEqualTo("ddUserId",userid);
+            return  appUserMapper.selectOneByExample(e);
+        }else {
+            return null;
+        }
 
     }
 
@@ -541,24 +546,24 @@ public class ActService {
         return supplierSalesmanMapper.selectOne(t);
     }
 
-    public String getNextSendUserId(DDUser user) {
-        AppUser appUser=getAppUserByUserDingId(user.getUserid());
-        AppAuthOrg org =findappAuthOrgByOrgId(appUser.getAppAuthOrgId());
-        String approveString = org.getPurchaseApproveList();
+    public String getNextSendUserId(String userId,String puchaseApproveListString) {
+        if (userId==null || userId.length()==0){
+            return "";
+        }
+        if (puchaseApproveListString==null || puchaseApproveListString.length()==0){
+            return "";
+        }
         String sendUserId="";
-        //String userid=user.getUserid();
-        if (approveString !=null){
-            String[] split = approveString.split(",");
-            for(int i=0;i<split.length;i++){
-                if (split[i].equals(appUser.getId())){
-                    if (i ==split.length-1){
-                        break;
-                    }else {
-                        sendUserId=split[i+1];
-                        break;
-                    }
-
+        String[] split = puchaseApproveListString.split(",");
+        for(int i=0;i<split.length;i++){
+            if (split[i].equals(userId)){
+                if (i ==split.length-1){
+                    break;
+                }else {
+                    sendUserId=split[i+1];
+                    break;
                 }
+
             }
         }
         return sendUserId;
@@ -740,10 +745,9 @@ public class ActService {
 
     public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(String orgId, String buyChannelId) {
         if (orgId!=null && buyChannelId!=null){
-            AppOrgBuyChannelApproveMiddle t = new AppOrgBuyChannelApproveMiddle();
-            t.setAppOrgId(orgId);
-            t.setBuyChannelId(buyChannelId);
-            return appOrgBuyChannelApproveMiddleMapper.selectOne(t);
+            Example t = new Example(AppOrgBuyChannelApproveMiddle.class);
+            t.and().andEqualTo("appOrgId",orgId).andEqualTo("buyChannelId",buyChannelId);
+            return appOrgBuyChannelApproveMiddleMapper.selectOneByExample(t);
         }
         return null;
     }
@@ -860,5 +864,25 @@ public class ActService {
         String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName,phone);
         log.info("钉钉给采购人员："+ddUserId+"发送短信结果："+s);
         return new AsyncResult<>(1);
+    }
+
+    public AppAuthOrg getAppOrgById(String appAuthOrgId) {
+        if (appAuthOrgId!=null){
+            Example t = new Example(AppAuthOrg.class);
+            t.and().andEqualTo("id",appAuthOrgId);
+            return appOrgMapper.selectOneByExample(t);
+        }else {
+            return null;
+        }
+    }
+
+    public AppPurchaseApprove getAppPurchaseApproveById(String purchaseApproveId) {
+        if (purchaseApproveId!=null){
+            Example o = new Example(AppPurchaseApprove.class);
+            o.and().andEqualTo("id",purchaseApproveId);
+            return appPurchaseApproveMapper.selectOneByExample(o);
+        }else {
+            return null;
+        }
     }
 }
