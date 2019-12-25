@@ -82,7 +82,7 @@ public class UploadController {
         Salesman salesman = microUserService.getUserFromSession(session);
 
         if (file==null){
-            return ServiceResult.failureMsg("文件接收失败");
+            return ServiceResult.failureMsg("没有文件");
         }
 
         String path = supplier.getName()+"/战略供应商认证资料"+"/";
