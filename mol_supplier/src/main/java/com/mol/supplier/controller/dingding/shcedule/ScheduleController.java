@@ -4,6 +4,7 @@ import com.mol.supplier.entity.dingding.login.DDUser;
 import com.mol.supplier.service.dingding.schedule.ScheduleService;
 import com.mol.supplier.util.JWTUtil;
 import entity.ServiceResult;
+import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @CrossOrigin
 @RequestMapping("/progress")
+@Log
 public class ScheduleController {
 
     @Autowired
@@ -26,7 +28,7 @@ public class ScheduleController {
 
     @RequestMapping(value = "/getScheduleList",method = RequestMethod.POST)
     public ServiceResult getProgress(String userId, String state, HttpServletRequest request){
-        System.out.println("userId:"+userId+",state:"+state);
+        log.info("userId:"+userId+",state:"+state);
         DDUser ddUser = JWTUtil.getUserByRequest(request);
             if(ddUser == null){
                 return ServiceResult.failure("通讯异常，请稍后再试！");

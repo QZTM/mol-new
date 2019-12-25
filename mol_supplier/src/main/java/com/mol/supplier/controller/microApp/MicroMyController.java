@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.util.concurrent.ExecutionException;
 
 @Controller
-@RequestMapping("/microApp/my")
+@RequestMapping("/my")
 public class MicroMyController {
 
     private Logger logger = LoggerFactory.getLogger(MicroMyController.class);
