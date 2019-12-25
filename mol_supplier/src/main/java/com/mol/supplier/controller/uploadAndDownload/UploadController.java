@@ -84,8 +84,10 @@ public class UploadController {
         if (file==null){
             return ServiceResult.failureMsg("没有文件");
         }
-
-        String path = supplier.getName()+"/战略供应商认证资料"+"/";
+        System.out.println(file.getName());
+        System.out.println(file.getSize());
+        System.out.println(file.getOriginalFilename());
+        String path = supplier.getName()+"/战略供应商认证资料"+"/战略供应商协议/"+file;
         String bucketName = OOSConfig.供应商文件夹;
         uploadService.uploadToOOS(file,path,bucketName);
         return ServiceResult.successMsg("上传成功");

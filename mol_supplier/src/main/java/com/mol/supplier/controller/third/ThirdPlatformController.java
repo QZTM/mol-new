@@ -72,12 +72,12 @@ public class ThirdPlatformController {
             Supplier su=platformService.findSupplierByOrgId(man.getPkSupplier());
             session.setAttribute("supplier",su);
 //                request.getRequestDispatcher("/index/selectOne?id="+purId).forward(request,res);
-            try {
-                res.sendRedirect("http://"+request.getServerName()+"/index/selectOne?id="+purId);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+//            try {
+//                res.sendRedirect("http://"+request.getServerName()+"/index/selectOne?id="+purId);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            return "forward:/index/selectOne?id="+purId;
         }
         Object salesmanObj = session.getAttribute("user");
         if(salesmanObj == null){

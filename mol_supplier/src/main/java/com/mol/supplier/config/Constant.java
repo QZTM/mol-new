@@ -1,10 +1,14 @@
 package com.mol.supplier.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * 项目中的常量定义类
  */
+@Component
+@Configuration
 public class Constant {
     @Value("${httppotocol}")
     public static String http ;

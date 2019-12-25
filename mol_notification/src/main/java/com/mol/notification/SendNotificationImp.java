@@ -172,6 +172,8 @@ public class SendNotificationImp implements SendNotification{
 
     @Override
     public OapiMessageCorpconversationAsyncsendV2Response sendOANotification(NotificationModel notificationModel) {
+        log.info("这里是调用通知模块的通知方法：传过来的参数为（notificationModel）：");
+        log.info(notificationModel.toString());
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
         OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
@@ -194,6 +196,9 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,notificationModel.getToken());
+            log.info("发送是否成功："+rsp.isSuccess());
+            log.info("errorCode:"+rsp.getErrcode());
+            log.info("errorMsg:"+rsp.getErrmsg());
             return rsp;
         } catch (ApiException e) {
             e.printStackTrace();

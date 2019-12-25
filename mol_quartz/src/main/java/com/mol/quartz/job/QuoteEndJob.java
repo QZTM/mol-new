@@ -129,7 +129,7 @@ public class QuoteEndJob implements Job{
 				log.info("给所属行业类别的专家发送通知：行业类别："+marbasClassId+",,获取到的专家集合大小："+expertIdList.size());
 				String token = null;
 				try {
-					token = getTokenService.getExpertToken().get().trim();
+					token = getTokenService.getExpertToken().get();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
@@ -148,7 +148,7 @@ public class QuoteEndJob implements Job{
 					NotificationModel t = new NotificationModel();
 					t.setAgentId(constant.getExpertAgentId());
 					t.setContent(NotificationConfig.专家端_NEW);
-					t.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+					t.setImage(NotificationConfig.评审图片);
 					t.setMessageUrl(NotificationConfig.EXPERT_APP);
 					t.setText("茉尔易购");
 					t.setTitle("新订单");
@@ -186,7 +186,7 @@ public class QuoteEndJob implements Job{
 				NotificationModel t = new NotificationModel();
 				t.setAgentId(constant.getPurchaseAgentId());
 				t.setContent(NotificationConfig.审批负责人_NEW);
-				t.setImage(NotificationConfig.NOTIFICATION_IMAGE_url);
+				t.setImage(NotificationConfig.议价图片);
 				t.setMessageUrl(NotificationConfig.PURCHASE_APP);
 				t.setText("茉尔易购");
 				t.setTitle("新订单");
