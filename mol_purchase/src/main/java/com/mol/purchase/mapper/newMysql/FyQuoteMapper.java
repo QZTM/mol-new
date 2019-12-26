@@ -4,8 +4,10 @@ import com.mol.base.BaseMapper;
 import com.mol.purchase.entity.FyQuote;
 import com.mol.purchase.entity.dingding.purchase.workBench.BigDataStar;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * ClassName:FyQuoteMapper
@@ -37,4 +39,6 @@ public interface FyQuoteMapper extends BaseMapper<FyQuote> {
     List<FyQuote> findSupplierIdListByPurId(String id);
 
     List<BigDataStar> getBigDataBySuppliedAndpkMaterialId(String supplierId,String pkMaterialId);
+
+    List<FyQuote> findQuteByPurIdAndIdNotEuqal(@Param("id") String purId,@Param("list") Set<String> supplierSet);
 }

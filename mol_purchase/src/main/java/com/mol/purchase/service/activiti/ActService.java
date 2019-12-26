@@ -625,44 +625,84 @@ public class ActService {
 
     //报价人员
     @Async
-    public ListenableFuture<Integer> getSaleManSendMessage(List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
-
+    public ListenableFuture<Integer> getSaleManSendMessage(String purId,List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitlePass,String notificationTitleRefuse,String notificationContantPass,String notificationContantRefuse,String imagePass,String imageRefuse) {
+        //分两步
+        //1.先给中标的发
+        //中标的报价id
         Set<String> supplierSet=new HashSet<>();
         for (PurchaseDetail purchaseDetail : detailList) {
             supplierSet.add(purchaseDetail.getQuoteId());
         }
-        log.info("给订单报价人员发送dd通知和短信");
-        List<SupplierSalesman> saleManList=new ArrayList<>();
-        for (String s : supplierSet) {
-            FyQuote quo=findQuoteById(s);
-            SupplierSalesman salesman =findSupplierById(quo.getSupplierSalesmanId());
-            saleManList.add(salesman);
+        if(supplierSet!=null && supplierSet.size()>0){
+            log.info("给订单报价人员发送dd通知和短信（放送中标的）");
+            List<SupplierSalesman> saleManList=new ArrayList<>();
+            for (String s : supplierSet) {
+                FyQuote quo=findQuoteById(s);
+                SupplierSalesman salesman =findSupplierById(quo.getSupplierSalesmanId());
+                saleManList.add(salesman);
+            }
+            //发通知
+
+            try{
+                for (SupplierSalesman salesman : saleManList) {
+                    //发送钉钉通知
+                    NotificationModel nm = new NotificationModel();
+                    nm.setAgentId(Constant.getInstance().getSupplierAgentId());
+                    nm.setContent(notificationContantPass);
+                    nm.setImage(imagePass);
+                    nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
+                    nm.setText("摩尔易购");
+                    nm.setToAllUser(false);
+                    nm.setToken(supplierClient.getToken());
+                    nm.setUserList(salesman.getDdUserId());
+                    nm.setTitle(notificationTitlePass);
+                    OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+                    log.info("钉钉给报价人员："+salesman.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
+                    //发送短信通知
+                    String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
+                    log.info("钉钉给报价人员："+salesman.getId()+"发送短信结果："+s);
+
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
-        try{
-            for (SupplierSalesman salesman : saleManList) {
+
+        //2.给未中标的发
+        //先根据订单id查询所有的报价
+
+        List<FyQuote>quoteList=quoteMapper.findQuteByPurIdAndIdNotEuqal(purId,supplierSet);
+        if(quoteList!=null){
+            log.info("给订单报价人员发送dd通知和短信（放送未中标的）");
+            List<SupplierSalesman> saleManNoTList=new ArrayList<>();
+            for (FyQuote fyQuote : quoteList) {
+                Example o = new Example(SupplierSalesman.class);
+                o.and().andEqualTo("id",fyQuote.getSupplierSalesmanId());
+                SupplierSalesman ssm = supplierSalesmanMapper.selectOneByExample(o);
+                saleManNoTList.add(ssm);
+            }
+
+            for (SupplierSalesman sm : saleManNoTList) {
                 //发送钉钉通知
                 NotificationModel nm = new NotificationModel();
-                nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
-                nm.setContent(notificationContant);
-                nm.setImage(image);
+                nm.setAgentId(Constant.getInstance().getSupplierAgentId());
+                nm.setContent(notificationContantRefuse);
+                nm.setImage(imageRefuse);
                 nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
                 nm.setText("摩尔易购");
                 nm.setToAllUser(false);
                 nm.setToken(supplierClient.getToken());
-                nm.setUserList(salesman.getDdUserId());
-                nm.setTitle(notificationTitle);
+                nm.setUserList(sm.getDdUserId());
+                nm.setTitle(notificationTitleRefuse);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
-                log.info("钉钉给报价人："+salesman.getDdUserId()+"发送通知结果："+omar+",token:"+supplierClient.getToken());
+                log.info("钉钉给报价人员："+sm.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
                 //发送短信通知
-                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
-                log.info("钉钉给报价人："+salesman.getId()+"发送短信结果："+s);
-
+                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),sm.getPhone());
+                log.info("钉钉给报价人员："+sm.getId()+"发送短信结果："+s);
             }
-            return new AsyncResult<>(1);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new AsyncResult<>(0);
         }
+        return null;
+
     }
 
     @Async

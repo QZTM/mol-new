@@ -194,17 +194,28 @@
                 <dbpassword>root</dbpassword>
                 <!--eureka服务器-->
                 <eurekaport>8700</eurekaport>
+                <othereurekaip>127.0.0.1</othereurekaip>
                 <eurekaserverip>127.0.0.1</eurekaserverip>
                 <!--eureka服务器注册地址-->
                 <eurekaserverurl>http://127.0.0.1:8700/eureka/</eurekaserverurl>
                 <!--redis配置-->
-                <redishost>127.0.0.1</redishost>
-                <redisport>6379</redisport>
+                <redis1host>192.168.1.171</redis1host>
+                <redis1port>7000</redis1port>
+                <redis2host>192.168.1.171</redis2host>
+                <redis2port>7001</redis2port>
+                <redis3host>192.168.1.171</redis3host>
+                <redis3port>7002</redis3port>
+                <redis4host>192.168.1.173</redis4host>
+                <redis4port>7003</redis4port>
+                <redis5host>192.168.1.173</redis5host>
+                <redis5port>7004</redis5port>
+                <redis6host>192.168.1.173</redis6host>
+                <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <!--*********************************************正式环境1**************************************************-->
         <profile>
