@@ -52,6 +52,7 @@ import org.springframework.stereotype.Service;
 import com.mol.purchase.mapper.newMysql.dingding.org.AppOrgMapper;
 import com.mol.purchase.mapper.newMysql.dingding.user.AppUserMapper;
 import org.springframework.util.concurrent.ListenableFuture;
+import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
 import util.TimeUtil;
 
@@ -497,9 +498,13 @@ public class ActService {
 
     //查询user
     public AppUser getAppUserByUserDingId(String userid) {
-        AppUser user = new AppUser();
-        user.setDdUserId(userid);
-        return  appUserMapper.selectOne(user);
+        if (userid!=null){
+            Example e = new Example(AppUser.class);
+            e.and().andEqualTo("ddUserId",userid);
+            return  appUserMapper.selectOneByExample(e);
+        }else {
+            return null;
+        }
 
     }
 
@@ -541,24 +546,24 @@ public class ActService {
         return supplierSalesmanMapper.selectOne(t);
     }
 
-    public String getNextSendUserId(DDUser user) {
-        AppUser appUser=getAppUserByUserDingId(user.getUserid());
-        AppAuthOrg org =findappAuthOrgByOrgId(appUser.getAppAuthOrgId());
-        String approveString = org.getPurchaseApproveList();
+    public String getNextSendUserId(String userId,String puchaseApproveListString) {
+        if (userId==null || userId.length()==0){
+            return "";
+        }
+        if (puchaseApproveListString==null || puchaseApproveListString.length()==0){
+            return "";
+        }
         String sendUserId="";
-        //String userid=user.getUserid();
-        if (approveString !=null){
-            String[] split = approveString.split(",");
-            for(int i=0;i<split.length;i++){
-                if (split[i].equals(appUser.getId())){
-                    if (i ==split.length-1){
-                        break;
-                    }else {
-                        sendUserId=split[i+1];
-                        break;
-                    }
-
+        String[] split = puchaseApproveListString.split(",");
+        for(int i=0;i<split.length;i++){
+            if (split[i].equals(userId)){
+                if (i ==split.length-1){
+                    break;
+                }else {
+                    sendUserId=split[i+1];
+                    break;
                 }
+
             }
         }
         return sendUserId;
@@ -604,10 +609,10 @@ public class ActService {
                 nm.setTitle(notificationTitle);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
 
-                log.info("钉钉给议价负责人员："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
+                log.info("钉钉给专家："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
-                log.info("钉钉给采购人员："+expertUser.getId()+"发送短信结果："+s);
+                log.info("钉钉给专家："+expertUser.getId()+"发送短信结果："+s);
 
             }
             return new AsyncResult<>(1);
@@ -620,44 +625,84 @@ public class ActService {
 
     //报价人员
     @Async
-    public ListenableFuture<Integer> getSaleManSendMessage(List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
-
+    public ListenableFuture<Integer> getSaleManSendMessage(String purId,List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitlePass,String notificationTitleRefuse,String notificationContantPass,String notificationContantRefuse,String imagePass,String imageRefuse) {
+        //分两步
+        //1.先给中标的发
+        //中标的报价id
         Set<String> supplierSet=new HashSet<>();
         for (PurchaseDetail purchaseDetail : detailList) {
             supplierSet.add(purchaseDetail.getQuoteId());
         }
-        log.info("给订单报价人员发送dd通知和短信");
-        List<SupplierSalesman> saleManList=new ArrayList<>();
-        for (String s : supplierSet) {
-            FyQuote quo=findQuoteById(s);
-            SupplierSalesman salesman =findSupplierById(quo.getSupplierSalesmanId());
-            saleManList.add(salesman);
+        if(supplierSet!=null && supplierSet.size()>0){
+            log.info("给订单报价人员发送dd通知和短信（放送中标的）");
+            List<SupplierSalesman> saleManList=new ArrayList<>();
+            for (String s : supplierSet) {
+                FyQuote quo=findQuoteById(s);
+                SupplierSalesman salesman =findSupplierById(quo.getSupplierSalesmanId());
+                saleManList.add(salesman);
+            }
+            //发通知
+
+            try{
+                for (SupplierSalesman salesman : saleManList) {
+                    //发送钉钉通知
+                    NotificationModel nm = new NotificationModel();
+                    nm.setAgentId(Constant.getInstance().getSupplierAgentId());
+                    nm.setContent(notificationContantPass);
+                    nm.setImage(imagePass);
+                    nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
+                    nm.setText("摩尔易购");
+                    nm.setToAllUser(false);
+                    nm.setToken(supplierClient.getToken());
+                    nm.setUserList(salesman.getDdUserId());
+                    nm.setTitle(notificationTitlePass);
+                    OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+                    log.info("钉钉给报价人员："+salesman.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
+                    //发送短信通知
+                    String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
+                    log.info("钉钉给报价人员："+salesman.getId()+"发送短信结果："+s);
+
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
-        try{
-            for (SupplierSalesman salesman : saleManList) {
+
+        //2.给未中标的发
+        //先根据订单id查询所有的报价
+
+        List<FyQuote>quoteList=quoteMapper.findQuteByPurIdAndIdNotEuqal(purId,supplierSet);
+        if(quoteList!=null){
+            log.info("给订单报价人员发送dd通知和短信（放送未中标的）");
+            List<SupplierSalesman> saleManNoTList=new ArrayList<>();
+            for (FyQuote fyQuote : quoteList) {
+                Example o = new Example(SupplierSalesman.class);
+                o.and().andEqualTo("id",fyQuote.getSupplierSalesmanId());
+                SupplierSalesman ssm = supplierSalesmanMapper.selectOneByExample(o);
+                saleManNoTList.add(ssm);
+            }
+
+            for (SupplierSalesman sm : saleManNoTList) {
                 //发送钉钉通知
                 NotificationModel nm = new NotificationModel();
-                nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
-                nm.setContent(notificationContant);
-                nm.setImage(image);
+                nm.setAgentId(Constant.getInstance().getSupplierAgentId());
+                nm.setContent(notificationContantRefuse);
+                nm.setImage(imageRefuse);
                 nm.setMessageUrl(NotificationConfig.SUPPLIER_APP);
                 nm.setText("摩尔易购");
                 nm.setToAllUser(false);
                 nm.setToken(supplierClient.getToken());
-                nm.setUserList(salesman.getDdUserId());
-                nm.setTitle(notificationTitle);
+                nm.setUserList(sm.getDdUserId());
+                nm.setTitle(notificationTitleRefuse);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
-                log.info("钉钉给议价负责人员："+salesman.getDdUserId()+"发送通知结果："+omar+",token:"+supplierClient.getToken());
+                log.info("钉钉给报价人员："+sm.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
                 //发送短信通知
-                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
-                log.info("钉钉给采购人员："+salesman.getId()+"发送短信结果："+s);
-
+                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),sm.getPhone());
+                log.info("钉钉给报价人员："+sm.getId()+"发送短信结果："+s);
             }
-            return new AsyncResult<>(1);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new AsyncResult<>(0);
         }
+        return null;
+
     }
 
     @Async
@@ -681,10 +726,10 @@ public class ActService {
             nm.setTitle(notificationTitle);
             OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
 
-            log.info("钉钉给议价负责人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
+            log.info("钉钉给订单发起人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
             //发送短信通知
             String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, au.getMobile());
-            log.info("钉钉给采购人员："+staffId+"发送短信结果："+s);
+            log.info("钉钉给订单发起人员："+staffId+"发送短信结果："+s);
             return new AsyncResult<>(1);
         }catch (Exception e){
             e.printStackTrace();
@@ -740,10 +785,9 @@ public class ActService {
 
     public AppOrgBuyChannelApproveMiddle findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(String orgId, String buyChannelId) {
         if (orgId!=null && buyChannelId!=null){
-            AppOrgBuyChannelApproveMiddle t = new AppOrgBuyChannelApproveMiddle();
-            t.setAppOrgId(orgId);
-            t.setBuyChannelId(buyChannelId);
-            return appOrgBuyChannelApproveMiddleMapper.selectOne(t);
+            Example t = new Example(AppOrgBuyChannelApproveMiddle.class);
+            t.and().andEqualTo("appOrgId",orgId).andEqualTo("buyChannelId",buyChannelId);
+            return appOrgBuyChannelApproveMiddleMapper.selectOneByExample(t);
         }
         return null;
     }
@@ -837,7 +881,7 @@ public class ActService {
         log.info("钉钉给议价负责人员："+appUser.getId()+"发送通知结果："+omar+",token:"+tokenService.getToken());
         //发送短信通知
         String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, appUser.getMobile());
-        log.info("钉钉给采购人员："+appUser.getId()+"发送短信结果："+s);
+        log.info("钉钉给议价负责人员："+appUser.getId()+"发送短信结果："+s);
         return new AsyncResult<>(1);
     }
 
@@ -860,5 +904,25 @@ public class ActService {
         String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName,phone);
         log.info("钉钉给采购人员："+ddUserId+"发送短信结果："+s);
         return new AsyncResult<>(1);
+    }
+
+    public AppAuthOrg getAppOrgById(String appAuthOrgId) {
+        if (appAuthOrgId!=null){
+            Example t = new Example(AppAuthOrg.class);
+            t.and().andEqualTo("id",appAuthOrgId);
+            return appOrgMapper.selectOneByExample(t);
+        }else {
+            return null;
+        }
+    }
+
+    public AppPurchaseApprove getAppPurchaseApproveById(String purchaseApproveId) {
+        if (purchaseApproveId!=null){
+            Example o = new Example(AppPurchaseApprove.class);
+            o.and().andEqualTo("id",purchaseApproveId);
+            return appPurchaseApproveMapper.selectOneByExample(o);
+        }else {
+            return null;
+        }
     }
 }

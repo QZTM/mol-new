@@ -1,11 +1,10 @@
 package com.mol.supplier;
 
 import com.mol.cache.CacheHandle;
-import com.mol.fadada.dao.AuthRecordMapper;
-import com.mol.fadada.handler.RecordDbHandler;
 import com.mol.oos.TYOOSUtil;
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

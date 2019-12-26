@@ -47,4 +47,14 @@
         ORDER BY
             fq.creationtime ASC
     </select>
+
+    <select id="findQuteByPurIdAndIdNotEuqal" resultType="com.mol.purchase.entity.FyQuote">
+        SELECT * FROM `fy_quote` where fy_purchase_id=#{id}
+        <if test="list!=null ">
+            and id not in
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 </mapper>

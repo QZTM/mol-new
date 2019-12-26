@@ -15,9 +15,9 @@ public class NotificationConfig {
     //报价图片地址
     public static final String 报价图片="http://140.249.22.202:8719/notification/baojia.png";
     //拒绝图片地址
-    public static final String 拒绝图片="http://140.249.22.202:8719/notification/baojia.png";
+    public static final String 拒绝图片="http://140.249.22.202:8719/notification/refuse.png";
     //通过图片地址
-    public static final String 通过图片="http://140.249.22.202:8719/notification/baojia.png";
+    public static final String 通过图片="http://140.249.22.202:8719/notification/pass.png";
 
 
 

@@ -141,22 +141,22 @@ public class MicroAuthController {
             System.out.println("supplier.getIfAttrNormal()..."+supplier.getIfAttrNormal());
             System.out.println("supplier.getSupstateNormal()..."+supplier.getSupstateNormal()+",MicroAttr.SUPSTATE_LOADING:"+MicroAttr.SUPSTATE_LOADING);
             //如果正在认证中显示认证中页面
-                if(supplier.getSupstateNormal() == MicroAttr.SUPSTATE_LOADING){
+                if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_LOADING.intValue()){
                     pageName = "authenticate_shenhe";
-                }else if(supplier.getSupstateNormal() == MicroAttr.SUPSTATE_FAIL){
+                }else if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_FAIL.intValue()){
                     pageName = "authenticate_update_jichu";
-                }else if(supplier.getSupstateNormal() == MicroAttr.SUPSTATE_SUCCESS){
+                }else if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_SUCCESS.intValue()){
                     pageName = "authenticate_success";
                 }
         } else if ("zhanlve".equals(authType)) {
             model.addAttribute("pagenametitlefront", "战略");
-                if(supplier.getSupstateStrategy() == MicroAttr.SUPSTATE_LOADING){
+                if(supplier.getSupstateStrategy().intValue() == MicroAttr.SUPSTATE_LOADING.intValue()){
                     pageName = "authenticate_shenhe";
                     return pageName;
-                }else if(supplier.getSupstateStrategy() == MicroAttr.SUPSTATE_FAIL){
+                }else if(supplier.getSupstateStrategy().intValue() == MicroAttr.SUPSTATE_FAIL.intValue()){
                     pageName = "authenticate_update_zhanlve";
                     return pageName;
-                }else if(supplier.getSupstateStrategy() == MicroAttr.SUPSTATE_SUCCESS){
+                }else if(supplier.getSupstateStrategy().intValue() == MicroAttr.SUPSTATE_SUCCESS.intValue()){
                     pageName = "authenticate_success";
                     return pageName;
                 }
@@ -191,7 +191,7 @@ public class MicroAuthController {
             /**
              * 如果已经认证过了基础供应商，且未在其他状态，那么显示认证页面2，如果没有认证过基础供应商，那么显示认证页面1
              */
-            if(supplier.getSupstateNormal() == MicroAttr.SUPSTATE_SUCCESS || supplier.getSupstateSingle() == MicroAttr.SUPSTATE_BEFORE_CREATE_PAY){
+            if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_SUCCESS.intValue() || supplier.getSupstateSingle().intValue() == MicroAttr.SUPSTATE_BEFORE_CREATE_PAY.intValue()){
                 pageName = "authenticate_danyi2";
             }else{
                 pageName = "authenticate_danyi";

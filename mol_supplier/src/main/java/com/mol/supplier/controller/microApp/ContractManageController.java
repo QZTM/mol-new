@@ -6,6 +6,7 @@ import com.mol.fadada.handler.SignatureHandler;
 import com.mol.fadada.pojo.AuthRecord;
 import com.mol.fadada.pojo.RegistRecord;
 import com.mol.supplier.config.Constant;
+import com.mol.supplier.config.MicroAttr;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
@@ -44,6 +45,9 @@ public class ContractManageController {
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private MicroAttr microAttr;
 
 
     @RequestMapping("/checkAuth")
@@ -135,7 +139,7 @@ public class ContractManageController {
     public ServiceResult signContract(@RequestParam String contractId,String purchaseId, HttpSession session) throws InterruptedException {
         Supplier supplier = microUserService.getSupplierFromSession(session);
         String customerId = RegistAndAuthHandler.getCustomerIdByOpenId(supplier.getPkSupplier());
-        ServiceResult extsign = ContractHandler.extsign(customerId, idWorker.nextId() + "", contractId, "2", "http://" + Constant.domain + "/fddCallback/signTo?customerId="+customerId+"&contract_id="+contractId+"&purchaseId="+purchaseId,"http://" + Constant.domain + "/fddCallback/sign?customerId="+customerId+"&purchaseId="+purchaseId);
+        ServiceResult extsign = ContractHandler.extsign(customerId, idWorker.nextId() + "", contractId, "2", "http://" + microAttr.getDomain() + "/fddCallback/signTo?customerId="+customerId+"&contract_id="+contractId+"&purchaseId="+purchaseId,"http://" + microAttr.getDomain() + "/fddCallback/sign?customerId="+customerId+"&purchaseId="+purchaseId);
         if(extsign.isSuccess()) {
             return ServiceResult.success(extsign.getResult());
         }else {
@@ -153,7 +157,7 @@ public class ContractManageController {
         Supplier supplier = microUserService.getSupplierFromSession(session);
         Salesman salesman = microUserService.getUserFromSession(session);
         String customerId = RegistAndAuthHandler.getCustomerIdByOpenId(salesman.getId());
-        ServiceResult extsign = ContractHandler.extsign(customerId, idWorker.nextId() + "", contractId, "2", "http://" + Constant.domain + "/fddCallback/signTo?customerId="+customerId+"&contract_id="+contractId+"&purchaseId="+purchaseId,"http://" + Constant.domain + "/fddCallback/sign?customerId="+customerId+"&purchaseId="+purchaseId);
+        ServiceResult extsign = ContractHandler.extsign(customerId, idWorker.nextId() + "", contractId, "2", "http://" + microAttr.getDomain() + "/fddCallback/signTo?customerId="+customerId+"&contract_id="+contractId+"&purchaseId="+purchaseId,"http://" + microAttr.getDomain() + "/fddCallback/sign?customerId="+customerId+"&purchaseId="+purchaseId);
         if(extsign.isSuccess()) {
             return ServiceResult.success(extsign.getResult());
         }else {
