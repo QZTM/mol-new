@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mol_parent</artifactId>
         <groupId>com.mol</groupId>
-        <version>${jarversion}</version>
+        <version>1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,7 +22,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>mol-eureka-${jarversion}</finalName>
+        <finalName>mol-eureka-1</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -6,7 +6,7 @@
 
     <groupId>com.mol</groupId>
     <artifactId>mol_parent</artifactId>
-    <version>${jarversion}</version>
+    <version>1</version>
     <modules>
         <module>mol_common</module>
         <module>mol_cache</module>

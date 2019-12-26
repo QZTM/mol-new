@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mol_parent</artifactId>
         <groupId>com.mol</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mol_pay</artifactId>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.mol</groupId>
             <artifactId>mol_common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1</version>
         </dependency>
         <dependency>
             <groupId>com.alipay.sdk</groupId>
@@ -25,6 +25,7 @@
     </dependencies>
 
     <build>
+        <finalName>mol-pay-1</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
