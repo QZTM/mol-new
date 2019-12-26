@@ -57,7 +57,6 @@ public class MicroAlipayController {
 
 
 
-    private final String PAY_CALLBACK_URL = "http://"+microAttr.getDomain()+"/pay/alipay/callback";
 
 
     /**
@@ -115,7 +114,7 @@ public class MicroAlipayController {
         if(!StringUtils.isEmpty(money)){
             createPayInfo.setTotalAmount(money);
         }
-        createPayInfo.setCallbackUrl(PAY_CALLBACK_URL);
+        createPayInfo.setCallbackUrl("http://"+microAttr.getDomain()+"/pay/alipay/callback");
         try {
             Map payInfoMap = microAlipayService.getAlipayInfo(createPayInfo).get();
             log.info("/getCreateInfo:"+payInfoMap.get(Alipay.MAPKEY_PAYINFO));

@@ -255,7 +255,8 @@ ActController {
                 //3.给发起采购的采购人员发短信，通知(p)
                 ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.采购人_PASS,NotificationConfig.通过图片);
                 //4.给供应商下的报价人发短信，通知(s)
-                ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.供应商_PASS,NotificationConfig.通过图片);
+                ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage
+                        (pur.getId(),detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.拒绝,NotificationConfig.供应商_PASS,NotificationConfig.供应商_REFUSE,NotificationConfig.通过图片,NotificationConfig.拒绝图片);
             }
         }else{
             //审批拒绝
@@ -272,7 +273,8 @@ ActController {
             //3.给发起采购的采购人员发短信，通知
             ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.采购人_REFUSE,NotificationConfig.拒绝图片);
             //4.给供应商下的报价人发短信，通知
-            ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.供应商_REFUSE,NotificationConfig.拒绝图片);
+            ListenableFuture<Integer> saleManSendMessage = actService.getSaleManSendMessage
+                    (pur.getId(),detailList, sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.拒绝,NotificationConfig.供应商_PASS,NotificationConfig.供应商_REFUSE,NotificationConfig.通过图片,NotificationConfig.拒绝图片);
 
         }
 
