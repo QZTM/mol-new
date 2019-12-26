@@ -478,7 +478,7 @@
 						var myChart_0 = echarts.init(document.getElementById('history_money_chart'));
 
 
-						var option_0= {
+/*						var option_0= {
 							xAxis: {
 								type: 'category',
 								data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
@@ -490,10 +490,26 @@
 								data: History_prices[i],
 								type: 'bar'
 							}]
+						};*/
+
+						option_0 = {
+							xAxis: {
+								type: 'category',
+								data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+							},
+							yAxis: {
+								type: 'value'
+							},
+							series: [{
+								data: History_prices[i],
+								type: 'line',
+								smooth: true
+							}]
 						};
 						myChart_0.setOption(option_0)
-
 						i++;
+
+
 					}
                     else
 					{

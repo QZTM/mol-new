@@ -126,13 +126,15 @@ public class ElectronicContractSigninginforService
          Map map= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);
          if (map.get("customer_id")!=null)
          {
-             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString());
+             String Auth_id=String.valueOf(new IdWorker().nextId());
+             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id,Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id);
              if (serviceResult.isSuccess()==true)//获取认证url
              {
                  String items=serviceResult.getResult().toString().split(",")[1];
                  String url =items.substring(5,items.length()-1);
                  map1.put("url",url);
                  map1.put("statu",true);
+                 electronicContractSigninginforMapper.AuthSynchronizeNotity(Auth_id,"","","","","1",DataUtil.GetNowSytemTime(),url);
              }
              else
              {
@@ -151,9 +153,11 @@ public class ElectronicContractSigninginforService
         try
         {
             Map map1=map;
-            if (map.get("status").toString().equals("0") && electronicContractSigninginforMapper.Setfadada_auth_record(map.get("customer_id").toString())==null)
+            if (map.get("status").toString().equals("0") /*&& electronicContractSigninginforMapper.Setfadada_auth_record(map.get("customer_id"))==null*/)
             {
-                electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime(),"");
+
+                electronicContractSigninginforMapper.fadada_auth_record(map.get("Auth_id").toString(),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1");
+                /*electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime(),"");*/
             }
         }
         catch (Exception e)
@@ -164,11 +168,18 @@ public class ElectronicContractSigninginforService
 
     public void AuthAsynchronousNotityLogic(Map map)//认证异步回调地址
     {
-        if(map.get("status").toString().equals("4"))
+        try {
+            if(map.get("status").toString().equals("4") || map.get("status").toString().equals("6"))
+            {
+                // electronicContractSigninginforMapper.fadada_auth_record_status(map.get("Auth_id").toString(),"4");
+                electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
+                ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
+                ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+            }
+        }
+        catch (Exception e)
         {
-            electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
-            ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
-            ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+
         }
     }
 

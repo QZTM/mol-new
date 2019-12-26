@@ -7,6 +7,7 @@ import com.mol.ddmanage.Service.DepartmentManagement.UpdateUserService;
 import com.mol.ddmanage.Service.StartInspectionService;
 import com.mol.ddmanage.Util.Dingding_Tools;
 import com.mol.ddmanage.config.Dingding_config;
+import lombok.extern.java.Log;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Component
 @Configuration      //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling   // 2.开启定时任务
+@Log
 public class LogServer {
     //或直接指定时间间隔，例如：5秒
     @Scheduled(fixedRate=1000*60*60*6)//6小时更新一次
@@ -27,12 +29,14 @@ public class LogServer {
         Dingding_config.DingdingAPP_Token= Dingding_Tools.GetAPPdingding_token();
         if (Dingding_config.DingdingAPP_Token!=null)
         {
-            System.out.println("服务注册成功");
+            log.info("服务注册成功");
+           // System.out.println("服务注册成功");
             UpdateUser();
         }
         else
         {
-            System.out.println("服务注册失败");
+            log.info("服务注册失败");
+          //  System.out.println("服务注册失败");
         }
 }
 
@@ -91,11 +95,13 @@ public class LogServer {
 
     if (updateUserService.UpdateUserLogic(AllUserNameId)!=false)
     {
-        System.out.println("人员更新完成");
+        log.info("人员更新完成");
+       // System.out.println("人员更新完成");
     }
     else
     {
-        System.out.println("人员更新失败");
+        log.info("人员更新失败");
+      //  System.out.println("人员更新失败");
     }
 
 }

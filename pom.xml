@@ -122,11 +122,14 @@
                 <manageip>localhost</manageip>
                 <manageport>8085</manageport>
                 <managedomain>fyycg66.vaiwan.com</managedomain>
-                <managedomain>manage.vaiwan.com</managedomain>
+
                 <!--定时任务端配置-->
                 <quartzip>127.0.0.1</quartzip>
                 <quartzport>8701</quartzport>
                 <!--数据库配置-->
+<!--                <dburl>jdbc:mysql://rm-m5e03h5q1182r0o9p9o.mysql.rds.aliyuncs.com:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+                <dbusername>mol</dbusername>
+                <dbpassword>!!mo$l20#19==P+W+D</dbpassword>-->
                 <dburl>jdbc:mysql://140.249.22.202:3306/zkfy_test_1?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>root</dbusername>
                 <dbpassword>ald377</dbpassword>
