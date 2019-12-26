@@ -144,10 +144,10 @@
                 <redisport>6379</redisport>
                 <redispassword>ald377</redispassword>
             </properties>
-            <!-- 这里代表默认使用dev环境配置文件 -->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+           <!--  这里代表默认使用dev环境配置文件-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <!--##########################################测试环境##################################################-->
         <profile>
@@ -216,9 +216,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-            <activation>
+<!--            <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation>
+            </activation>-->
         </profile>
         <!--*********************************************正式环境1**************************************************-->
         <profile>
@@ -258,7 +258,7 @@
                 <managehttp>http://</managehttp>
                 <manageip>172.31.17.88</manageip>
                 <manageport>8085</manageport>
-                <managedomain>118.190.141.175:8080</managedomain>
+                <managedomain>http://zj.moleertech.cn:8080</managedomain>
                 <!--定时任务端配置-->
                 <quartzip>172.31.17.89</quartzip>
                 <quartzport>8701</quartzport>
@@ -288,9 +288,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+<!--            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>-->
         </profile>
 
         <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-ly-1YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->

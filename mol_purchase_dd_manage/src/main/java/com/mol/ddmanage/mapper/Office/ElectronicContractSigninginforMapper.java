@@ -13,6 +13,8 @@ public interface ElectronicContractSigninginforMapper
     Map GetContractId(String  purchasId, String supplierid);//获取此订单的供应商合同表
     Map GetCustomer_id(String open_id);//获取注册记录表
 
+    void fadada_auth_record(String id,String customer_id,String transaction_no,String authentication_type,String sign,String status );
+    void fadada_auth_record_status(String id,String status);
     Map Get_fy_purchase_supplier_contract(String ContractId);//获取订单合同签署状态表
     Map  Setfadada_auth_record(String customerId);//查看fadada_auth_record是否有对应的数据
     void AuthSynchronizeNotity(String id,String customer_id,String transaction_no,String authentication_type,String sign,String status,String create_time,String url);//认证同步回调地址

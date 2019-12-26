@@ -7,6 +7,7 @@ import com.mol.ddmanage.mapper.Office.ElectronicContractSigninginforMapper;
 import com.mol.fadada.handler.ContractHandler;
 import com.mol.fadada.handler.RegistAndAuthHandler;
 import entity.ServiceResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import util.IdWorker;
@@ -23,6 +24,8 @@ import java.util.Map;
 @Service
 public class ElectronicContractSigninginforService
 {
+    @Autowired
+    Basic_config basic_config;
     @Resource
     ElectronicContractSigninginforMapper electronicContractSigninginforMapper;
 
@@ -120,6 +123,8 @@ public class ElectronicContractSigninginforService
      * 认证法大大账号
      * @return
      */
+
+
      public Map CertificationAccountLogic()
      {
          Map map1=new HashMap();
@@ -127,7 +132,7 @@ public class ElectronicContractSigninginforService
          if (map.get("customer_id")!=null)
          {
              String Auth_id=String.valueOf(new IdWorker().nextId());
-             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id,Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id);
+             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),basic_config.getDomain_name()+"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id,basic_config.getDomain_name() +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id);
              if (serviceResult.isSuccess()==true)//获取认证url
              {
                  String items=serviceResult.getResult().toString().split(",")[1];
@@ -262,7 +267,7 @@ public class ElectronicContractSigninginforService
         {
             Map map1=electronicContractSigninginforMapper.GetContractId(purchasId,supplierid);//获取
             Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
-            ServiceResult serviceResult=ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),map1.get("contract_id").toString(),"编写目的", Basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity?contract_id="+map1.get("contract_id").toString());//手动签署合同
+            ServiceResult serviceResult=ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),map1.get("contract_id").toString(),"编写目的", basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity?contract_id="+map1.get("contract_id").toString());//手动签署合同
             map.put("statu",serviceResult.isSuccess());
             map.put("url",serviceResult.getResult());
             return map;
