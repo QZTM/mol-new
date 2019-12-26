@@ -624,7 +624,7 @@ public class ActService {
     }
 
     //报价人员
-//    @Async
+    @Async
     public ListenableFuture<Integer> getSaleManSendMessage(String purId,List<PurchaseDetail> detailList, SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitlePass,String notificationTitleRefuse,String notificationContantPass,String notificationContantRefuse,String imagePass,String imageRefuse) {
         //分两步
         //1.先给中标的发
@@ -705,7 +705,7 @@ public class ActService {
 
     }
 
-//    @Async
+    @Async
     public ListenableFuture<Integer> getAuSendMessage(String staffId,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
         log.info("给订单发起人员发送dd通知和短信");
 
@@ -835,7 +835,7 @@ public class ActService {
 
 
     //给议价负责人发送通知
-//    @Async
+    @Async
     public ListenableFuture<Integer> getPurMainPerson(String orgId, Integer buyChannelId,SendMsmHandler sendMsmHandler, XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image ) {
         if(orgId==null || buyChannelId==null){
             log.info("给议价负责人发送通知和短信失败！ 参数orgid:"+orgId+",buychannelId:"+buyChannelId);
