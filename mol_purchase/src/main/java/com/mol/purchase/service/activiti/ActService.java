@@ -609,10 +609,10 @@ public class ActService {
                 nm.setTitle(notificationTitle);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
 
-                log.info("钉钉给议价负责人员："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
+                log.info("钉钉给专家："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
-                log.info("钉钉给采购人员："+expertUser.getId()+"发送短信结果："+s);
+                log.info("钉钉给专家："+expertUser.getId()+"发送短信结果："+s);
 
             }
             return new AsyncResult<>(1);
@@ -652,10 +652,10 @@ public class ActService {
                 nm.setUserList(salesman.getDdUserId());
                 nm.setTitle(notificationTitle);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
-                log.info("钉钉给议价负责人员："+salesman.getDdUserId()+"发送通知结果："+omar+",token:"+supplierClient.getToken());
+                log.info("钉钉给报价人："+salesman.getDdUserId()+"发送通知结果："+omar+",token:"+supplierClient.getToken());
                 //发送短信通知
                 String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, XiaoNiuMsmTemplate.推送未中标结果模板(),salesman.getPhone());
-                log.info("钉钉给采购人员："+salesman.getId()+"发送短信结果："+s);
+                log.info("钉钉给报价人："+salesman.getId()+"发送短信结果："+s);
 
             }
             return new AsyncResult<>(1);
@@ -686,10 +686,10 @@ public class ActService {
             nm.setTitle(notificationTitle);
             OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
 
-            log.info("钉钉给议价负责人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
+            log.info("钉钉给订单发起人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
             //发送短信通知
             String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, au.getMobile());
-            log.info("钉钉给采购人员："+staffId+"发送短信结果："+s);
+            log.info("钉钉给订单发起人员："+staffId+"发送短信结果："+s);
             return new AsyncResult<>(1);
         }catch (Exception e){
             e.printStackTrace();
@@ -841,7 +841,7 @@ public class ActService {
         log.info("钉钉给议价负责人员："+appUser.getId()+"发送通知结果："+omar+",token:"+tokenService.getToken());
         //发送短信通知
         String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, appUser.getMobile());
-        log.info("钉钉给采购人员："+appUser.getId()+"发送短信结果："+s);
+        log.info("钉钉给议价负责人员："+appUser.getId()+"发送短信结果："+s);
         return new AsyncResult<>(1);
     }
 
