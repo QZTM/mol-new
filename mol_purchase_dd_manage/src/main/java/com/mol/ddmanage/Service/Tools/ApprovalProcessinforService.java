@@ -1,8 +1,8 @@
 package com.mol.ddmanage.Service.Tools;
 
-import com.mol.ddmanage.Util.HttpCommunication;
 import com.mol.ddmanage.client.purchase.PurchaseClient;
 import com.mol.ddmanage.mapper.Tools.ApprovalProcessinforMapper;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import util.IdWorker;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Log
 public class ApprovalProcessinforService
 {
 
@@ -63,6 +64,7 @@ public class ApprovalProcessinforService
        return map;
     }
 
+
     public Map SubmitApprovalDataLogic(String id, String amountMin,String amountMax,String status,String approval_ids,String Unlock_ids_str)
     {
         Map map=new HashMap();
@@ -97,14 +99,18 @@ public class ApprovalProcessinforService
             approvalProcessinforMapper.updata_fy_buy_channel(buy_channel_id,status);//更新审批状态表
 
            // HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=1111&processId=testname&processName=test1&orgId=1202851016954982400&buyChannelId="+buy_channel_id);
-          //String nnn=  HttpCommunication.HttpGet("http://140.249.22.202:8082/ac/deploy?name=n"+String.valueOf(id)+"&processId=process"+ new  IdWorker().nextId() +"&processName=processName"+String.valueOf(id)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(id));
-            String nnn= purchaseClient.deploy("n"+String.valueOf(id),new  IdWorker().nextId()+"","processName"+String.valueOf(id),"1202851016954982400",String.valueOf(id));
+        //  String nnn=  HttpCommunication.HttpGet("http://139.129.240.48:8080/ac/deploy?name=n"+String.valueOf(id)+"&processId=process"+ new IdWorker().nextId() +"&processName=processName"+String.valueOf(id)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(id));
+         //   log.info(nnn);
+           String nnn= purchaseClient.deploy("n"+String.valueOf(id),new IdWorker().nextId()+"","processName"+String.valueOf(id),"1202851016954982400",String.valueOf(id));
+               log.info(nnn);
             map.put("statu",true);
+
             return map;
         }
         catch (Exception e)
         {
             map.put("statu",false);
+            log.info(e.toString());
             return map;
         }
     }

@@ -3,6 +3,7 @@ package com.mol.ddmanage.Controller;
 import com.mol.ddmanage.Service.LoginService;
 import com.mol.ddmanage.Service.Office.ReviewBargainingHistoryPageService;
 import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
+import com.mol.ddmanage.config.Basic_config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,8 @@ import java.util.Map;
 @RequestMapping("/Home")
 public class ControllerPages {
 
+    @Autowired
+    Basic_config basic_config;
     @Resource
     VerificationPermissionService verificationPermissionService;//验证访问人权限
     @Autowired
@@ -32,9 +35,9 @@ public class ControllerPages {
     @RequestMapping("/new_file")//测试首页框架
     public String new_file(@RequestParam Map map , HttpSession httpSession)
     {
+       String sssss=basic_config.getTesturl();
         httpSession.setAttribute("userid","083216482529129838");//083216482529129838
         return "newfile";
-
     }
 
     @RequestMapping("/verificationLogin")//扫描二维码登录

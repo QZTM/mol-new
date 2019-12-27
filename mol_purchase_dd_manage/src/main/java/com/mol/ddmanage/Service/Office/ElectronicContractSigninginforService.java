@@ -7,6 +7,8 @@ import com.mol.ddmanage.mapper.Office.ElectronicContractSigninginforMapper;
 import com.mol.fadada.handler.ContractHandler;
 import com.mol.fadada.handler.RegistAndAuthHandler;
 import entity.ServiceResult;
+import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import util.IdWorker;
@@ -21,8 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Log
 public class ElectronicContractSigninginforService
 {
+    @Autowired
+    Basic_config basic_config;
     @Resource
     ElectronicContractSigninginforMapper electronicContractSigninginforMapper;
 
@@ -120,19 +125,23 @@ public class ElectronicContractSigninginforService
      * 认证法大大账号
      * @return
      */
+
+
      public Map CertificationAccountLogic()
      {
          Map map1=new HashMap();
          Map map= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);
          if (map.get("customer_id")!=null)
          {
-             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString(),Basic_config.domain_name +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString());
+             String Auth_id=String.valueOf(new IdWorker().nextId());
+             ServiceResult serviceResult=RegistAndAuthHandler.getAuthCompanyurl(map.get("customer_id").toString(),basic_config.getDomain_name()+"/ElectronicContractSigninginforController/AuthAsynchronousNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id,basic_config.getDomain_name() +"/ElectronicContractSigninginforController/AuthSynchronizeNotity?customer_id="+map.get("customer_id").toString()+"&Auth_id="+Auth_id);
              if (serviceResult.isSuccess()==true)//获取认证url
              {
                  String items=serviceResult.getResult().toString().split(",")[1];
                  String url =items.substring(5,items.length()-1);
                  map1.put("url",url);
                  map1.put("statu",true);
+                 electronicContractSigninginforMapper.AuthSynchronizeNotity(Auth_id,"","","","","1",DataUtil.GetNowSytemTime(),url);
              }
              else
              {
@@ -151,9 +160,11 @@ public class ElectronicContractSigninginforService
         try
         {
             Map map1=map;
-            if (map.get("status").toString().equals("0") && electronicContractSigninginforMapper.Setfadada_auth_record(map.get("customer_id").toString())==null)
+            if (map.get("status").toString().equals("0") /*&& electronicContractSigninginforMapper.Setfadada_auth_record(map.get("customer_id"))==null*/)
             {
-                electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime(),"");
+
+                electronicContractSigninginforMapper.fadada_auth_record(map.get("Auth_id").toString(),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1");
+                /*electronicContractSigninginforMapper.AuthSynchronizeNotity(String.valueOf(new IdWorker().nextId()),map.get("customer_id").toString(),map.get("transactionNo").toString(),map.get("authenticationType").toString(),map.get("sign").toString(),"1",DataUtil.GetNowSytemTime(),"");*/
             }
         }
         catch (Exception e)
@@ -164,11 +175,18 @@ public class ElectronicContractSigninginforService
 
     public void AuthAsynchronousNotityLogic(Map map)//认证异步回调地址
     {
-        if(map.get("status").toString().equals("4"))
+        try {
+            if(map.get("status").toString().equals("4") || map.get("status").toString().equals("6"))
+            {
+                // electronicContractSigninginforMapper.fadada_auth_record_status(map.get("Auth_id").toString(),"4");
+                electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
+                ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
+                ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+            }
+        }
+        catch (Exception e)
         {
-            electronicContractSigninginforMapper.AuthAsynchronousNotity(map.get("customerId").toString(),map.get("serialNo").toString(),map.get("status").toString(),map.get("statusDesc").toString(),DataUtil.GetNowSytemTime());
-            ContractHandler.ApplyNumCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请编号证书
-            ContractHandler.ApplyCert(map.get("customerId").toString(),map.get("serialNo").toString());//申请实名证书
+
         }
     }
 
@@ -189,13 +207,18 @@ public class ElectronicContractSigninginforService
      * @param map
      * @return
      */
+
     public Map Upload_Contract_Logic(MultipartFile file,Map map)
     {
+        log.info("2");
         Map map1=new HashMap();
         try {
+            log.info("3");
             ServiceResult authResult=RegistAndAuthHandler.checkIfAuthed(Basic_config.open_id,"2");
+            log.info("4");
             if (RegistAndAuthHandler.checkIfRegisted(Basic_config.open_id,"2").isSuccess()==false)//查询是否注册
             {
+                log.info("5");
                 map1.put("statu","2");//未注册
                 return map1;
             }
@@ -204,19 +227,27 @@ public class ElectronicContractSigninginforService
                 map1.put("statu","3");//未认证
                 return map1;
             }
+            log.info("6");
             File toFile = null;//准备上传的合同
+            log.info("7");
             if (file.equals("") || file.getSize() <= 0)
             {
                 file = null;
             }
             else
              {
+
                 InputStream ins = null;
+
                 ins = file.getInputStream();
+
                 toFile = new File(file.getOriginalFilename());
+
                 inputStreamToFile(ins, toFile);
 
+
                  ServiceResult result =ContractHandler.uploadContract(toFile.getName(),toFile);//调用法大上传合同接口上传
+                 log.info("8");
                  if(result.isSuccess()==true)
                  {
                      Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
@@ -225,7 +256,9 @@ public class ElectronicContractSigninginforService
                      electronicContractSigninginforMapper.Supplier_Contract(String.valueOf(new IdWorker().nextId()),map.get("purchase_id").toString(),map.get("supplier_id").toString(),result.getResult().toString(),"",DataUtil.GetNowSytemTime(),DataUtil.GetNowSytemTime(),"1");//保存订单对应供应商合同的信息
                    //  ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),result.getResult().toString(),"编写目的","1");//手动签署合同
                  }
+                 log.info("9");
                  ins.close();
+                 log.info("10");
             }
 
             map1.put("statu","0");
@@ -233,6 +266,7 @@ public class ElectronicContractSigninginforService
         }
         catch (Exception e)
         {
+            log.info(e.toString());
            map1.put("statu","1");
            return map1;
         }
@@ -251,7 +285,7 @@ public class ElectronicContractSigninginforService
         {
             Map map1=electronicContractSigninginforMapper.GetContractId(purchasId,supplierid);//获取
             Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
-            ServiceResult serviceResult=ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),map1.get("contract_id").toString(),"编写目的", Basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity?contract_id="+map1.get("contract_id").toString());//手动签署合同
+            ServiceResult serviceResult=ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),map1.get("contract_id").toString(),"编写目的", basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity?contract_id="+map1.get("contract_id").toString());//手动签署合同
             map.put("statu",serviceResult.isSuccess());
             map.put("url",serviceResult.getResult());
             return map;

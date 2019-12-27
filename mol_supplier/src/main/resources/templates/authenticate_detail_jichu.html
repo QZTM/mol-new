@@ -61,8 +61,8 @@
 <div class="input-group" style="margin:10px 6px 0 10px;position: relative">
     <span class="input-group-addon">营业执照号：</span>
     <input type="text" class="form-control" placeholder="Business license number" aria-describedby="basic-addon1" id="bussinessLicenceNumInput" th:value="${session.supplier.buslicensenum}" disabled="disabled">
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_lisn_num_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_lisn_num_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_lisn_num_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_lisn_num_btn">保存</span>-->
 </div>
 <script th:inline="javascript">
     $("#update_lisn_num_btn").on('click',function(){
@@ -129,8 +129,8 @@
 
 <!-- 上传营业执照图片开始 -->
 <div style="margin: 10px 10px 0 10px;position:relative">
-        <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:12px" id="update_lisn_img_btn">修改</span>
-        <span class="layui-badge layui-bg-blue toupbtn" style="position: absolute;right:5px;z-index: 9998;top:12px;display: none" id="to_update_lisn_img_btn">点击图片即可修改</span>
+<!--        <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:12px" id="update_lisn_img_btn">修改</span>-->
+<!--        <span class="layui-badge layui-bg-blue toupbtn" style="position: absolute;right:5px;z-index: 9998;top:12px;display: none" id="to_update_lisn_img_btn">点击图片即可修改</span>-->
     <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="#">营业执照图像</a></li>
     </ul>
@@ -159,8 +159,8 @@
 <div class="input-group" style="margin:10px 6px 0 10px;position: relative">
     <span class="input-group-addon">所在地：</span>
     <span class="form-control" aria-describedby="basic-addon1" id="sel_city" style="pointer-events: none"><span>点击选取省市区县</span></span>
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_city_num_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_city_num_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_city_num_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_city_num_btn">保存</span>-->
 </div>
 <script>
     $("#update_city_num_btn").on('click',function(){
@@ -190,8 +190,8 @@
 <div class="input-group" style="margin:10px 6px 0 10px;clear: both;position: relative">
     <span class="input-group-addon">注册地：</span>
     <input type="text" class="form-control" placeholder="Place of registration" aria-describedby="basic-addon1" id="registAddressInput" th:value="${session.supplier.registeredAddress}" disabled="disabled">
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_registration_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_registration_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_registration_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_registration_btn">保存</span>-->
 </div>
 <script>
     //注册地修改
@@ -229,19 +229,18 @@
     <span class="input-group-addon">所属行业：</span>
     <!--<span class="form-control" aria-describedby="basic-addon1" id="sel_trade"><span style="color:#aaa">点击选取所属行业</span></span>-->
     <span id="industry_span" style="pointer-events: none">
-        <select class="selectpicker form-control" id="itemtype_select_id" style="background-color: #1b6d85;color:#111" >
+        <select class="selectpicker form-control" id="sel_trade" style="background-color: #1b6d85;color:#111" >
             <div th:each="itemType,itemTypeStat : ${itemTypeList}">
                 <option th:if="${itemType.pkMarbasclass == session.supplier.industryFirst}" th:text="${itemType.name}" th:typeid="${itemType.pkMarbasclass}" class="itemType-option" selected></option>
                 <option th:if="${itemType.pkMarbasclass != session.supplier.industryFirst}" th:text="${itemType.name}" th:typeid="${itemType.pkMarbasclass}" class="itemType-option"></option>
             </div>
         </select>
     </span>
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_itemType_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%;display: none" id="to_update_itemType_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_itemType_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%;display: none" id="to_update_itemType_btn">保存</span>-->
 </div>
 <!--修改所属行业-->
 <script>
-    console.log("修改所属行业。。。。");
     $("#industry_span").on('change',function(){
         $("#to_update_itemType_btn").show();
     })
@@ -283,8 +282,8 @@
         <li role="presentation" class="active"><a href="#bussiness-scope-out-div">经营范围</a></li>
     </ul>
     <textarea style="width: 100%; " id="bussinessScopeTextarea" th:text="${session.supplier.businessScope}" disabled="disabled"></textarea>
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_bussinessScope_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_bussinessScope_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_bussinessScope_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_bussinessScope_btn">保存</span>-->
 </div>
 <!--修改经营范围-->
 <script>
@@ -321,8 +320,8 @@
 <!-- 上传法人身份证正反面开始 -->
 <!-- 上传法人身份证正面 -->
 <div style="margin: 6px 10px 0 10px;position:relative" >
-    <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:12px" id="update_legalBodyIdFront_img_btn">修改</span>
-    <span class="layui-badge layui-bg-blue toupbtn" style="position: absolute;right:5px;z-index: 9998;top:12px;display: none" id="to_update_legalBodyIdFront_img_btn">点击图片即可修改</span>
+<!--    <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:12px" id="update_legalBodyIdFront_img_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue toupbtn" style="position: absolute;right:5px;z-index: 9998;top:12px;display: none" id="to_update_legalBodyIdFront_img_btn">点击图片即可修改</span>-->
     <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="#">法人身份证图像</a></li>
     </ul>
@@ -334,8 +333,8 @@
         <p style="margin: 0 auto;width:100%;height:30px;text-align: center;padding-top:6px;" class="uploadimg-p">身份证正面</p>
     </div>
 
-    <span class="layui-badge upbtn" style="left:87%;z-index: 9999;top:30px" id="update_legalBodyIdBack_img_btn">修改</span>
-    <span class="layui-badge layui-bg-blue toupbtn" style="left:66%;z-index: 9998;top:30px;display: none" id="to_update_legalBodyIdBack_img_btn">点击图片即可修改</span>
+<!--    <span class="layui-badge upbtn" style="left:87%;z-index: 9999;top:30px" id="update_legalBodyIdBack_img_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue toupbtn" style="left:66%;z-index: 9998;top:30px;display: none" id="to_update_legalBodyIdBack_img_btn">点击图片即可修改</span>-->
     <!--上传法人身份证反面-->
     <div class="control-group uploadimg-out-div" id="div-legal-person-back" style="margin-top:40px;width:100%">
         <div id="preview-legalBodyIdBack"  style="width:100%">
@@ -369,8 +368,8 @@
 <div class="input-group" style="margin:40px 6px 0 10px ;clear: both;">
     <span class="input-group-addon">法人姓名：</span>
     <input type="text" class="form-control" placeholder="Name of legal person" aria-describedby="basic-addon1" id="legalBodyNameInput" th:value="${session.supplier.legalbodyName}" disabled="disabled">
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_legalBodyName_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_legalBodyName_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_legalBodyName_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_legalBodyName_btn">保存</span>-->
 </div>
 <!--法人姓名修改-->
 <script>
@@ -407,8 +406,8 @@
 <div class="input-group" style="margin:10px 6px 0 10px">
     <span class="input-group-addon">身份证号：</span>
     <input type="text" class="form-control" placeholder="ID number" aria-describedby="basic-addon1"  id="legalBodyIdCardNumInput"  th:value="${session.supplier.legalbodyIdcardNumber}" disabled="disabled">
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_legalBodyIdCardNum_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_legalBodyIdCardNum_btn">保存</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_legalBodyIdCardNum_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%" id="to_update_legalBodyIdCardNum_btn">保存</span>-->
 </div>
 <!--修改身份证号码-->
 <script>
@@ -446,123 +445,13 @@
     })
 </script>
 <!-- 身份证号结束 -->
-<!--上传战略供应商协议开始-->
-<div style="margin:10px 6px 0 10px;position: relative">
-    <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:10px" id="update_legalBodyIdFront_img_btn">下载样本</span>
-    <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="/auth/downZhanlve">上传战略供应商协议</a></li>
-    </ul>
-    <div style="width:100%;text-align: center">
-        <div style="width:100%">
-            <img th:src="@{/img/upimg.png}" width="70px" height="70px">
-        </div>
-        <label class="input-group-btn">
-            <input class="file" type="file" onchange="fileSelected(this,'protocolFile')" style="left: -9999px; position: absolute;" id="protocol_file_input"/>
-            <span class="btn btn-default">点击上传</span>
-        </label>
-    </div>
-</div>
-<!-- 上传战略供应商协议结束 -->
-<script>
-    function fileSelected(file,which) {
-        var theFile = file.files[0];
-        if (theFile) {
-            var fileSize = 0;
-            if (theFile.size > 1024 * 1024){
-                var fileSizeNum = Math.round(theFile.size * 100 / (1024 * 1024)) / 100;
-                if(fileSizeNum > 20){
-                    alertMsg("文件超过20M无法上传");
-                    return ;
-                }
-                fileSize = (Math.round(theFile.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
-            } else
-                fileSize = (Math.round(theFile.size * 100 / 1024) / 100).toString() + 'KB';
-
-            $(file).next().text(theFile.name);
-            uploadFile(theFile,which,file);
-        }
-    }
-
-    function uploadFile(file,whichFile,ele) {
-        var fd = new FormData();
-        fd.append("fileToUpload", file);
-        fd.append("whichFile",whichFile);
-        var xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener("progress", uploadProgress, false);
-        xhr.addEventListener("load", function(){uploadComplete(event,ele)} , false);
-        xhr.addEventListener("error", uploadFailed, false);
-        xhr.addEventListener("abort", uploadCanceled, false);
-        xhr.open("POST", "/auth/upload/file"); //修改成自己的接口
-        xhr.send(fd);
-    }
-
-    <!--显示进度，已废弃-->
-    function uploadProgress(evt) {
-        if (evt.lengthComputable) {
-            //var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-            //console.log(percentComplete.toString());
-            //document.getElementById('uploadProgressNUm').innerHTML = percentComplete.toString() + '%';
-        } else {
-            //document.getElementById('uploadProgressNUm').innerHTML = 'unable to compute';
-        }
-    }
-
-    function uploadComplete(evt,t) {
-        /* 服务器端返回响应时候触发event事件*/
-        if(evt.target.responseText.indexOf('success')){
-            //console.log($(evt));
-            console.log($(t));
-            $(t).attr('upload',1);
-            alertMsg('上传成功');
-        }else{
-            alertMsg('上传失败');
-        }
-    }
-
-    function uploadFailed(evt) {
-        console.log("There was an error attempting to upload the file.");
-    }
-
-    function uploadCanceled(evt) {
-        console.log("The upload has been canceled by the user or the browser dropped the connection.");
-    }
-</script>
-<!-- 其他补充材料开始 -->
-<div style="margin:10px 6px 0 10px">
-    <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="#">其他补充材料(专利、代理商资质等资料)</a></li>
-    </ul>
-    <div style="width:100%;text-align: center">
-        <div style="width:100%">
-            <img th:src="@{/img/upimg.png}" width="70px" height="70px">
-        </div>
-        <label class="input-group-btn">
-            <input class="file" type="file" onchange="fileSelected(this,'agentQualificationFile1')" style="left: -9999px; position: absolute;"/>
-            <span class="btn btn-default">点击上传</span>
-        </label>
-    </div>
-</div>
-<div style="margin:10px 6px 0 10px">
-    <!--<ul class="nav nav-tabs">-->
-    <!--<li role="presentation" class="active"><a href="#">上传战略供应商协议</a></li>-->
-    <!--</ul>-->
-    <div style="width:100%;text-align: center">
-        <div style="width:100%">
-            <img th:src="@{/img/upimg.png}" width="70px" height="70px">
-        </div>
-        <label class="input-group-btn">
-            <input class="file" type="file" onchange="fileSelected(this,'agentQualificationFile2')" style="left: -9999px; position: absolute;"/>
-            <span class="btn btn-default">点击上传</span>
-        </label>
-    </div>
-</div>
 <!-- 手机号开始 -->
 <div class="input-group" style="margin:10px 6px 0 10px;position: relative">
     <span class="input-group-addon">手机号：</span>
     <input type="text" class="form-control" placeholder="Phone number" aria-describedby="basic-addon1" id="phoneNumInput-jc" th:value="${session.supplier.authPhone}" th:oldphone="${session.supplier.authPhone}" disabled="disabled">
-    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_phone_btn">修改</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%;display: none" id="to_update_phone_btn">保存</span>
-    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%;display: none"  onclick="getPhoneCode();" id="getCodeBtn">获取验证码</span>
+<!--    <span class="layui-badge" style="position: absolute;right:8px;z-index: 9999;top:24%" id="update_phone_btn">修改</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%;display: none" id="to_update_phone_btn">保存</span>-->
+<!--    <span class="layui-badge layui-bg-blue" style="position: absolute;right:8px;z-index: 9998;top:24%;display: none"  onclick="getPhoneCode();" id="getCodeBtn">获取验证码</span>-->
 </div>
 <!--修改手机号码-->
 <script>
@@ -732,8 +621,9 @@
 
 </script>
 <!-- 提交开始 -->
-<button type="button" class="btn btn-danger" style="margin-top: 20px;width: 100%;" id="subBtn">提交</button>
+<!--<button type="button" class="btn btn-danger" style="margin-top: 20px;width: 100%;" id="subBtn">提交</button>-->
 <!-- 提交结束 -->
+<div style="height:20px;"></div>
 </body>
 <script th:inline="javascript">
 
@@ -996,7 +886,7 @@
         //
         // /*供应商属性（基础供应商）*/
         // supplier.ifAttrNormal = 1;
-        supplier.supstateStrategy = 2;
+        supplier.supstateNormal = 2;
 
 
         /*ajax 提交*/
@@ -1006,8 +896,7 @@
                 alertMsg("已请求更改资料，请等待审核！");
                 setTimeout(function(){
                     window.history.back();
-                },1000)
-
+                },1500);
             }
             //alertMsg(res.message);
         },function(res){

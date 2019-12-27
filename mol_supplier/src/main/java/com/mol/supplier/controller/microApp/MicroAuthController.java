@@ -131,6 +131,7 @@ public class MicroAuthController {
         session.setAttribute("supplier",supplier);
         //获取行业类别（物料分类的第一级）
         List<BdMarbasclass> bdMarbasclassList = bdMarbasclassMapper.findMarbasFirstList();
+        log.info("获取到的物料分类第一级list.size:"+bdMarbasclassList.size());
         model.addAttribute("itemTypeList",bdMarbasclassList);
         String paySuccessed = "0";
         Example example = new Example(PuiSupplierDeposit.class);
@@ -215,14 +216,19 @@ public class MicroAuthController {
      */
     @RequestMapping("/detail")
     public String showAuthDetail(String suppliertype,Model model){
+
+        List<BdMarbasclass> bdMarbasclassList = bdMarbasclassMapper.findMarbasFirstList();
+        log.info("获取到的物料分类第一级list.size:"+bdMarbasclassList.size());
+        model.addAttribute("itemTypeList",bdMarbasclassList);
+
         model.addAttribute("pagenametitlefront", suppliertype);
         log.info("showAuthDetail...suppliertype:"+suppliertype);
         if ("基础".equals(suppliertype)) {
-            return "authenticate_update_jichu";
+            return "authenticate_detail_jichu";
         }else if("战略".equals(suppliertype)){
-            return "authenticate_update_zhanlve";
+            return "authenticate_detail_zhanlve";
         }else if("单一".equals(suppliertype)){
-            return "authenticate_update_danyi";
+            return "authenticate_detail_danyi";
         }
         return "";
     }

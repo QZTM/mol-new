@@ -745,6 +745,8 @@ public class ActService {
         AppUser au = findAppUserById(staffId);
         try{
             //发送钉钉通知
+//            ServiceResult serviceResult = sendNotificationImp.sendOaFromE(au.getId(), au.getUserName(), tokenService.getToken(), Constant.AGENTID_EXPERT);
+//            log.info("钉钉给采购人员："+staffId+"发送通知结果："+serviceResult.getMessage());
             NotificationModel nm = new NotificationModel();
             nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
             nm.setContent(notificationContant);
@@ -757,10 +759,10 @@ public class ActService {
             nm.setTitle(notificationTitle);
             OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
 
-            log.info("钉钉给议价负责人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
+            log.info("钉钉给订单发起人员："+au.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+tokenService.getToken());
             //发送短信通知
             String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, au.getMobile());
-            log.info("钉钉给采购人员："+staffId+"发送短信结果："+s);
+            log.info("钉钉给订单发起人员："+staffId+"发送短信结果："+s);
             return new AsyncResult<>(1);
         }catch (Exception e){
             e.printStackTrace();
@@ -912,7 +914,7 @@ public class ActService {
         log.info("钉钉给议价负责人员："+appUser.getId()+"发送通知结果："+omar+",token:"+tokenService.getToken());
         //发送短信通知
         String s = sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, appUser.getMobile());
-        log.info("钉钉给采购人员："+appUser.getId()+"发送短信结果："+s);
+        log.info("钉钉给议价负责人员："+appUser.getId()+"发送短信结果："+s);
         return new AsyncResult<>(1);
     }
 

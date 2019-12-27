@@ -2,8 +2,10 @@ package com.mol.ddmanage.Service;
 
 import com.mol.ddmanage.client.purchase.PurchaseClient;
 import com.mol.ddmanage.mapper.StartInspectionMapper;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import java.util.Map;
  * @author wjh
  */
 @Service
+@Log
 public class StartInspectionService
 {
     @Resource
@@ -136,9 +139,10 @@ public class StartInspectionService
                         //最后一次循环依然没有在表中找到要查找的数据，此时需要插入一条数据
                         else if (n_1+1==app_org_buy_channel_approve_middle.size())
                         {
-
                             startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                            purchaseClient.deploy("n"+String.valueOf(n),"process"+String.valueOf(n),"processName"+String.valueOf(n),"1202851016954982400",String.valueOf(n));
+                            String nnn=  purchaseClient.deploy("n"+String.valueOf(n),"process"+String.valueOf(n),"processName"+String.valueOf(n),"1202851016954982400",String.valueOf(n));
+                           // String nnn= HttpCommunication.HttpGet("http://139.129.240.48:8080/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+ new IdWorker().nextId() +"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                            log.info(nnn);
                         }
                     }
                 }
@@ -146,13 +150,16 @@ public class StartInspectionService
                 else
                 {
                     startInspectionMapper.insert_app_org_buy_channel_approve_middle(String.valueOf(n),app_auth_org.get(0).get("id").toString(),String.valueOf(n),String.valueOf(n));
-                    purchaseClient.deploy("n"+String.valueOf(n),"process"+String.valueOf(n),"processName"+String.valueOf(n),"1202851016954982400",String.valueOf(n));
+                   String nnn= purchaseClient.deploy("n"+String.valueOf(n),"process"+String.valueOf(n),"processName"+String.valueOf(n),"1202851016954982400",String.valueOf(n));
+                    //String nnn= HttpCommunication.HttpGet("http://139.129.240.48:8080/ac/deploy?name=n"+String.valueOf(n)+"&processId=process"+ new IdWorker().nextId() +"&processName=processName"+String.valueOf(n)+"&orgId=1202851016954982400&buyChannelId="+String.valueOf(n));
+                    log.info(nnn);
                 }
             }
         }
         catch (Exception e)
         {
-            System.out.println("检测app_org_buy_channel_approve_middle表出问题："+e);
+            log.info("检测app_org_buy_channel_approve_middle表出问题："+e);
+           // System.out.println("检测app_org_buy_channel_approve_middle表出问题："+e);
         }
     }
 }

@@ -229,7 +229,7 @@
     <span class="input-group-addon">所属行业：</span>
     <!--<span class="form-control" aria-describedby="basic-addon1" id="sel_trade"><span style="color:#aaa">点击选取所属行业</span></span>-->
     <span id="industry_span" style="pointer-events: none">
-        <select class="selectpicker form-control" id="itemtype_select_id" style="background-color: #1b6d85;color:#111" >
+        <select class="selectpicker form-control" id="sel_trade" style="background-color: #1b6d85;color:#111" >
             <div th:each="itemType,itemTypeStat : ${itemTypeList}">
                 <option th:if="${itemType.pkMarbasclass == session.supplier.industryFirst}" th:text="${itemType.name}" th:typeid="${itemType.pkMarbasclass}" class="itemType-option" selected></option>
                 <option th:if="${itemType.pkMarbasclass != session.supplier.industryFirst}" th:text="${itemType.name}" th:typeid="${itemType.pkMarbasclass}" class="itemType-option"></option>

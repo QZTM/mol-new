@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mol_parent</artifactId>
         <groupId>com.mol</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -37,12 +37,12 @@
         <dependency>
             <groupId>com.mol</groupId>
             <artifactId>mol_common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1</version>
         </dependency>
         <dependency>
             <groupId>com.mol</groupId>
             <artifactId>mol_fadada</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1</version>
         </dependency>
 
         <dependency>
@@ -52,6 +52,13 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/taobao-sdk-java-auto_1479188381469-20190826.jar</systemPath>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.httpcomponents</groupId>-->
+            <!--<artifactId>httpmime</artifactId>-->
+            <!--<version>4.3.2</version>-->
+        <!--</dependency>-->
+
         <!--<dependency>-->
             <!--<groupId>com.mol</groupId>-->
             <!--<artifactId>fadadaapisdk</artifactId>-->
@@ -59,6 +66,13 @@
             <!--<scope>system</scope>-->
             <!--<systemPath>${pom.basedir}/lib/fadada_api_sdk_2.4.0.jar</systemPath>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>com.mol</groupId>
+            <artifactId>fadadaapisdk</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/fadada_api_sdk_2.4.0.jar</systemPath>
+        </dependency>
         <!-- 解析json依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -127,12 +141,13 @@
 
     </dependencies>
     <build>
+        <finalName>mol-purchase-dd-manage-1</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                <includeSystemScope>true</includeSystemScope>
+                    <includeSystemScope>true</includeSystemScope>
                 </configuration>
             </plugin>
         </plugins>
