@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+import util.TimeUtil;
 
 import javax.swing.plaf.SeparatorUI;
 import java.lang.reflect.Type;
@@ -251,6 +252,17 @@ public class TobeNegotiatedService {
 
         List<SupplierIdToExpertId> ste = negotiatIng.getSupplierToExpert();
 
+        //订单的所有设置为淘汰
+        int refuse=fyQuoteMapper.updataApprovalOverRefuse(OrderStatus.QUOTE_REFUSE+"",TimeUtil.getNow(),OrderStatus.QUOTE_STATUS_NOUSERD+"",purId);
+        log.info("设置全部，数量为："+refuse);
+
+        //将返回的物料对应信息保存到报价表
+        if(mts!=null && mts.size()>0){
+            for (MaterIdToSupplierId mt : mts) {
+                fyQuoteMapper.updataApprovalOver(OrderStatus.QUOTE_PASS+"", TimeUtil.getNow(),OrderStatus.QUOTE_STATUS_NOUSERD+"",purId,mt.getMaterId(),mt.getSupplierId());
+            }
+        }
+
         //合并
         for(int k=0;k<mts.size();k++){
             String idString="";
@@ -381,13 +393,14 @@ public class TobeNegotiatedService {
     }
 
     public List<fyPurchase> findFyPurchaseByBuyChannelAndOrgId(List<String> buychanneList, String orgId,int pageNum,int pageSize) {
-        PageHelper.startPage(pageNum,pageSize);
+//        PageHelper.startPage(pageNum,pageSize);
         Example e =new Example(fyPurchase.class);
         Example.Criteria criteria = e.createCriteria();
 //        criteria.andEqualTo("buyChannelId",buyChannelId);
         criteria.andIn("buyChannelId",buychanneList);
         criteria.andEqualTo("orgId",orgId);
         criteria.andGreaterThan("status",OrderStatus.UNDER_REVIEW);
+        e.setOrderByClause("create_time desc");
         return fyPurchaseMapper.selectByExample(e);
     }
 
@@ -418,5 +431,31 @@ public class TobeNegotiatedService {
             }
         }
         return overlist;
+    }
+
+    public List<FyQuote> findSupplierIdByPurId(String id) {
+        if (id!=null){
+//            Example e = new Example(FyQuote.class);
+//            e.and().andEqualTo("fyPurchaseId",id);
+//            List<FyQuote> quoteList = fyQuoteMapper.selectByExample(e);
+
+            return fyQuoteMapper.findFyQuoteByPurid(id);
+
+        }
+        return null;
+    }
+
+    public List<Supplier> findSupplierByQuoteList(List<FyQuote> quoteList) {
+        if (quoteList!=null && quoteList.size()>0){
+            List<Supplier> supplierList = new ArrayList<>();
+            for (FyQuote fyQuote : quoteList) {
+                Example t = new Example(Supplier.class);
+                t.and().andEqualTo("pkSupplier",fyQuote.getPkSupplierId());
+                Supplier supplier = bdSupplierMapper.selectOneByExample(t);
+                supplierList.add(supplier);
+            }
+            return supplierList;
+        }
+        return null;
     }
 }

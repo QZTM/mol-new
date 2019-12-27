@@ -12,4 +12,18 @@
     <update id="updataComissionMoneyByPurIdAndExpertId" parameterType="java.lang.String">
         update expert_recommend set commission_money=#{moneyOne},com_money_time=#{nowTime} where purchase_id=#{purId} AND expert_id=#{expertId}
     </update>
+    <select id="findExpertRecommendByPurIdAndExpertIdNotIn" resultType="com.mol.purchase.entity.ExpertRecommend">
+        SELECT
+            *
+        FROM
+            `expert_recommend`
+        WHERE
+            purchase_id = #{id}
+            <if test="list!=null">
+                AND expert_id NOT IN
+                <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+    </select>
 </mapper>

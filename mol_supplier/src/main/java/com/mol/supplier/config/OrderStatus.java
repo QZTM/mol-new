@@ -39,6 +39,16 @@ public class OrderStatus {
      */
     public static final Integer refuse=8;
 
+    //报价表的状态
+    //通过
+    public static final Integer QUOTE_PASS=1001;
+    //拒绝
+    public static final Integer QUOTE_REFUSE=1002;
 
+    //是否启用
+    //是
+    public static final Integer QUOTE_STATUS_USED=1;
+    //否
+    public static final Integer QUOTE_STATUS_NOUSERD=0;
 
 }

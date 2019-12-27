@@ -24,5 +24,8 @@ public class FyQuote {
     //专家推荐
     private String expertRecommendation;
 
+    private String approvalOverStatus;
+    private String approvalOverTime;
+    private String approvalStatusEnable;
 
 }

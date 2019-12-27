@@ -57,4 +57,45 @@
             </foreach>
         </if>
     </select>
+    
+    <update id="updataApprovalOverRefuse" parameterType="java.lang.String" >
+        UPDATE fy_quote
+        SET approval_over_status = #{quoteStatus},
+        approval_over_time = #{time},
+        approval_status_enable = #{quoteStatusUesdOrNo}
+        WHERE
+            fy_purchase_id = #{purId}
+    </update>
+
+    <update id="updataApprovalOver" parameterType="java.lang.String" >
+        UPDATE fy_quote
+        SET approval_over_status = #{quoteStatus},
+        approval_over_time = #{time},
+        approval_status_enable = #{quoteStatusUesdOrNo}
+        WHERE
+            fy_purchase_id =  #{purId}
+            AND pk_material_id = #{materId}
+            AND pk_supplier_id = #{supplierId}
+    </update>
+
+    <update id="updataApprovalStatusEnableByPurId" parameterType="java.lang.String" >
+        UPDATE fy_quote
+        SET approval_over_time = #{time},
+        approval_status_enable = #{quoteStatusUesdOrNo}
+        WHERE
+            fy_purchase_id =  #{purId}
+    </update>
+
+    <update id="updataApprovalOverStatusAndTimeAndEnableByPurId" parameterType="java.lang.String" >
+        UPDATE fy_quote
+        SET approval_over_status = #{quoteStatus},
+        approval_over_time = #{time},
+        approval_status_enable = #{quoteStatusUesdOrNo}
+        WHERE
+            fy_purchase_id =  #{purId}
+    </update>
+
+    <select id="findFyQuoteByPurid" parameterType="java.lang.String" resultType="com.mol.purchase.entity.FyQuote">
+        	select * from  fy_quote where fy_purchase_id =#{purId} GROUP BY pk_supplier_id
+    </select>
 </mapper>

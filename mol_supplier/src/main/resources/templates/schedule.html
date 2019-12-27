@@ -72,8 +72,8 @@
     <ul class="nav nav-tabs">
         <li role="presentation col-md-3 col-xs-3" th:class="${status}==1?'active':''"><a href="/sche/findList?status_first=1&status_second=4&status_thrid=6&status_four=5&pageNum=1&pageSize=6">正在进行</a></li>
         <li role="presentation col-md-3 col-xs-3" th:class="${status}==3?'active':''"><a href="/sche/findList?status_first=3&pageNum=1&pageSize=6">已废止</a></li>
-        <li role="presentation col-md-3 col-xs-3" th:class="${status}==7?'active':''"><a href="/sche/findList?status_first=7&pageNum=1&pageSize=6">已通过</a></li>
-        <li role="presentation col-md-3 col-xs-3" th:class="${status}==8?'active':''"><a href="/sche/findList?status_first=8&pageNum=1&pageSize=7">已淘汰</a></li>
+        <li role="presentation col-md-3 col-xs-3" th:class="${status}==1001?'active':''"><a href="/sche/findPass?status_first=1001&pageNum=1&pageSize=6">已通过</a></li>
+        <li role="presentation col-md-3 col-xs-3" th:class="${status}==1002?'active':''"><a href="/sche/findNot?status_first=1002&pageNum=1&pageSize=6">已淘汰</a></li>
     </ul>
 </div>
 <div style="height: 52px;border-bottom: 1px solid black">
