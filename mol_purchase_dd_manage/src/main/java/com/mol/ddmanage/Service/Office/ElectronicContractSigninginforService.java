@@ -7,6 +7,7 @@ import com.mol.ddmanage.mapper.Office.ElectronicContractSigninginforMapper;
 import com.mol.fadada.handler.ContractHandler;
 import com.mol.fadada.handler.RegistAndAuthHandler;
 import entity.ServiceResult;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Log
 public class ElectronicContractSigninginforService
 {
     @Autowired
@@ -205,13 +207,18 @@ public class ElectronicContractSigninginforService
      * @param map
      * @return
      */
+
     public Map Upload_Contract_Logic(MultipartFile file,Map map)
     {
+        log.info("2");
         Map map1=new HashMap();
         try {
+            log.info("3");
             ServiceResult authResult=RegistAndAuthHandler.checkIfAuthed(Basic_config.open_id,"2");
+            log.info("4");
             if (RegistAndAuthHandler.checkIfRegisted(Basic_config.open_id,"2").isSuccess()==false)//查询是否注册
             {
+                log.info("5");
                 map1.put("statu","2");//未注册
                 return map1;
             }
@@ -220,19 +227,27 @@ public class ElectronicContractSigninginforService
                 map1.put("statu","3");//未认证
                 return map1;
             }
+            log.info("6");
             File toFile = null;//准备上传的合同
+            log.info("7");
             if (file.equals("") || file.getSize() <= 0)
             {
                 file = null;
             }
             else
              {
+
                 InputStream ins = null;
+
                 ins = file.getInputStream();
+
                 toFile = new File(file.getOriginalFilename());
+
                 inputStreamToFile(ins, toFile);
 
+
                  ServiceResult result =ContractHandler.uploadContract(toFile.getName(),toFile);//调用法大上传合同接口上传
+                 log.info("8");
                  if(result.isSuccess()==true)
                  {
                      Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
@@ -241,7 +256,9 @@ public class ElectronicContractSigninginforService
                      electronicContractSigninginforMapper.Supplier_Contract(String.valueOf(new IdWorker().nextId()),map.get("purchase_id").toString(),map.get("supplier_id").toString(),result.getResult().toString(),"",DataUtil.GetNowSytemTime(),DataUtil.GetNowSytemTime(),"1");//保存订单对应供应商合同的信息
                    //  ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),result.getResult().toString(),"编写目的","1");//手动签署合同
                  }
+                 log.info("9");
                  ins.close();
+                 log.info("10");
             }
 
             map1.put("statu","0");
@@ -249,6 +266,7 @@ public class ElectronicContractSigninginforService
         }
         catch (Exception e)
         {
+            log.info(e.toString());
            map1.put("statu","1");
            return map1;
         }

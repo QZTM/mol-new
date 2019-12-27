@@ -2,6 +2,7 @@ package com.mol.ddmanage.Controller.Office;
 
 import com.mol.ddmanage.Ben.PurchasOrderManagement.PurchasOrderinforben;
 import com.mol.ddmanage.Service.Office.ElectronicContractSigninginforService;
+import lombok.extern.java.Log;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/ElectronicContractSigninginforController")
+@Log
 public class ElectronicContractSigninginforController
 {
     @Resource
@@ -57,6 +59,7 @@ public class ElectronicContractSigninginforController
     @RequestMapping("/Upload_Contract")//上传合同
     public Map Upload_Contract(@RequestParam("file") MultipartFile file ,@RequestParam Map map)
     {
+        log.info("1");
         return electronicContractSigninginforService.Upload_Contract_Logic(file,map);
     }
     @RequestMapping("/signContract")//手动签署合同

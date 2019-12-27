@@ -315,8 +315,10 @@
                             layui.use('layer', function(){
                                 var layer = layui.layer;
                                 layer.msg('上传合同成功！');
+                                location.reload();
                             });
-                            location.reload();
+
+                           // Start_landing()
                         }
                         else if (data.statu==="1")
                         {
@@ -324,6 +326,7 @@
                                 var layer = layui.layer;
                                 layer.msg('上传合同失败！');
                             });
+                          //  Start_landing()
                         }
                         else if (data.statu==="2")//您的企业未注册法大大的账号，请注册！
                         {
