@@ -114,7 +114,7 @@ public class MicroDDLoginController {
     @RequestMapping("/initUserInfo")
     @ResponseBody
     public ServiceResult getSticket(String code, HttpSession session, HttpServletRequest request) {
-        logger.info("进入initUserInfo方法");
+        logger.info("进入initUserInfo方法,code:"+code);
         /*获取钉钉用户id*/
         String userId = "";
         try{
