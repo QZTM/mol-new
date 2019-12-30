@@ -47,78 +47,71 @@
         需支付专家评审费：<text th:text="${expertReward}" style="color: red">200</text>元
     </div>
     <!--产品名称开始-->
-    <div style="text-align: center;border: 1px solid #eeeeee;font-size: 14px;padding-top: 6px;clear: both;">
+    <div style="font-size: 10px;clear: both;padding-top: 3px">
 
-        <div  class="col-xs-4 col-md-4">
-            <p style="text-align: center;">已报价商家:<span style="color: red;" th:text="${quoteCount}">
-				14
-			</span></p>
-        </div>
-        <div >
-            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">
+        <!--        <div  class="col-xs-4 col-md-4">-->
+        <!--            <p style="text-align: center;">已报价商家:<span style="color: red;" th:text="${quoteCount}">-->
+        <!--				14-->
+        <!--			</span></p>-->
+        <!--        </div>-->
+        <!--        <div  style="text-align: right">-->
+        <!--            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">-->
 
-			</span></p>
-        </div>
+        <!--			</span></p>-->
+        <!--        </div>-->
+        <span style="float:left;padding-left: 10px;width: 40%;text-align: left">
+            <p style="color: red;">已报价商家:<span th:text="${quoteCount}" style="color: black;"></span></p>
+
+        </span>
+        <span style="float: right;width: 46%;text-align: center" >
+            <p style="color: red;">&nbsp;发布日期:<span th:text="${pur.createTime}" style="color: black;white-space:nowrap;overflow: auto;"></span></p>
+        </span>
     </div>
     <!--产品名称结束-->
     <!--发布日期开始-->
-    <div style="padding-top: 6px" >
+    <div style="padding-top: 10px;text-align: center;font-size: 10px" >
         <!--        <div  class="col-xs-3 col-md-3">-->
         <!--            <p style="text-align: center;">要求商家:<span style="color: red;" th:text="${quoNum}">-->
         <!--			</span></p>-->
         <!--        </div>-->
 
-        <span style="float:left;font-size: 10px;padding-left: 10px;width: 24%">
+        <span style="float:left;padding-left: 10px;width: 24%;text-align: left">
             <p style="color: blue;">类型:<span th:text="${pur.goodsType}" style="color: black;"></span></p>
 
         </span>
-        <span style="font-size: 10px;float: left;width: 24%" >
+        <span style="float: left;width: 24%;text-align: center" >
             <p style="color: blue;">&nbsp;状态:<span th:text="${pur.status}" style="color: black;"></span></p>
         </span>
 
-        <span style="font-size: 10px;float: left;width: 24%" >
+        <span style="float: left;width: 26%;text-align: center" >
             <p style="color: blue;">&nbsp;付款方式:<span th:text="${payMent}" style="color: black;"></span></p>
         </span>
 
-        <span style="font-size: 10px;float: left;width: 24%" >
+        <span style="float: left;width: 24%;text-align: right" >
             <p style="color: blue;">&nbsp;供货周期:<span th:text="${supplyCycle}" style="color: black;"></span><span style="color: black;">天</span></p>
         </span>
-        <!--        <div  class="col-xs-4 col-md-4">-->
-        <!--            <p style="text-align: center;">付款方式:<span style="color: red;" th:text="${payMent}">-->
-        <!--				货到付款-->
-        <!--			</span></p>-->
-        <!--        </div>-->
-        <!--        <div  class="col-xs-4 col-md-4">-->
-        <!--        <p style="text-align: center;">供货周期:<span style="color: red;" th:text="${supplyCycle}">-->
-        <!--				30-->
-        <!--			</span>天</p>-->
-        <!--        </div>-->
-        <!--        <div class="col-xs-6 col-md-6">-->
-        <!--            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">-->
 
-        <!--			</span></p>-->
-        <!--        </div>-->
 
     </div>
     <!--发布日期结束-->
 
     <!--编号开始-->
     <div style="border: 1px solid #eeeeee;clear: both;">
-         <span style="float:left;padding-left: 9px;font-size: 12px;padding-top: 6px">
+         <span style="float:left;padding-left: 9px;font-size: 10px;padding-top: 6px;text-align: left">
             <p>编号&nbsp;:&nbsp;<span th:text="${pur.orderNumber}"></span></p>
 
         </span>
-        <span style="font-size: 12px;float: right;padding-right: 72px;padding-top: 6px" >
+        <span style="font-size: 10px;float: right;padding-right: 10px;padding-top: 6px;text-align: right" >
 <!--            -->
             <!--    查询到的专家的电话号码放到此处        -->
             <!--            -->
-            <p>技术支持&nbsp;: &nbsp;<span  th:text="${tst}" style="color: blue;">11111</span></p>
+            <p>技术支持&nbsp;: &nbsp;<span id="callNumber"  th:text="${tst}" style="color: blue;" onclick="call(this.id)"></span></p>
         </span>
     </div>
     <!--编号结束-->
     <!--表格开始-->
     <div >
-        <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
+        <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 10px">
             <tr>
                 <td style="width: 12%">序号</td>
                 <td  style="width: 28%;">名称</td>
@@ -128,8 +121,8 @@
             </tr>
             <tr th:each="en,f:${purList}">
                 <td th:text="${f.index+1}" style="width: 12%">序号</td>
-                <td th:text="${en.itemName}" style="width: 32%;">名称</td>
-                <td th:text="${en.norms}"  style="width: 32%;">规格</td>
+                <td th:text="${en.itemName}" style="width: 32%;white-space:nowrap;overflow: auto;">名称</td>
+                <td th:text="${en.norms}"  style="width: 32%;white-space:nowrap;overflow: auto;">规格</td>
                 <td th:text="${en.unit}" style="width: 12%">单位</td>
                 <td th:text="${en.count}" style="width: 12%">数量</td>
             </tr>
@@ -138,13 +131,13 @@
     </div>
     <!--表格结束-->
 
-    <div style="margin-left: 16px;font-size: 12px;clear: both;">
+    <div style="margin-left: 16px;font-size: 10px;clear: both;">
         <!--详情需求pdf-->
-        <div style="float: left;font-size: 12px">
+        <div style="float: left;font-size: 10px">
             <a href="#">详情需求PDF</a>
         </div>
         <!--截止日期-->
-        <div style="font-size: 12px;color: #ff0000;float: right;padding-right: 43px">
+        <div style="font-size: 10px;color: #ff0000;float: right;padding-right: 43px">
             <span>截止日期：</span>
             <span th:text="${dealLine}">2019-6-9 18:00:00</span>
         </div>
@@ -152,7 +145,7 @@
 
 
     <div style="clear:both;">
-        <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
+        <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 10px">
             <tr>
                 <td colspan="2">
                     我的报价
@@ -174,8 +167,8 @@
             </tr>
             <tr th:each="en,f:${purList}">
                 <td th:text="${f.index+1}" style="width: 9%">序号</td>
-                <td th:text="${en.itemName}" style="width: 27%;">名称</td>
-                <td th:text="${en.norms}"  style="width: 27%;">规格</td>
+                <td th:text="${en.itemName}" style="width: 27%;white-space:nowrap;overflow: auto;">名称</td>
+                <td th:text="${en.norms}"  style="width: 27%;white-space:nowrap;overflow: auto;">规格</td>
                 <td th:text="${en.count}" style="width: 12%">数量</td>
                 <td th:text="${en.quote}" style="width: 12%">报价</td>
                 <td th:text="${en.sum}" style="width: 13%">总计</td>
@@ -190,7 +183,7 @@
             中标结果
         </div>
         <div>
-            <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
+            <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 10px">
                 <tr>
                     <td style="width: 10%">序号</td>
                     <td  style="width: 27%;">名称</td>
@@ -241,7 +234,6 @@
 
     <div class="jumbotron">
         <h2  style="text-align: center"><small th:text="${pur.status}"></small></h2>
-
     </div>
 
 </div>
@@ -282,6 +274,7 @@
         $("#basic-addon1").on('click',function(){
             //支付1.去后端获取支付信息     2，带着支付信息调用钉钉微应用的支付接口
             //禁用支付，防止多次支付
+            console.log("调用支付。。")
             $("#basic-addon1").attr('disabled','disable');
             var purchaseId = [[${pur.id}]];
             var money = 0;

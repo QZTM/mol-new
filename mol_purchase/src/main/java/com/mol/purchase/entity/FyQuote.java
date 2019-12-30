@@ -30,4 +30,8 @@ public class FyQuote {
     //专家推荐的该公司报价数量
     private String expertAgreeCounts;
 
+    private String approvalOverStatus;
+    private String approvalOverTime;
+    private String approvalStatusEnable;
+
 }

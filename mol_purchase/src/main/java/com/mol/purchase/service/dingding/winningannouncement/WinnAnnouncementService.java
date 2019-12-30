@@ -25,6 +25,7 @@ public class WinnAnnouncementService {
         Example.Criteria criteria = e.createCriteria();
         criteria.andEqualTo("orgId",orgId);
         criteria.andBetween("status",7,8);
+        e.setOrderByClause("approval_end_time desc");
         return purchaseMapper.selectByExample(e);
     }
 

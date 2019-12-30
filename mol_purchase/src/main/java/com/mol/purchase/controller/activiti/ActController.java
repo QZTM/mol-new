@@ -3,11 +3,13 @@ package com.mol.purchase.controller.activiti;
 import com.mol.config.NotificationConfig;
 import com.mol.notification.SendNotification;
 import com.mol.purchase.config.Constant;
+import com.mol.purchase.config.OrderStatus;
 import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiProcinst;
 import com.mol.purchase.entity.dingding.login.AppAuthOrg;
 import com.mol.purchase.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
 import com.mol.purchase.entity.dingding.solr.fyPurchase;
+import com.mol.purchase.mapper.newMysql.FyQuoteMapper;
 import com.mol.purchase.service.activiti.ActService;
 import com.mol.purchase.entity.dingding.login.AppUser;
 import com.mol.purchase.service.token.TokenService;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
+import util.TimeUtil;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +55,8 @@ ActController {
     SendNotification sendNotificationImp;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private FyQuoteMapper quoteMapper;
 
     private SendMsmHandler sendMsmHandler = SendMsmHandler.getSendMsmHandler();
 
@@ -222,6 +227,9 @@ ActController {
                 //审批任务完成
                 //查询订单相关信息
 
+                //将报价表的状态设置为启用
+                logger.info("将报价表的状态设置为启用");
+                quoteMapper.updataApprovalStatusEnableByPurId(pur.getId(),TimeUtil.getNow(), OrderStatus.QUOTE_STATUS_USED+"");
 
                 //3.订单详情
                 List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
@@ -251,7 +259,8 @@ ActController {
                 //1.给采购部门主管发短信，通知（P）
                 ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.议价负责人_PASS,NotificationConfig.通过图片);
                 //2.给选中的专家发短信，通知（E)
-                ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板(),NotificationConfig.通过,NotificationConfig.专家端_PASS,NotificationConfig.通过图片);
+                ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage
+                        (pur.getId(),detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板(),NotificationConfig.通过,NotificationConfig.拒绝,NotificationConfig.专家端_PASS,NotificationConfig.专家端_REFUSE,NotificationConfig.通过图片,NotificationConfig.拒绝图片);
                 //3.给发起采购的采购人员发短信，通知(p)
                 ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送中标结果模板(),NotificationConfig.通过,NotificationConfig.采购人_PASS,NotificationConfig.通过图片);
                 //4.给供应商下的报价人发短信，通知(s)
@@ -264,12 +273,16 @@ ActController {
             //查询订单相关信息
             //3.订单详情
             List<PurchaseDetail> detailList =actService.findPurchaseDetailListByPurId(pur.getId());
+            //将报价表的状态设置为淘汰，并启用
+            logger.info("将报价表的状态设置为淘汰，并启用");
+            quoteMapper.updataApprovalOverStatusAndTimeAndEnableByPurId(OrderStatus.QUOTE_REFUSE+"", TimeUtil.getNow(),OrderStatus.QUOTE_STATUS_USED+"");
             //修改未选中的专家推荐表中的adopt
             actService.updataExpertRecommendNotChecked(pur.getId());
             //1.给议价负责人发短信，通知
             ListenableFuture<Integer> purMainPersonSendMessage=actService.getPurMainPerson(pur.getOrgId(),pur.getBuyChannelId(),sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.议价负责人_REFUSE,NotificationConfig.拒绝图片);
             //2.给选中的专家发短信，通知
-            ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage(detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家发送评审失败结果模板(),NotificationConfig.拒绝,NotificationConfig.专家端_REFUSE,NotificationConfig.拒绝图片);
+            ListenableFuture<Integer> expertSendMessage = actService.getExpertSendMessage
+                    (pur.getId(),detailList, sendMsmHandler, XiaoNiuMsmTemplate.给专家推送评审成功结果模板(),NotificationConfig.通过,NotificationConfig.拒绝,NotificationConfig.专家端_PASS,NotificationConfig.专家端_REFUSE,NotificationConfig.通过图片,NotificationConfig.拒绝图片);
             //3.给发起采购的采购人员发短信，通知
             ListenableFuture<Integer> auSendMessage = actService.getAuSendMessage(pur.getStaffId(), sendMsmHandler, XiaoNiuMsmTemplate.推送未中标结果模板(),NotificationConfig.拒绝,NotificationConfig.采购人_REFUSE,NotificationConfig.拒绝图片);
             //4.给供应商下的报价人发短信，通知

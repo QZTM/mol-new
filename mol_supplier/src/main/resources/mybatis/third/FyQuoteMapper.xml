@@ -39,4 +39,34 @@
     <select id="findCountWinningKidSupplierByPurId" parameterType="java.lang.String" resultType="java.lang.Integer">
         select  COUNT(DISTINCT pk_supplier_id) from fy_quote where id in(SELECT quote_id FROM `fy_purchase_detail` WHERE fy_purchase_id=#{id})
     </select>
+    <select id="findQuoteBySupplierIdAndApprovalOverStatus" parameterType="java.lang.String" resultType="com.mol.supplier.entity.thirdPlatform.FyQuote">
+        select DISTINCT fy_purchase_id from fy_quote  where pk_supplier_id =#{supplierId} and approval_status_enable='1' and approval_over_status =#{status} ORDER BY approval_over_time desc
+
+    </select>
+    <select id="findPurAllRefuseBySupplierIdAndStatus" parameterType="java.lang.String" resultType="com.mol.supplier.entity.thirdPlatform.FyQuote">
+
+            SELECT
+                fq.fy_purchase_id,
+                pk_supplier_id,
+                approval_over_status,
+                fq.approval_over_time
+            FROM
+                fy_quote fq
+            WHERE
+                fq.pk_supplier_id = #{supplierId}
+                AND ( SELECT count( * ) FROM fy_quote fqe WHERE fqe.fy_purchase_id = fq.fy_purchase_id AND fqe.pk_supplier_id = fq.pk_supplier_id ) = (
+            SELECT
+                count( * )
+            FROM
+                fy_quote fqee
+            WHERE
+                fqee.fy_purchase_id = fq.fy_purchase_id
+                AND fqee.pk_supplier_id = fq.pk_supplier_id
+                AND fqee.approval_over_status = #{status}
+                )
+            GROUP BY
+                fy_purchase_id
+            ORDER BY
+                fq.approval_over_time DESC
+    </select>
 </mapper>

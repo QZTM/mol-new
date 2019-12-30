@@ -1,6 +1,7 @@
 package com.mol.supplier.service.third;
 
 import com.github.pagehelper.PageHelper;
+import com.mol.supplier.config.OrderStatus;
 import com.mol.supplier.entity.MicroApp.Supplier;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseArray;
 import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseDetail;
@@ -14,6 +15,7 @@ import com.mol.supplier.mapper.third.TpMapper;
 import com.mol.supplier.util.StatusScheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,12 +86,17 @@ public class ScheService {
     public List<FyQuote> findQuoteById(String id,String supplierId) {
         return fyQuoteMapper.findQuoteBySupplierIdAndPurchaseId(id, supplierId);
     }
+
     public fyPurchase selectOneById(String id) {
-        fyPurchase fyPurchase = tpMapper.selectOneById(id);
-        fyPurchase= StatusScheUtils.getStatusIntegerToString(fyPurchase);
-        String supplierNameById = bdSupplierMapper.getSupplierNameById(fyPurchase.getPkSupplier());
-        fyPurchase.setPkSupplier(supplierNameById);
-        return fyPurchase;
+        fyPurchase pur = tpMapper.selectOneById(id);
+        return pur;
+    }
+
+    public fyPurchase toChineses(fyPurchase pur){
+        pur= StatusScheUtils.getStatusIntegerToString(pur);
+        String supplierNameById = bdSupplierMapper.getSupplierNameById(pur.getPkSupplier());
+        pur.setPkSupplier(supplierNameById);
+        return pur;
     }
 
     public List<FyQuote> findQuoteBySupplierIdAndPurId(String supplierId, String id) {
@@ -116,6 +123,59 @@ public class ScheService {
 
     public int getCountWinningKidSupplier(String id) {
         return fyQuoteMapper.findCountWinningKidSupplierByPurId(id);
+    }
+
+    public List<FyQuote> getList(String supplierId, String status, int pageNum, int pageSize) {
+        if (supplierId ==null || status==null){
+            return null;
+        }
+        PageHelper.startPage(pageNum,pageSize);
+        return fyQuoteMapper.findQuoteBySupplierIdAndApprovalOverStatus(supplierId,status);
+    }
+
+    public List<fyPurchase> getPurListByPurIdList(List<FyQuote> quoteList) {
+        if (quoteList!=null && quoteList.size()>0 ){
+            List<fyPurchase> purList=new ArrayList<>();
+            for (FyQuote fyQuote : quoteList) {
+                fyPurchase pur=fyPurchaseMapper.findOneById(fyQuote.getFyPurchaseId());
+                purList.add(pur);
+            }
+            return purList;
+        }
+        return new ArrayList<>();
+    }
+//
+//    public List<fyPurchase> changeStatusToChinese(List<fyPurchase> purList) {
+//        if (purList!=null && purList.size()>0){
+//            List<fyPurchase> _purList=new ArrayList<>();
+//            for (fyPurchase pur : purList) {
+//                _purList.add(StatusScheUtils.getStatusIntegerToString(pur));
+//            }
+//            return _purList;
+//        }
+//        return purList;
+//    }
+
+    public List<fyPurchase> findFyquoteStatusByPurId(List<fyPurchase> purList,String status) {
+        if (purList!=null && purList.size()>0 && status!=null){
+            for (fyPurchase pur : purList) {
+                if (Integer.parseInt(status)==OrderStatus.QUOTE_PASS){
+                    pur.setStatus("通过");
+                }
+                if (Integer.parseInt(status)==OrderStatus.QUOTE_REFUSE){
+                    pur.setStatus("淘汰");
+                }
+            }
+        }
+        return purList;
+    }
+
+    public List<FyQuote> findNotList(String supplierId, String status,int pageNum,int pageSize) {
+        if (supplierId!=null && status!=null){
+//            PageHelper.startPage(pageNum,pageSize);
+            return fyQuoteMapper.findPurAllRefuseBySupplierIdAndStatus(supplierId,status);
+        }
+        return null;
     }
 
 

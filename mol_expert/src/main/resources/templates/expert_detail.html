@@ -86,8 +86,8 @@
             </tr>
             <tr th:each="en,f:${purList}">
                 <td th:text="${f.index+1}" style="width: 12%">序号</td>
-                <td th:text="${en.itemName}" style="width: 32%;">名称</td>
-                <td th:text="${en.norms}"  style="width: 32%;">规格</td>
+                <td th:text="${en.itemName}" style="width: 32%;white-space:nowrap;overflow: auto;">名称</td>
+                <td th:text="${en.norms}"  style="width: 32%;white-space:nowrap;overflow: auto;">规格</td>
                 <td th:text="${en.unit}" style="width: 12%">单位</td>
                 <td th:text="${en.count}" style="width: 12%">数量</td>
             </tr>
