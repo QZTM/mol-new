@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 import util.IdWorker;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -52,7 +54,7 @@ public class ContractManageController {
 
     @RequestMapping("/checkAuth")
     @ResponseBody
-    public ServiceResult checkAuth(HttpSession session){
+    public ServiceResult checkAuth(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Supplier supplier = microUserService.getSupplierFromSession(session);
         //验证是否已认证，如果没有认证，则提示去认证：
         ServiceResult sr = RegistAndAuthHandler.checkIfRegisted(supplier.getPkSupplier(),"2");
@@ -65,6 +67,7 @@ public class ContractManageController {
             if(authRecord == null || !("4".equals(authRecord.getStatus()))){
                 return ServiceResult.failureMsg("请先完成电子合同认证");
             }
+            response.sendRedirect("/contract/index");
         }else {
             return ServiceResult.failureMsg("请先完成电子合同认证");
         }
@@ -74,7 +77,8 @@ public class ContractManageController {
 
     @RequestMapping("/index")
     public String showContractIndex(Model model,HttpSession session){
-        List<Map> dataList = microContractService.getPurchaseAndContractList("1178121287969550336");
+        Salesman salesman = microUserService.getUserFromSession(session);
+        List<Map> dataList = microContractService.getPurchaseAndContractList(salesman.getId());
         model.addAttribute("list",dataList);
         return "contract_index";
     }
