@@ -69,4 +69,17 @@
             ORDER BY
                 fq.approval_over_time DESC
     </select>
+
+    <select id="findPriceBySupplierIdAndMaterialId" parameterType="java.lang.String" resultType="com.mol.supplier.entity.thirdPlatform.FyQuote">
+        SELECT
+            fq.*
+        FROM
+            fy_quote fq
+            LEFT JOIN bd_material bm ON fq.pk_material_id = bm.pk_material
+        WHERE
+            fq.pk_material_id =#{materId}
+            AND fq.pk_supplier_id =#{supplierId}
+        ORDER BY
+            fq.creationtime desc
+    </select>
 </mapper>
