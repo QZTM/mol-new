@@ -67,7 +67,7 @@ public class ContractManageController {
             if(authRecord == null || !("4".equals(authRecord.getStatus()))){
                 return ServiceResult.failureMsg("请先完成电子合同认证");
             }
-            response.sendRedirect("/contract/index");
+            //response.sendRedirect("/contract/index");
         }else {
             return ServiceResult.failureMsg("请先完成电子合同认证");
         }
