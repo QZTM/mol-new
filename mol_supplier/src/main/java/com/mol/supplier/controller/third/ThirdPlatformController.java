@@ -635,7 +635,9 @@ public class ThirdPlatformController {
             pur.setUnit(purchaseArrayList.get(i).getUnit());
             pur.setNorms(purchaseArrayList.get(i).getNorms());
             //上次价格
-            pur.setAvgPriceHistory(platformService.getAvgPrice(supplierId,id));
+            Double avgPrice = platformService.getAvgPrice(supplierId, purchaseArrayList.get(i).getMaterialId());
+            pur.setAvgPriceHistory(avgPrice);
+            log.info("物品"+pur.getItemName()+"上次报价"+avgPrice);
             purList.add(pur);
         }
         map.addAttribute("purList", purList);

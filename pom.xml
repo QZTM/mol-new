@@ -216,9 +216,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+<!--            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>-->
         </profile>
         <!--*********************************************正式环境1**************************************************-->
         <profile>
@@ -288,9 +288,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+<!--            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>-->
         </profile>
 
         <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-ly-1YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->
@@ -362,9 +362,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-                        <activation>
-                            <activeByDefault>true</activeByDefault>
-                        </activation>-->
+<!--                        <activation>-->
+<!--                            <activeByDefault>true</activeByDefault>-->
+<!--                        </activation>-->
         </profile>
         <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-ly-2YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->
 

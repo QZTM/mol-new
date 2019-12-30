@@ -229,9 +229,12 @@ public class ThirdPlatformService {
     //获取公司上次该物料的报价
     public Double getAvgPrice(String supplierId,String id) {
         Double b =0.00;
-        List<Double> bList =poOrderMapper.getNorigpriceBySupplierIdAndMaterialId(supplierId,id);
-        if (bList != null && bList.size()>0){
-            b=bList.get(0);
+//        List<Double> bList =poOrderMapper.getNorigpriceBySupplierIdAndMaterialId(supplierId,id);
+        List<FyQuote> quoteList=fyQuoteMapper.findPriceBySupplierIdAndMaterialId(supplierId,id);
+        if (quoteList != null && quoteList.size()>0){
+            if (quoteList.get(0).getQuote()!=null){
+                b=Double.parseDouble(quoteList.get(0).getQuote());
+            }
         }
         return b;
     }
