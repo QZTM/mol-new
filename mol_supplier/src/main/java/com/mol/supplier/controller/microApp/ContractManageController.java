@@ -13,6 +13,7 @@ import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.service.microApp.MicroContractService;
 import com.mol.supplier.service.microApp.MicroUserService;
 import entity.ServiceResult;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,13 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 合同管理控制器
  */
 @Controller
+@Log
 @RequestMapping("/contract")
 public class ContractManageController {
 
@@ -78,7 +79,31 @@ public class ContractManageController {
     @RequestMapping("/index")
     public String showContractIndex(Model model,HttpSession session){
         Salesman salesman = microUserService.getUserFromSession(session);
-        List<Map> dataList = microContractService.getPurchaseAndContractList(salesman.getId());
+        Supplier supplier = microUserService.getSupplierFromSession(session);
+        log.info("salesmanId:"+salesman.getId()+",supplierId:"+supplier.getPkSupplier());
+        Map paraMap = new HashMap();
+        paraMap.put("salesmanId",salesman.getId());
+        paraMap.put("supplierId",supplier.getPkSupplier());
+//        paraMap.put("salesmanId","1210088441147858944");
+//        paraMap.put("supplierId","1210088440980086784");
+        List<Map> dataList = microContractService.getPurchaseAndContractList(paraMap);
+//        for(int i=0;i<dataList.size();i++){
+//            log.info("*************"+i+"************");
+//            Map map = dataList.get(i);
+//            Set set = map.keySet();
+//            Iterator<String> it = set.iterator();
+//            while (it.hasNext()) {
+//                String str = it.next();
+//                System.out.println("i:"+i+",,key:"+str+",,value:"+map.get(str));
+//            }
+//        }
+//        for(int a=0;a<1000;a++){
+//            Map map = dataList.get(0);
+//            Map newMap = new HashMap();
+//            newMap.putAll(map);
+//            newMap.put("orderNumber","aaaaaaaa"+a);
+//            dataList.add(newMap);
+//        }
         model.addAttribute("list",dataList);
         return "contract_index";
     }
