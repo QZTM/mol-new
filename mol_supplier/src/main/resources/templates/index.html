@@ -175,7 +175,9 @@
                 //getUserAndOrgByEnvWithdd();
             }else if("iphone----dd" == localRunEnv){
                 localRunEnvExl = "这是苹果手机的钉钉运行环境";
-                getUserAndOrgByEnvWithdd();
+                dd.ready(function(){
+                    android_dd_init_action();
+                })
             }else if("android--wx" == localRunEnv){
                 localRunEnvExl = "这是安卓微信运行环境";
                 getUserAndOrgByEnvWithwx();
