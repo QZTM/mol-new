@@ -448,19 +448,22 @@
 <!-- 身份证号结束 -->
 <!--上传战略供应商协议开始-->
 <div style="margin:10px 6px 0 10px;position: relative">
-    <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:10px" id="update_legalBodyIdFront_img_btn">下载样本</span>
+<!--    <span class="layui-badge upbtn" style="position: absolute;right:5px;z-index: 9999;top:10px" id="update_legalBodyIdFront_img_btn">下载样本</span>-->
     <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="/auth/downZhanlve">上传战略供应商协议</a></li>
+        <li role="presentation" class="active"><a href="/auth/downZhanlve">战略供应商协议</a></li>
     </ul>
-    <div style="width:100%;text-align: center">
-        <div style="width:100%">
-            <img th:src="@{/img/upimg.png}" width="70px" height="70px">
-        </div>
-        <label class="input-group-btn">
-            <input class="file" type="file" onchange="fileSelected(this,'protocolFile')" style="left: -9999px; position: absolute;" id="protocol_file_input"/>
-            <span class="btn btn-default">点击上传</span>
-        </label>
-    </div>
+<!--    <div style="width:100%;text-align: center">-->
+<!--        <div style="width:100%">-->
+<!--            <img th:src="@{/img/upimg.png}" width="70px" height="70px">-->
+<!--        </div>-->
+<!--        <label class="input-group-btn">-->
+<!--            <input class="file" type="file" onchange="fileSelected(this,'protocolFile')" style="left: -9999px; position: absolute;" id="protocol_file_input"/>-->
+<!--            <span class="btn btn-default">点击上传</span>-->
+<!--        </label>-->
+<!--    </div>-->
+    <blockquote class="layui-elem-quote layui-quote-nm" style="width:100%;border:none;">
+        <div class="layui-upload-list"></div>
+    </blockquote>
 </div>
 <!-- 上传战略供应商协议结束 -->
 <script>
@@ -817,6 +820,23 @@
             setTimeout("changeInputFileSize($('#"+pervDivId+"'))",500);
         }
 
+
+
+        //获取oos上的供应商协议图片：
+        $.ajax({
+            url: '/down/proImages',
+            data: {'proType':'zhanlve'},
+            type: 'get',
+            dataType: 'json',
+            success: function(res){
+                var imgList = res.result;
+                for(var key in imgList){
+                    var pointIndex = key.indexOf(".");
+                    var keyname = key.substring(0,pointIndex);
+                    $(".layui-upload-list").append('<img src="data:image/png;base64,'   + imgList[key] + '" key="'+key+'" id="remove_' + keyname + '" style="width:100%;height:auto;">');
+                }
+            }
+        })
 
 
 

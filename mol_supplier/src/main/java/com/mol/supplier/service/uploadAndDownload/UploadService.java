@@ -2,10 +2,14 @@ package com.mol.supplier.service.uploadAndDownload;
 
 import com.mol.oos.OOSConfig;
 import com.mol.oos.TYOOSUtil;
+import lombok.extern.java.Log;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,14 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import util.TimeUtil;
 import util.UploadUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Future;
 
+@Log
 @Service
 public class UploadService {
 
@@ -30,7 +35,11 @@ public class UploadService {
     @Autowired
     private TYOOSUtil tyoosUtil;
 
-    //文件上传相关代码
+    /**
+     * 上传文件
+     * @param file
+     * @return
+     */
     public String upload(MultipartFile file) {
         if (file.isEmpty()) {
             return "文件为空";
@@ -78,13 +87,14 @@ public class UploadService {
     }
 
 
-    public void uploadToOOS(MultipartFile multipartFile, String path,String bucketName){
+    @Async
+    public Future<String> uploadToOOS(MultipartFile multipartFile, String path, String bucketName){
 //获取名字
         String fileName = multipartFile.getOriginalFilename();
         //获取后缀
         String  suffName= fileName.substring(fileName.lastIndexOf("."));
         //产生一个新名字
-        String name = UUID.randomUUID()+suffName;
+        String name = RandomStringUtils.random(15,"asdfghjkqwertyuiopzxcvbnm")+suffName;
         //获取当前class的路径
         URL resource = UploadService.class.getResource("");
         File file=new File(resource.getPath()+File.separator+name);
@@ -93,18 +103,33 @@ public class UploadService {
             FileUtils.copyInputStreamToFile(multipartFile.getInputStream(),file);
             File newFile=new File(resource.getPath()+File.separator+name);
             //文件夹
+            log.info("上传OOS之前：bucketName："+bucketName+",,,key:"+path+name+",newfile.name:"+newFile.getName()+",newFile.size:"+newFile.length());
             tyoosUtil.uploadObjToBucket(bucketName,path+name,newFile);
-
+            return new AsyncResult<>(name);
         } catch (IOException e) {
             logger.info("合同照片上传异常");
             e.printStackTrace();
+            return new AsyncResult<>("");
         }finally {
             file.delete();
         }
     }
 
+
+    /**
+     * 从天翼云上删除一个文件
+     * @param filepath
+     */
+    public void delFileFromOOS(String bucketName,String filepath){
+        log.info("删除OOS文件...bucketName:"+bucketName+",filepath:"+filepath);
+            tyoosUtil.delObj(bucketName,filepath,"","");
+    }
+
+
+
+
+
     //文件下载相关代码
-    @RequestMapping("/download")
     public String downloadFile(HttpServletRequest request, HttpServletResponse response) {
         String fileName = "FileUploadTests.java";
         if (fileName != null) {

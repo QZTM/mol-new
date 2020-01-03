@@ -19,9 +19,11 @@ public class OOSClient {
         if(oosClient == null){
             // 创建一个AmazonS3 客户端对象
             oosClient = new AmazonS3Client(new AWSCredentials() {
+                @Override
                 public String getAWSAccessKeyId() {
                     return OOS_ACCESS_ID;//你的accesskey
                 }
+                @Override
                 public String getAWSSecretKey() {
                     return OOS_SECRET_ID;//你的secretKey
                 }
@@ -40,9 +42,11 @@ public class OOSClient {
             synchronized (OOSClient.class) {
                 if (oosClient == null) {
                     oosClient = new AmazonS3Client(new AWSCredentials() {
+                        @Override
                         public String getAWSAccessKeyId() {
                             return OOS_ACCESS_ID;//你的accesskey
                         }
+                        @Override
                         public String getAWSSecretKey() {
                             return OOS_SECRET_ID;//你的secretKey
                         }

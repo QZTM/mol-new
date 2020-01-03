@@ -2,11 +2,15 @@ package com.mol.oos;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-
+import lombok.extern.java.Log;
+import util.FileUtils;
 import javax.imageio.stream.FileImageOutputStream;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Log
 public class TYOOSUtil {
 
     private AmazonS3 oos = OOSClient.getClient();
@@ -31,7 +35,7 @@ public class TYOOSUtil {
      */
     public List<Bucket> bucketList(){
         /*列出账户内的所有 buckets */
-        System.out.println("Listing buckets");
+        log.info("Listing buckets");
         List<Bucket> buckets = oos.listBuckets();
         for (Bucket bucket : buckets) {
             System.out.println(" - " + bucket.getName());
@@ -45,7 +49,7 @@ public class TYOOSUtil {
      */
     public void createBucket(String bucketName){
         /* 创建 bucket */
-        System.out.println("Creating bucket " + bucketName + "\n");
+        log.info("Creating bucket " + bucketName + "\n");
         oos.createBucket(bucketName);
         System.out.println();
     }
@@ -58,8 +62,9 @@ public class TYOOSUtil {
      */
     public void uploadObjToBucket(String bucketName,String key,File file) throws IOException {
         /* 上传一个 object 到 bucket 中 */
-        System.out.println("Uploading a new object to OOS from a file\n");
-        oos.putObject(new PutObjectRequest(bucketName, key, file));
+        log.info("Uploading a new object to OOS from a file,,,bucketName:"+bucketName+",key:"+key);
+        PutObjectResult putObjectResult = oos.putObject(new PutObjectRequest(bucketName, key, file));
+        System.out.println(putObjectResult.toString());
     }
 
     /**
@@ -70,7 +75,7 @@ public class TYOOSUtil {
      */
     public void download(String bucketName,String key) throws IOException {
         /* 下载 object */
-        System.out.println("Downloading an object");
+        log.info("Downloading an object");
             /* 当使用getObject()方法时，需要非常小心。因为返回的S3Object对象包
             括一个从HTTP连接获得的数据流。底层的HTTP连接不会被关闭，直到用户
             读完了数据，并关闭了流。因此从S3Object中读取inputStream数据后，需要立刻关闭流。
@@ -92,6 +97,27 @@ public class TYOOSUtil {
         displayTextInputStream(object.getObjectContent());
     }
 
+    /**
+     * 下载文件并存入byte数组中
+     * @param bucketName
+     * @param key
+     * @throws IOException
+     */
+    public byte[] download(String bucketName,String key,String name) throws IOException {
+        /* 下载 object */
+        log.info("Downloading an object to byte[]");
+            /* 当使用getObject()方法时，需要非常小心。因为返回的S3Object对象包
+            括一个从HTTP连接获得的数据流。底层的HTTP连接不会被关闭，直到用户
+            读完了数据，并关闭了流。因此从S3Object中读取inputStream数据后，需要立刻关闭流。
+            否则会导致客户端连接池用满 */
+        S3Object object = oos.getObject(new GetObjectRequest(bucketName, key));
+        String fileName = key.substring(key.lastIndexOf("/"));
+        S3ObjectInputStream objectContent = object.getObjectContent();
+        byte[] bytes1 = FileUtils.toByteArray(objectContent);
+        displayTextInputStream(object.getObjectContent());
+        return bytes1;
+    }
+
 
     /**
      *  拷贝 object
@@ -104,7 +130,7 @@ public class TYOOSUtil {
         /* 拷贝 object */
 //        String destinationBucketName = "my-copy-oos-bucket";
 //        String destinationKey = "MyCopyKey";
-        System.out.println("Copying an object ,from " + bucketName + "/" + key + " to " + destinationBucketName + "/" + destinationKey);
+        log.info("Copying an object ,from " + bucketName + "/" + key + " to " + destinationBucketName + "/" + destinationKey);
         oos.createBucket(destinationBucketName);
         oos.copyObject(bucketName, key, destinationBucketName, destinationKey);
     }
@@ -121,7 +147,7 @@ public class TYOOSUtil {
     public void downCoped(String bucketName,String key,String destinationKey,String destinationBucketName) throws IOException {
         /* 下载拷贝的 object */
         S3Object object = oos.getObject(new GetObjectRequest(bucketName, key));
-        System.out.println("Downloading the " + destinationKey + " object");
+        log.info("Downloading the " + destinationKey + " object");
         object = oos.getObject(new GetObjectRequest(destinationBucketName, destinationKey));
         System.out.println("Content-Type: " + object.getObjectMetadata().getContentType());
         System.out.println("Content:");
@@ -134,12 +160,12 @@ public class TYOOSUtil {
      * @param bucketName        桶名称
      * @param filePre           文件前缀
      */
-    public  ObjectListing listObj(String bucketName,String filePre){
+    public ObjectListing listObj(String bucketName,String filePre){
         /* 列出 bucket 中的 object，支 prefix,delimiter,marker,max-keys 等选项 */
         if(filePre == null){
             filePre = "";
         }
-        System.out.println("Listing objects");
+        log.info("Listing objects");
         ObjectListing objectListing = oos.listObjects(new ListObjectsRequest().withBucketName(bucketName).withPrefix(filePre));
 //        for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
 //            System.out.println(objectSummary.getBucketName()+" - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")");
@@ -147,15 +173,17 @@ public class TYOOSUtil {
        return objectListing;
     }
 
+
     /**
      * 批量下载 bucket 中的 object
      * @param bucketName        桶名称
      * @param filePre           文件前缀
      */
     public  void listDownLoad(String bucketName,String filePre){
+        log.info("listDownLoad....bucketName:"+bucketName+",,filePre:"+filePre);
         ObjectListing objectListing = listObj(bucketName,filePre);
         for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-            System.out.println(objectSummary.getBucketName()+" - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")");
+            log.info(objectSummary.getBucketName()+" - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")");
             try {
                 download(objectSummary.getBucketName(),objectSummary.getKey());
             } catch (IOException e) {
@@ -164,6 +192,29 @@ public class TYOOSUtil {
         }
         System.out.println();
     }
+
+    /**
+     * 批量下载 bucket 中的 object
+     * @param bucketName        桶名称
+     * @param filePre           文件前缀
+     */
+    public Map<String,byte[]> listDownLoad(String bucketName, String filePre, String name){
+        log.info("listDownLoad.To..Map...bucketName:"+bucketName+",,filePre:"+filePre);
+        ObjectListing objectListing = listObj(bucketName,filePre);
+        Map<String,byte[]> objs = new HashMap<>();
+        for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+            log.info(objectSummary.getBucketName()+" - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")");
+            try {
+                byte[] names = download(objectSummary.getBucketName(), objectSummary.getKey(), "name");
+                objs.put(objectSummary.getKey(),names);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return objs;
+    }
+
+
 
 
     /**
@@ -224,7 +275,7 @@ public class TYOOSUtil {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         while (true) {
             String line = reader.readLine();
-            if (line == null) break;
+            if (line == null) {break;}
             System.out.println("    " + line);
         } /* 需要在这里关闭InputStream，原因参见getObject处 */
         input.close();
