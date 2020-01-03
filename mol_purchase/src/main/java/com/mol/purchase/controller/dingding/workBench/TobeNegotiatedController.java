@@ -312,9 +312,14 @@ public class TobeNegotiatedController {
      * @return
      */
     @RequestMapping(value = "/getBigDate",method = RequestMethod.GET)
-    public ServiceResult getBigDate(String supplierId,String pkMaterialId){
-        log.info("查询大数据 供应商id"+supplierId+",物料id"+pkMaterialId);
-        Ucharts u=negotiatedService.getBigData(supplierId,pkMaterialId);
+    public ServiceResult getBigDate(String supplierId,String pkMaterialId,String purId){
+        String time="";
+        log.info("查询大数据 参数 ===> 供应商id:"+supplierId+",物料id"+pkMaterialId+",订单id："+purId);
+        List<FyQuote> quoteList=negotiatedService.findQuoteByPurIdAndSupplierId(supplierId,purId);
+        if (quoteList!= null && quoteList.size()>0){
+            time = quoteList.get(0).getCreationtime();
+        }
+        Ucharts u=negotiatedService.getBigData(supplierId,pkMaterialId,time);
         return ServiceResult.success(u);
     }
 

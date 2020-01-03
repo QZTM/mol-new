@@ -44,6 +44,7 @@
         WHERE
             fq.pk_material_id =#{pkMaterialId}
             and fq.pk_supplier_id=#{supplierId}
+            AND fq.creationtime &lt; #{time}
         ORDER BY
             fq.creationtime ASC
     </select>

@@ -122,7 +122,22 @@ public class ThirdPlatformController {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-            return "forward:/index/selectOne?id="+purId;
+
+            //根据订单id查询订单状态
+            fyPurchase pur=platformService.findPurById(purId);
+            // 由订单状态判断跳转的具体页面
+            if(pur!=null){
+                if (Integer.parseInt(pur.getStatus())==OrderStatus.waitingQuote){
+                    //报价 /index/selectOne?id
+                    return "forward:/index/selectOne?id="+purId;
+                }
+                if (Integer.parseInt(pur.getStatus())==OrderStatus.pass || Integer.parseInt(pur.getStatus())==OrderStatus.refuse){
+                    //通过或淘汰 /sche/getScheduleOne?id
+                    return "forward:/sche/getScheduleOne?id="+purId;
+                }
+            }
+
+
         }
         Object salesmanObj = session.getAttribute("user");
         if(salesmanObj == null){

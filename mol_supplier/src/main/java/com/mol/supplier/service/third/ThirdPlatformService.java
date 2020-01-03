@@ -534,4 +534,12 @@ public class ThirdPlatformService {
         t.setPkSupplier(pkSupplier);
         return bdSupplierMapper.selectOne(t);
     }
+
+    public fyPurchase findPurById(String purId) {
+        if (purId!=null){
+            return fyPurchaseMapper.findOneById(purId);
+        }else {
+            return null;
+        }
+    }
 }

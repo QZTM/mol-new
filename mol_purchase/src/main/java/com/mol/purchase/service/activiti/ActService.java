@@ -540,7 +540,7 @@ public class ActService {
         return quoteMapper.selectOne(t);
     }
 
-    public SupplierSalesman findSupplierById(String supplierSalesmanId) {
+    public SupplierSalesman findSupplierSalemanById(String supplierSalesmanId) {
         SupplierSalesman t=new SupplierSalesman();
         t.setId(supplierSalesmanId);
         return supplierSalesmanMapper.selectOne(t);
@@ -671,7 +671,8 @@ public class ActService {
             List<SupplierSalesman> saleManList=new ArrayList<>();
             for (String s : supplierSet) {
                 FyQuote quo=findQuoteById(s);
-                SupplierSalesman salesman =findSupplierById(quo.getSupplierSalesmanId());
+                //查询报价人员
+                SupplierSalesman salesman =findSupplierSalemanById(quo.getSupplierSalesmanId());
                 saleManList.add(salesman);
             }
             //发通知
@@ -689,6 +690,8 @@ public class ActService {
                     nm.setToken(supplierClient.getToken());
                     nm.setUserList(salesman.getDdUserId());
                     nm.setTitle(notificationTitlePass);
+                    nm.setPurId(purId);
+                    nm.setMessageToPlatform(2);
                     OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
                     log.info("钉钉给报价人员："+salesman.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
                     //发送短信通知
@@ -727,6 +730,8 @@ public class ActService {
                 nm.setToken(supplierClient.getToken());
                 nm.setUserList(sm.getDdUserId());
                 nm.setTitle(notificationTitleRefuse);
+                nm.setPurId(purId);
+                nm.setMessageToPlatform(2);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
                 log.info("钉钉给报价人员："+sm.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
                 //发送短信通知
@@ -751,6 +756,7 @@ public class ActService {
             nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
             nm.setContent(notificationContant);
             nm.setImage(image);
+//            nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
             nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
             nm.setText("摩尔易购");
             nm.setToAllUser(false);

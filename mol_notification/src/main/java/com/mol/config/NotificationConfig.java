@@ -23,6 +23,16 @@ public class NotificationConfig {
 
     //小程序首页地址
     public static final String PURCHASE_APP="eapp://pages/purchase/purchase";
+    //小程序进度详情页地址(采购)
+    public static final String 进度详情页_PURCHASE_APP="eapp://pages/scheduleRepair/scheduleDetail/scheduleDetail";
+    //小程序议价详情页地址(议价开始)
+    public static final String 议价开始详情页_PURCHASE_APP="eapp://pages/purchase/workbench/negotiatedPrice/negotiatedPrice";
+    //小程序议价详情页地址(议价结束)
+    public static final String 议价结束详情页_PURCHASE_APP="eapp://pages/purchase/workbench/completeBargainingList/completeBargaining/completeBargaining";
+    //小程序审批详情页地址(审批开始)
+    public static final String 审批开始详情页_PURCHASE_APP="eapp://pages/purchase/workbench/tobeapproved/tobeapprovedDetail/tobeapprovedDetail";
+    //小程序审批详情页地址(审批结束)
+    public static final String 审批结束详情页_PURCHASE_APP="eapp://pages/purchase/workbench/approved/approvedDetail/approvedDetail";
     //供应商首页地址
     public static final String SUPPLIER_APP="http://"+ Constant.getInstance().getSupplierDomain() +"/index/findAll";
     //专家端首页地址

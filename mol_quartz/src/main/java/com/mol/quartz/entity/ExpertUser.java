@@ -33,5 +33,7 @@ public class ExpertUser {
     private String work_life;//           varchar(200) null comment '工作年限',
     private String mar_id;//              varchar(200) null comment '认证的物料类型id',
     private String id_number;
+    private String alipayUserId;
+
 
 }
