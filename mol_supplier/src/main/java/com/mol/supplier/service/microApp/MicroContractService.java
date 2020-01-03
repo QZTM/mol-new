@@ -17,8 +17,8 @@ public class MicroContractService {
     private MicroContractMapper microContractMapper;
 
 
-    public List<Map> getPurchaseAndContractList(String salesmanId){
-        return microContractMapper.selectPurchaseAndContractList(salesmanId);
+    public List<Map> getPurchaseAndContractList(Map paraMap){
+        return microContractMapper.selectPurchaseAndContractList(paraMap);
     }
 
 

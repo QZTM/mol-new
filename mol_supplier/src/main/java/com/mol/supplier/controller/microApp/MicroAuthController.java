@@ -119,14 +119,9 @@ public class MicroAuthController {
      */
     @RequestMapping("/attr/{authType}")
     public String showAuthPage(@PathVariable String authType, HttpSession session, Model model) {
-        //todo 获取最新的供应商状态
         String pageName = "";
-        System.out.println("authType:");
-        System.out.println(authType);
+        log.info("供应商性质认证---/auth/attr/"+authType);
         Supplier supplierOld = microUserService.getSupplierFromSession(session);
-        if (supplierOld == null) {
-            throw new RuntimeException("请先注册后再试");
-        }
         Supplier supplier = microSupplierMapper.selectByPrimaryKey(supplierOld);
         session.setAttribute("supplier",supplier);
         //获取行业类别（物料分类的第一级）
@@ -164,7 +159,7 @@ public class MicroAuthController {
             /**
              * 如果已经认证过了基础供应商，且未在其他状态，那么显示认证页面2，如果没有认证过基础供应商，那么显示认证页面1
              */
-            if(supplier.getSupstateNormal() == MicroAttr.SUPSTATE_SUCCESS || supplier.getSupstateStrategy() == MicroAttr.SUPSTATE_BEFORE_CREATE_PAY){
+            if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_SUCCESS.intValue() || supplier.getSupstateStrategy().intValue() == MicroAttr.SUPSTATE_BEFORE_CREATE_PAY){
                 pageName = "authenticate_zhanlve2";
             }else{
                 pageName = "authenticate_zhanlve";
@@ -179,20 +174,20 @@ public class MicroAuthController {
             }
         } else if ("danyi".equals(authType)) {
             model.addAttribute("pagenametitlefront", "单一");
-                if(supplier.getSupstateSingle() == MicroAttr.SUPSTATE_LOADING){
+                if(supplier.getSupstateSingle().intValue() == MicroAttr.SUPSTATE_LOADING){
                     pageName = "authenticate_shenhe";
                     return pageName;
-                }else if(supplier.getSupstateSingle() == MicroAttr.SUPSTATE_FAIL){
+                }else if(supplier.getSupstateSingle().intValue() == MicroAttr.SUPSTATE_FAIL){
                     pageName = "authenticate_update_danyi";
                     return pageName;
-                }else if(supplier.getSupstateSingle() == MicroAttr.SUPSTATE_SUCCESS){
+                }else if(supplier.getSupstateSingle().intValue() == MicroAttr.SUPSTATE_SUCCESS){
                     pageName = "authenticate_success";
                     return pageName;
                 }
             /**
              * 如果已经认证过了基础供应商，且未在其他状态，那么显示认证页面2，如果没有认证过基础供应商，那么显示认证页面1
              */
-            if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_SUCCESS.intValue() || supplier.getSupstateSingle().intValue() == MicroAttr.SUPSTATE_BEFORE_CREATE_PAY.intValue()){
+            if(supplier.getSupstateNormal().intValue() == MicroAttr.SUPSTATE_SUCCESS || supplier.getSupstateSingle().intValue() == MicroAttr.SUPSTATE_BEFORE_CREATE_PAY){
                 pageName = "authenticate_danyi2";
             }else{
                 pageName = "authenticate_danyi";
@@ -205,7 +200,7 @@ public class MicroAuthController {
             }
         }
         model.addAttribute("payed",paySuccessed);
-        System.out.println("finally.....pageName:"+pageName);
+        log.info("供应商性质认证，，，最终跳转的页面名称为："+ pageName);
         return pageName;
     }
 
@@ -218,19 +213,19 @@ public class MicroAuthController {
     public String showAuthDetail(String suppliertype,Model model){
 
         List<BdMarbasclass> bdMarbasclassList = bdMarbasclassMapper.findMarbasFirstList();
-        log.info("获取到的物料分类第一级list.size:"+bdMarbasclassList.size());
+        log.info("查看详情页面----获取到的物料分类第一级list.size:"+bdMarbasclassList.size());
         model.addAttribute("itemTypeList",bdMarbasclassList);
-
         model.addAttribute("pagenametitlefront", suppliertype);
-        log.info("showAuthDetail...suppliertype:"+suppliertype);
+        String finalPageName = "";
         if ("基础".equals(suppliertype)) {
-            return "authenticate_detail_jichu";
+            finalPageName =  "authenticate_detail_jichu";
         }else if("战略".equals(suppliertype)){
-            return "authenticate_detail_zhanlve";
+            finalPageName =  "authenticate_detail_zhanlve";
         }else if("单一".equals(suppliertype)){
-            return "authenticate_detail_danyi";
+            finalPageName =  "authenticate_detail_danyi";
         }
-        return "";
+        log.info("showAuthDetail...suppliertype:"+suppliertype+",,,finalPageName--->"+finalPageName);
+        return finalPageName;
     }
 
 
@@ -245,7 +240,7 @@ public class MicroAuthController {
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @ResponseBody
     public ServiceResult update(@RequestBody Supplier supplier, HttpSession session, HttpServletResponse response) throws IOException {
-            Supplier supplier1 = microUserService.getSupplierFromSession(session);
+        Supplier supplier1 = microUserService.getSupplierFromSession(session);
         System.out.println(supplier);
         supplier.setPkSupplier(supplier1.getPkSupplier());
         try{
@@ -269,9 +264,6 @@ public class MicroAuthController {
     @ResponseBody
     public ServiceResult saveImage(MultipartFile file, String whichImg, HttpSession session) {
         log.info("****供应商认证上传图片****，whichImg:"+whichImg);
-//       for(Object obj:map.keySet()){
-////           System.out.println(obj.toString());
-////       }
         if (file == null) {
             throw new RuntimeException("没有需要保存的图片");
         }
@@ -320,11 +312,11 @@ public class MicroAuthController {
                 }
                 break;
             case Supplier.WHICHIMAGE_SINGLE_protocotl:
-                try {
-                    supplier.setLegalbodyCardBackImg(file.getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    supplier.setLegalbodyCardBackImg(file.getBytes());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 break;
         }
 

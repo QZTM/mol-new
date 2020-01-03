@@ -178,6 +178,7 @@ public class FadadaCallBackController {
     @ResponseBody
     public void sign(@RequestParam Map paraMap){
         log.info("*****法大大手动签署合同异步通知*****");
+        log.info(paraMap.toString());
         //this.handlerParaMapToDb(paraMap);
     }
 
