@@ -173,7 +173,7 @@
                 <supplieragentid>326218884</supplieragentid>
                 <supplierappkey>dingigxguuo5zhpkbq0p</supplierappkey>
                 <supplierappsecret>_nJwAJw53V4LjaufYKEKY5OL1hkqnKxGbCy53CCcxzYW7Slk74i3-e2Jryw3otSt</supplierappsecret>
-                <elasticsearchhostlist>127.0.0.1:9200</elasticsearchhostlist>
+                <elasticsearchhostlist>172.27.185.139:9200</elasticsearchhostlist>
                 <!--专家端微应用配置-->
                 <experthttp>http://</experthttp>
                 <expertip>127.0.0.1</expertip>
@@ -216,9 +216,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <!--*********************************************正式环境1**************************************************-->
         <profile>

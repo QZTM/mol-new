@@ -378,7 +378,7 @@ public class ThirdPlatformController {
     @RequestMapping(value = "/selectOne", method = RequestMethod.GET)
     public String selectOne(String id, ModelMap modelMap, HttpSession session) {
 
-        System.out.println(id);
+        log.info("查看订单详情，订单id："+id);
         fyPurchase purchase = platformService.selectOneById(id);
         purchase=platformService.ToChineseString(purchase);
         //查询报价商家的数量
