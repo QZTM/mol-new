@@ -220,10 +220,15 @@ public class ThirdPlatformService {
 
     //将字段改为中文显示
     public fyPurchase ToChineseString(fyPurchase purchase){
-        purchase = StatusUtils.getStatusIntegerToString(purchase);
-        String supplierNameById = bdSupplierMapper.getSupplierNameById(purchase.getPkSupplier());
-        purchase.setPkSupplier(supplierNameById);
-        return purchase;
+        if(purchase!=null){
+            purchase = StatusUtils.getStatusIntegerToString(purchase);
+            String supplierNameById = bdSupplierMapper.getSupplierNameById(purchase.getPkSupplier());
+            purchase.setPkSupplier(supplierNameById);
+            return purchase;
+        }else {
+            return null;
+        }
+
     }
 
     //获取公司上次该物料的报价
