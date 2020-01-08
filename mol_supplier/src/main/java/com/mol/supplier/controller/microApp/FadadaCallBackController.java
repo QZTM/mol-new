@@ -7,6 +7,7 @@ import com.mol.supplier.entity.MicroApp.PurchaseSupplierContract;
 import com.mol.supplier.mapper.microApp.FadadaAuthRecordMapper;
 import com.mol.supplier.mapper.microApp.FadadaSignResultRecordMapper;
 import com.mol.supplier.mapper.microApp.MicroPurchaseSupplierContractMapper;
+import com.mol.supplier.service.microApp.EContractService;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class FadadaCallBackController {
 
     @Autowired
     private MicroPurchaseSupplierContractMapper microPurchaseSupplierContractMapper;
+
+    @Autowired
+    private EContractService eContractService;
 
     @RequestMapping(value = "/personAuth")
     @ResponseBody
@@ -179,7 +183,7 @@ public class FadadaCallBackController {
     public void sign(@RequestParam Map paraMap){
         log.info("*****法大大手动签署合同异步通知*****");
         log.info(paraMap.toString());
-        //this.handlerParaMapToDb(paraMap);
+        this.handlerParaMapToDb(paraMap);
     }
 
     public void handlerParaMapToDb(Map paraMap){
@@ -196,6 +200,11 @@ public class FadadaCallBackController {
             return ;
         }else if(purchaseSupplierContract1 != null && PurchaseSupplierContract.采购方供应商都已签署.equals(purchaseSupplierContract1.getSignStatus())) {
             //todo:合同归档
+            PurchaseSupplierContract purchaseSupplierContract = new PurchaseSupplierContract();
+            purchaseSupplierContract.setId(purchaseSupplierContract1.getId());
+            purchaseSupplierContract.setSignStatus(PurchaseSupplierContract.合同已归档);
+            eContractService.contractFiling(contractId);
+            microPurchaseSupplierContractMapper.updateByPrimaryKeySelective(purchaseSupplierContract);
         }else {
             if ("3000".equals(resultCode)) {
                 //签章成功：contract_id
@@ -245,7 +254,9 @@ public class FadadaCallBackController {
                     fadadaSignResultRecordMapper.updateByPrimaryKeySelective(srr);
                 }
                 PurchaseSupplierContract purchaseSupplierContract = new PurchaseSupplierContract();
-                purchaseSupplierContract.setSignStatus(PurchaseSupplierContract.采购方供应商都已签署);
+//                purchaseSupplierContract.setSignStatus(PurchaseSupplierContract.采购方供应商都已签署);
+                eContractService.contractFiling(contractId);
+                purchaseSupplierContract.setSignStatus(PurchaseSupplierContract.合同已归档);
                 microPurchaseSupplierContractMapper.updateByExampleSelective(purchaseSupplierContract, example1);
                 //PurchaseSupplierContract purchaseSupplierContract = microPurchaseSupplierContractMapper.selectOneByExample(example1);
 
