@@ -2,9 +2,12 @@ package com.mol.ddmanage.Service;
 
 import com.mol.ddmanage.Ben.Purchase_track_ben;
 import com.mol.ddmanage.Ben.Supplier_Review_ben;
+import com.mol.ddmanage.Ben.Workench.GetNeedQuoteAlertben;
 import com.mol.ddmanage.Ben.Workench.GetProductTypeben;
+import com.mol.ddmanage.Ben.Workench.GethistoryQuotesben;
 import com.mol.ddmanage.Util.DataUtil;
 import com.mol.ddmanage.mapper.GetPurchaseMapper;
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -14,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Log
 public class Get_Purchase_inforService
 {
     @Resource
@@ -178,6 +182,7 @@ public class Get_Purchase_inforService
         Map map=new HashMap();
         try
         {
+           // times="2019-12";
             if (times.equals(""))
             {
                 times=DataUtil.GetNowSytemTime().split("-")[0]+DataUtil.GetNowSytemTime().split("-")[1];
@@ -200,6 +205,7 @@ public class Get_Purchase_inforService
                         Price=Price+Double.valueOf(getProductTypebens.get(n_1).getQuote());
                     }
                 }
+                Prices.add(Price);
             }
             MaterialsType.add("产品采购金额");
             Prices.add("产品采购金额");
@@ -216,6 +222,53 @@ public class Get_Purchase_inforService
         {
 
             return map;
+        }
+    }
+
+   public ArrayList<GetNeedQuoteAlertben> GetQuoteAlertLogic(String time_day)
+    {
+
+
+        ArrayList<GetNeedQuoteAlertben> getNeedQuoteAlertbens=new ArrayList<>();
+        try
+        {
+            if (time_day.equals(""))
+            {
+                time_day=DataUtil.GetNowSytemTime().substring(0,11);
+            }
+             getNeedQuoteAlertbens=get_purchase.GetNeedQuoteAlert(time_day);//获取一定时间内出现的报价异常物料
+             for (int n=0;n<getNeedQuoteAlertbens.size();n++)
+             {
+                 Double Quote_difference=Double.valueOf(getNeedQuoteAlertbens.get(n).getQuote_difference());//获取报价差
+                 Double NeedQuote=Double.valueOf(getNeedQuoteAlertbens.get(n).getLast_quote());//获取上一次报价
+                 String f=String.valueOf((Quote_difference/NeedQuote)*10).substring(0,4);//获取前4位
+                 if (f.substring(f.length()-1,f.length()).equals("."))//判断最后一位是否有小数点
+                 {
+                     f=f.replace(".","");
+                    getNeedQuoteAlertbens.get(n).setFloating_ratio(f+"%");
+                 }
+                 else
+                 {
+                     getNeedQuoteAlertbens.get(n).setFloating_ratio(f);
+                 }
+
+                 ArrayList<GethistoryQuotesben> gethistoryQuotesbens=get_purchase.GethistoryQuotes(getNeedQuoteAlertbens.get(n).getPkMaterialId(),DataUtil.getHistoryTime(180));//获取这个物料最近半年的已成交价格
+                  ArrayList<String> times=new ArrayList<>();//X轴时间字符传
+                  ArrayList<Double> quotes=new ArrayList<>();//物料的历史价格
+                 for (int n_1=0;n_1<gethistoryQuotesbens.size();n_1++)
+                 {
+                     times.add(gethistoryQuotesbens.get(n_1).getTimes());
+                     quotes.add(Double.valueOf(gethistoryQuotesbens.get(n_1).getQuotes()));
+                 }
+                 getNeedQuoteAlertbens.get(n).setQuotes(quotes);
+                 getNeedQuoteAlertbens.get(n).setTimes(times);
+             }
+
+            return getNeedQuoteAlertbens;
+        }
+        catch (Exception e)
+        {
+           return getNeedQuoteAlertbens;
         }
     }
 

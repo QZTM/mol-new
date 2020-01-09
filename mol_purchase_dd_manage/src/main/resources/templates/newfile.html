@@ -72,15 +72,16 @@
       <dd><a id="G2I4" href="javascript:;">采购进度跟踪</a></dd>
       <dd><a id="G2I5" href="javascript:;">采购合同管理</a></dd>
       <dd><a id="G2I6" href="javascript:;">电子合同签署</a></dd>
+      <dd><a id="G2I7" href="javascript:;">发布采购</a></dd>
     </dl>
   </li>
   
   <li class="layui-nav-item">
     <a href="javascript:;">成员管理</a>
     <dl class="layui-nav-child">
-      <dd><a id="G3I1" href="javascript:;">部门管理</a></dd>
+<!--      <dd><a id="G3I1" href="javascript:;">部门管理</a></dd>-->
       <dd><a id="G3I2" href="javascript:;">岗位设置</a></dd>
-      <dd><a id="G3I3" href="javascript:;">员工设置</a></dd>
+<!--      <dd><a id="G3I3" href="javascript:;">员工设置</a></dd>-->
     </dl>
   </li>
 
@@ -292,6 +293,18 @@ layui.use('element', function(){
     {
       active.tabAdd('G2I6_bat_id',"电子合同签署",'<div id="G2I6_form" style="width:100%;height: auto;float:left; display:inline"><iframe style="width:98.8%;height: 800px;" src="/Home/ElectronicContractSigningListPage"></iframe></div>');
       active.tabChange('G2I6_bat_id');
+    }
+  });
+
+  $('#G2I7').on('click', function(){               //采购发布点击事件
+    if(document.getElementById('G2I7_form')!=null)
+    {
+      active.tabChange('G2I7_bat_id');
+    }
+    else
+    {
+      active.tabAdd('G2I7_bat_id',"采购发布",'<div id="G2I7_form" style="width:100%;height: auto;float:left; display:inline"><iframe style="width:98.8%;height: 800px;" src="/Home/PurchaseReleaseListPage"></iframe></div>');
+      active.tabChange('G2I7_bat_id');
     }
   });
 

@@ -2,15 +2,23 @@ package com.mol.ddmanage.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mol.ddmanage.Util.Dingding_Tools;
+import com.mol.ddmanage.Util.HttpCommunication;
 import com.mol.ddmanage.Util.Token_hand;
+import com.mol.ddmanage.mapper.Tools.ApprovalProcessinforMapper;
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 @Service
+@Log
 public class LoginService
 {
+
+    @Resource
+    ApprovalProcessinforMapper processinforMapper;
     public Map LoginService_dingding(Map map, HttpSession session)
     {
 
@@ -28,12 +36,22 @@ public class LoginService
 
             if (userid!=null && userid!="")
             {
+                Map app_userid=processinforMapper.Get_app_user(userid);//获取appuser表
                 String user_infor=Dingding_Tools.Get_User_infor(userid);//获取登录人员详细信息
 
+                session.setAttribute("app_userid",app_userid.get("id").toString());
                 session.setAttribute("token", Token_hand.CreateMyToken(userid));//这里存储的是本地服务器的token
                 session.setAttribute("userid",userid);
                 session.setAttribute("username",JSONObject.parseObject(user_infor).get("name").toString());
+                session.setMaxInactiveInterval(60*60*4);//4小时过期时间
 
+                String str=HttpCommunication.HttpGet("http://139.129.240.48:8080/app/PClogin?dduserid="+userid);
+                log.info(str);
+                JSONObject jsonObject=JSONObject.parseObject(str);
+                String eticket=(JSONObject.parseObject(jsonObject.getString("result"))).getString("eticket");
+                session.setAttribute("eticket",eticket)//获取用于访问采购端的票据
+                ;
+                log.info("eticket:"+eticket);
                 map1.put("name",JSONObject.parseObject(user_infor).get("name").toString());
                 map1.put("rest",true);
 
@@ -46,8 +64,10 @@ public class LoginService
         }
         catch (Exception e)
         {
+            log.info(e.toString());
             map1.put("rest",false);
             return map1;
+
         }
     }
 

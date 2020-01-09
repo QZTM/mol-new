@@ -52,13 +52,6 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/taobao-sdk-java-auto_1479188381469-20190826.jar</systemPath>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.apache.httpcomponents</groupId>-->
-            <!--<artifactId>httpmime</artifactId>-->
-            <!--<version>4.3.2</version>-->
-        <!--</dependency>-->
-
         <!--<dependency>-->
             <!--<groupId>com.mol</groupId>-->
             <!--<artifactId>fadadaapisdk</artifactId>-->
@@ -141,12 +134,11 @@
 
     </dependencies>
     <build>
-        <finalName>mol-purchase-dd-manage-1</finalName>
+        <finalName>mol-manage-1</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>

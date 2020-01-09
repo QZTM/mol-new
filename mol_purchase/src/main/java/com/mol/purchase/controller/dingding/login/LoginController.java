@@ -1,20 +1,10 @@
 package com.mol.purchase.controller.dingding.login;
-import com.dingtalk.api.DefaultDingTalkClient;
-import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiUserListbypageRequest;
-import com.dingtalk.api.request.OapiUserSimplelistRequest;
-import com.dingtalk.api.response.OapiUserListbypageResponse;
-import com.dingtalk.api.response.OapiUserSimplelistResponse;
 import com.mol.purchase.service.dingding.login.LoginService;
 import com.mol.purchase.service.token.TokenService;
-import com.mol.purchase.config.URLConstant;
-import com.mol.purchase.service.dingding.login.LoginService;
-import com.taobao.api.ApiException;
 import entity.ServiceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -50,6 +40,17 @@ public class LoginController {
     @ResponseBody
     public ServiceResult login(@RequestParam(value = "authCode") String requestAuthCode) {
         return loginService.login(requestAuthCode);
+    }
+
+    /**
+     * pc端用户登录
+     * @param dduserid
+     * @return
+     */
+    @RequestMapping(value = "/PClogin", method = RequestMethod.GET)
+    @ResponseBody
+    public ServiceResult PClogin(@RequestParam(value = "dduserid") String dduserid) {
+        return loginService.PClogin(dduserid);
     }
 
     @RequestMapping("/getToken")

@@ -15,7 +15,7 @@ public class JWTInterceptor implements HandlerInterceptor {
         // 允许跨域
         response.setHeader("Access-Control-Allow-Origin", "*");
         // 允许自定义请求头token(允许head跨域)
-        // response.setHeader("Access-Control-Allow-Headers", "token, Accept, Origin, X-Requested-With, Content-Type, Last-Modified");
+         response.setHeader("Access-Control-Allow-Headers", "token,eticket, Accept, Origin, X-Requested-With, Content-Type, Last-Modified");
 
         //后台管理页面产生的token
         String eticket = request.getHeader("eticket");

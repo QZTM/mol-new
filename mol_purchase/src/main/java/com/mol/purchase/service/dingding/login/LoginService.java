@@ -154,6 +154,90 @@ public class LoginService {
         return ServiceResult.success(resultMap);
     }
 
+    public ServiceResult PClogin(String dduserid) {
+        Map resultMap = new HashMap();
+        /*获取access_token*/
+        String accessToken = tokenService.getToken();
+
+        /*根据access_token获取用户信息*/
+      //  String userId = getUserIdByAuthCode(accessToken,requestAuthCode);
+        if(dduserid == null){
+            throw new RuntimeException("获取用户信息失败，请稍后再试");
+        }
+
+        /*根据userId获取用户详情*/
+        OapiUserGetResponse userProfile = getUserProfile(accessToken, dduserid);
+        if(userProfile == null){
+            throw new RuntimeException("获取用户信息失败，请稍后再试");
+        }
+        System.out.println(userProfile.getDepartment().toString());
+        DDUser ddUser = DDEntityChangeUtil.changeOapiUserGetResponseToDDUser(userProfile);
+        resultMap.put("ddUser",ddUser);
+        System.out.println("ddUser:");
+        System.out.println(ddUser);
+
+        DDDept org = new DDDept();
+        DDDept dept = new DDDept();
+        /*根据部门id获取部门信息*/
+        Long deptId = userProfile.getDepartment().get(0);
+        System.out.println(deptId);
+        // 审批里的部门id，1和-1要互相转换一下
+
+        dept = getDeptDetail(deptId);
+        if((deptId+"") == (1L+"")){
+            org = dept;
+        }else{
+            org = getDeptDetail(1L);
+        }
+
+        /*根据企业钉钉验证一下*/
+        Example orgExample = new Example(AppAuthOrg.class);
+        orgExample.and().andEqualTo("orgName",org.getName());
+        List<AppAuthOrg> appAuthOrg = appOrgMapper.selectByExample(orgExample);
+        Map saveResultMap = new HashMap();
+        if(appAuthOrg.size() == 0){
+            //todo: 如需验证注册状态写在这里(暂时写注册的逻辑)
+            saveResultMap = saveOrgAndUser(ddUser,org);
+        }else{
+
+            Example userExample = new Example(AppUser.class);
+            userExample.and().andEqualTo("userName",ddUser.getName());
+            userExample.and().andEqualTo("appAuthOrgId",appAuthOrg.get(0).getId());
+            List<AppUser> appUserlist = appUserMapper.selectByExample(userExample);
+            if(appUserlist.size() == 0){
+                AppUser newAppUser = saveUser(ddUser,appAuthOrg.get(0).getId());
+                appUserlist.add(newAppUser);
+            }
+            saveResultMap.put("user",appUserlist.get(0));
+            saveResultMap.put("org",appAuthOrg.get(0));
+        }
+
+        /*获取部门人员列表*/
+        List<DDUser> usersOfDept = getDeptUsersByDeptId(deptId);
+        System.out.println("org:");
+        System.out.println(org);
+        System.out.println("dept");
+        System.out.println(dept);
+        System.out.println("usersOfDept:");
+        System.out.println();
+        for(DDUser ddUser1:usersOfDept){
+            System.out.println("ddUser1:");
+            System.out.println(ddUser1);
+        }
+        System.out.println();
+        resultMap.put("ddOrg",org);
+        resultMap.put("ddDept", dept);
+        resultMap.put("ddUsersOfDept",usersOfDept);
+        resultMap.putAll(saveResultMap);
+        //生成钉钉E应用与服务端通信的ticket
+        Map claimMap = new HashMap<>();
+        claimMap.put("user", JSONObject.toJSONString(ddUser));
+        //claimMap.put("user",ddUser);
+        String eticket = JWTUtil.createJwt(claimMap,dduserid+userProfile.getName(),-1);
+        resultMap.put("eticket",eticket);
+        return ServiceResult.success(resultMap);
+    }
+
 
     @Transactional(isolation= Isolation.DEFAULT,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public Map saveOrgAndUser(DDUser ddUser,DDDept org){

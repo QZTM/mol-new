@@ -45,8 +45,8 @@ public class Dingding_Tools
 
         DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/gettoken");
         OapiSnsGettokenRequest request = new OapiSnsGettokenRequest();
-        request.setAppid("dingoa95guzn8q0hi2h69z");
-        request.setAppsecret("Gvg-lNJOSZ_q_CsxXJEnZDntE5ivCVKDm8kFiMsckTvMy_yNWvZOhcXZiLPZIEIQ");
+        request.setAppid(Dingding_config.Appid);//dingoa95guzn8q0hi2h69z
+        request.setAppsecret(Dingding_config.Appsecret);//Gvg-lNJOSZ_q_CsxXJEnZDntE5ivCVKDm8kFiMsckTvMy_yNWvZOhcXZiLPZIEIQ
         request.setHttpMethod("GET");
         response = client.execute(request);
         String body = response.getBody();
