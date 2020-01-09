@@ -115,30 +115,41 @@ public class TobeNegotiatedController {
             }
             //查询自己负责议价的订单
             List<fyPurchase> purList=negotiatedService.findFyPurchaseByBuyChannelAndOrgId(buyChnnelList,orgId,pageNum,pageSize);
-            log.info("已议价list  查询自己负责议价的订单"+purList);
+            log.info("已议价list  查询自己负责议价的订单:"+purList.size());
 
             //查询辅助议价的订单
             //查询组织有参与辅助的订单
             List <fyPurchase> npNotNullList=negotiatedService.findFyPurchaseByNegotiatePersonNotNullAndOrgId(orgId);
-            log.info("已议价list  查询组织有参与辅助的订单"+npNotNullList);
+            log.info("已议价list  查询组织有参与辅助的订单:"+npNotNullList.size());
 
             //在上一步的订单中找出userID 参与的订单(方法里判null)
             List <fyPurchase> npNotNullListInnerUserList=negotiatedService.findNegotiatePersonNotNullInnerUser(npNotNullList,userId);
-            log.info("已议价list  在上一步的订单中找出userID 参与的订单"+npNotNullListInnerUserList);
+            log.info("已议价list  在上一步的订单中找出userID 参与的订单:"+npNotNullListInnerUserList.size());
 
-            if (pageNum==1){
-                //第一个页面
-                if (purList.size()==0 || npNotNullListInnerUserList.size()==0){
-                    if (purList.size()>0){
-                        return purList;
-                    }
-                    if (npNotNullListInnerUserList.size()>0){
-                        return npNotNullListInnerUserList;
-                    }
-                }else {
-                    purList.addAll(npNotNullListInnerUserList);
-                    return purList;
-                }
+//            if (pageNum==1){
+//                //第一个页面
+//                if (purList.size()==0 || npNotNullListInnerUserList.size()==0){
+//                    if (purList.size()>0){
+//                        return purList;
+//                    }
+//                    if (npNotNullListInnerUserList.size()>0){
+//                        return npNotNullListInnerUserList;
+//                    }
+//                }else {
+//                    purList.addAll(npNotNullListInnerUserList);
+//                    return purList;
+//                }
+//            }
+
+            if (purList.size()==0){
+                return npNotNullListInnerUserList;
+            }
+            if (npNotNullListInnerUserList.size()==0){
+                return purList;
+            }
+            else {
+               purList.addAll(npNotNullListInnerUserList);
+               return purList;
             }
 
         }else {
@@ -156,7 +167,6 @@ public class TobeNegotiatedController {
 
             return npNotNullListInnerUserList;
         }
-        return new ArrayList<>();
     }
 
     /**
@@ -197,21 +207,28 @@ public class TobeNegotiatedController {
         Map<String, List> quoteMap = negotiatedService.findQuoteById(id);
         map.put("map",quoteMap);
 
-        List<Supplier> supplierList = new ArrayList<>();
+//        List<Supplier> supplierList = new ArrayList<>();
         //查询订单详情表中具体物料选中的具体公司
         List<PurchaseDetail> detailList=negotiatedService.findFyPurchaseDetailById(id);
-        for (PurchaseDetail purchaseDetail : detailList) {//查看是否完成议价
-            if (purchaseDetail.getQuoteId()!=null&&purchaseDetail.getQuoteId()!=""){
-                map.put("detailList",detailList);
-                //查询对应的供应商信息
-                Supplier sl=negotiatedService.findSupplierByQuoteId(purchaseDetail.getQuoteId());
-                supplierList.add(sl);
-                break;
-            }
+//        for (PurchaseDetail purchaseDetail : detailList) {//查看是否完成议价
+//            if (purchaseDetail.getQuoteId()!=null&&purchaseDetail.getQuoteId()!=""){
+//                map.put("detailList",detailList);
+//                //查询对应的供应商信息
+//                Supplier sl=negotiatedService.findSupplierByQuoteId(purchaseDetail.getQuoteId());
+//                supplierList.add(sl);
+//                break;
+//            }
+//        }
+//        map.put("supplier",supplierList);
+//        return map;
+
+        if(detailList!=null && detailList.size()>0){
+            map.put("detailList",detailList);
         }
+        List<FyQuote> quoteList=negotiatedService.findSupplierIdByPurId(pur.getId());
+        List<Supplier> supplierList=negotiatedService.findSupplierByQuoteList(quoteList);
         map.put("supplier",supplierList);
         return map;
-
     }
 
     /**
@@ -295,9 +312,14 @@ public class TobeNegotiatedController {
      * @return
      */
     @RequestMapping(value = "/getBigDate",method = RequestMethod.GET)
-    public ServiceResult getBigDate(String supplierId,String pkMaterialId){
-        log.info("查询大数据 供应商id"+supplierId+",物料id"+pkMaterialId);
-        Ucharts u=negotiatedService.getBigData(supplierId,pkMaterialId);
+    public ServiceResult getBigDate(String supplierId,String pkMaterialId,String purId){
+        String time="";
+        log.info("查询大数据 参数 ===> 供应商id:"+supplierId+",物料id"+pkMaterialId+",订单id："+purId);
+        List<FyQuote> quoteList=negotiatedService.findQuoteByPurIdAndSupplierId(supplierId,purId);
+        if (quoteList!= null && quoteList.size()>0){
+            time = quoteList.get(0).getCreationtime();
+        }
+        Ucharts u=negotiatedService.getBigData(supplierId,pkMaterialId,time);
         return ServiceResult.success(u);
     }
 

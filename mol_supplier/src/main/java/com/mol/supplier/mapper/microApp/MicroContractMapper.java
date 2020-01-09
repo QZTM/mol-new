@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface MicroContractMapper {
-    List<Map> selectPurchaseAndContractList(String salesmanId);
+    List<Map> selectPurchaseAndContractList(Map paraMap);
 }

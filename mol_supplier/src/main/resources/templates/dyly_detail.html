@@ -53,7 +53,7 @@
         <!--			</span></p>-->
         <!--        </div>-->
         <div >
-            <p style="text-align: center;">发布日期:<span style="color: red;" th:text="${pur.createTime}">
+            <p style="text-align: center;">发布日期:<span style="color: red;white-space:nowrap;overflow: auto;" th:text="${pur.createTime}">
 
 			</span></p>
         </div>
@@ -104,16 +104,21 @@
     <div >
         <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
             <tr>
-                <td style="width: 12%">序号</td>
-                <td  style="width: 32%;">名称</td>
-                <td  style="width: 32%;">规格</td>
-                <td style="width: 12%">单位</td>
-                <td style="width: 12%">数量</td>
+<!--                <td style="width: 12%">序号</td>-->
+<!--                <td  style="width: 32%;">名称</td>-->
+<!--                <td  style="width: 32%;">规格</td>-->
+<!--                <td style="width: 12%">单位</td>-->
+<!--                <td style="width: 12%">数量</td>-->
+                <td style="min-width: 33px">序号</td>
+                <td  style="">名称</td>
+                <td  style="">规格</td>
+                <td >单位</td>
+                <td style="min-width: 33px">数量</td>
             </tr>
             <tr th:each="en,f:${purList}">
                 <td th:text="${f.index+1}" style="width: 12%">序号</td>
-                <td th:text="${en.itemName}" style="width: 32%;">名称</td>
-                <td th:text="${en.norms}"  style="width: 32%;">规格</td>
+                <td th:text="${en.itemName}" style="width: 32%;white-space:nowrap;overflow: auto;">名称</td>
+                <td th:text="${en.norms}"  style="width: 32%;white-space:nowrap;overflow: auto;">规格</td>
                 <td th:text="${en.unit}" style="width: 12%">单位</td>
                 <td th:text="${en.count}" style="width: 12%">数量</td>
             </tr>

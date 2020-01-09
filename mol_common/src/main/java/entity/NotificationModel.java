@@ -23,6 +23,38 @@ public class NotificationModel {
     private String userList;//接收者的用户userid列表，最大列表长度：20
     private String title;//消息体的标题
     private String token;
+    private String purId;
+
+    //消息发往那个平台，有订单id时必填
+    //1==purchase
+    //2==supplier
+    //3==expert
+    private Integer messageToPlatform;//
+
+
+    public Integer getMessageToPlatform() {
+        return messageToPlatform;
+    }
+
+    public void setMessageToPlatform(Integer messageToPlatform) {
+        if (messageToPlatform!=null){
+            if (messageToPlatform==1 || messageToPlatform==2 || messageToPlatform==3){
+                this.messageToPlatform=messageToPlatform;
+            }else {
+                this.messageToPlatform=null;
+            }
+        }else {
+            this.messageToPlatform=null;
+        }
+    }
+
+    public String getPurId() {
+        return purId;
+    }
+
+    public void setPurId(String purId) {
+        this.purId = purId;
+    }
 
     public String getMsgType() {
         return msgType;

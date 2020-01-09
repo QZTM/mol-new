@@ -220,18 +220,26 @@ public class ThirdPlatformService {
 
     //将字段改为中文显示
     public fyPurchase ToChineseString(fyPurchase purchase){
-        purchase = StatusUtils.getStatusIntegerToString(purchase);
-        String supplierNameById = bdSupplierMapper.getSupplierNameById(purchase.getPkSupplier());
-        purchase.setPkSupplier(supplierNameById);
-        return purchase;
+        if(purchase!=null){
+            purchase = StatusUtils.getStatusIntegerToString(purchase);
+            String supplierNameById = bdSupplierMapper.getSupplierNameById(purchase.getPkSupplier());
+            purchase.setPkSupplier(supplierNameById);
+            return purchase;
+        }else {
+            return null;
+        }
+
     }
 
     //获取公司上次该物料的报价
     public Double getAvgPrice(String supplierId,String id) {
         Double b =0.00;
-        List<Double> bList =poOrderMapper.getNorigpriceBySupplierIdAndMaterialId(supplierId,id);
-        if (bList != null && bList.size()>0){
-            b=bList.get(0);
+//        List<Double> bList =poOrderMapper.getNorigpriceBySupplierIdAndMaterialId(supplierId,id);
+        List<FyQuote> quoteList=fyQuoteMapper.findPriceBySupplierIdAndMaterialId(supplierId,id);
+        if (quoteList != null && quoteList.size()>0){
+            if (quoteList.get(0).getQuote()!=null){
+                b=Double.parseDouble(quoteList.get(0).getQuote());
+            }
         }
         return b;
     }
@@ -530,5 +538,13 @@ public class ThirdPlatformService {
         Supplier t = new Supplier();
         t.setPkSupplier(pkSupplier);
         return bdSupplierMapper.selectOne(t);
+    }
+
+    public fyPurchase findPurById(String purId) {
+        if (purId!=null){
+            return fyPurchaseMapper.findOneById(purId);
+        }else {
+            return null;
+        }
     }
 }

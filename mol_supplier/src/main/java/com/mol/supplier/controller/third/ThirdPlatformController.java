@@ -1,9 +1,13 @@
 package com.mol.supplier.controller.third;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dingtalk.api.response.OapiDepartmentGetResponse;
+import com.dingtalk.api.response.OapiUserGetResponse;
 import com.mol.supplier.config.BuyChannelResource;
 import com.mol.supplier.config.ContractConfig;
 import com.mol.supplier.config.OrderStatus;
+import com.mol.supplier.entity.MicroApp.DDDept;
 import com.mol.supplier.entity.MicroApp.DDUser;
 import com.mol.supplier.entity.MicroApp.Salesman;
 import com.mol.supplier.entity.MicroApp.Supplier;
@@ -14,6 +18,7 @@ import com.mol.supplier.entity.dingding.purchase.enquiryPurchaseEntity.PurchaseD
 import com.mol.supplier.entity.dingding.solr.fyPurchase;
 import com.mol.supplier.entity.thirdPlatform.*;
 import com.mol.supplier.service.dingding.purchase.EsService;
+import com.mol.supplier.service.microApp.MicroGetDDUserInfoService;
 import com.mol.supplier.service.microApp.MicroUserService;
 import com.mol.supplier.service.third.ScheService;
 import com.mol.supplier.service.third.ThirdPlatformService;
@@ -49,6 +54,9 @@ public class ThirdPlatformController {
     @Autowired
     private ThirdPlatformService platformService;
 
+    @Autowired
+    private MicroGetDDUserInfoService microGetDDUserInfoService;
+
     @Resource
     private EsService esService;
 
@@ -71,13 +79,65 @@ public class ThirdPlatformController {
             session.setAttribute("user",man);
             Supplier su=platformService.findSupplierByOrgId(man.getPkSupplier());
             session.setAttribute("supplier",su);
+
+            /*获取钉钉用户详情：*/
+            OapiUserGetResponse response = microGetDDUserInfoService.getUserDetail(ddId);
+            if (response == null) {
+                throw new RuntimeException("获取用户信息失败");
+            }
+            DDUser ddUser = JSONObject.parseObject(JSONObject.toJSONString(response), DDUser.class);
+            log.info("获取到的用户详情：");
+            log.info(ddUser.toString());
+
+
+            /*获取部门信息*/
+            OapiDepartmentGetResponse departmentGetResponse = microGetDDUserInfoService.getDeptInfo(ddUser.getDepartment().get(0));
+            if (departmentGetResponse == null) {
+                throw new RuntimeException("获取用户部门信息失败");
+            }
+
+            OapiDepartmentGetResponse orgGetResponse = microGetDDUserInfoService.getOrgInfo(-99L);
+            if (orgGetResponse == null) {
+                throw new RuntimeException("获取组织信息失败");
+            }
+            DDDept ddDept = JSONObject.parseObject(JSONObject.toJSONString(departmentGetResponse), DDDept.class);
+            log.info("获取到的部门信息：");
+            log.info(ddDept.toString());
+
+            /*获取组织信息*/
+            DDDept org = JSONObject.parseObject(JSONObject.toJSONString(orgGetResponse), DDDept.class);
+            log.info("获取到的企业信息：");
+            log.info(org.toString());
+
+            session.setAttribute("ddUser", ddUser);
+            session.setAttribute("ddDept", ddDept);
+            session.setAttribute("ddOrg", org);
+
+
+
+
 //                request.getRequestDispatcher("/index/selectOne?id="+purId).forward(request,res);
 //            try {
 //                res.sendRedirect("http://"+request.getServerName()+"/index/selectOne?id="+purId);
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-            return "forward:/index/selectOne?id="+purId;
+
+            //根据订单id查询订单状态
+            fyPurchase pur=platformService.findPurById(purId);
+            // 由订单状态判断跳转的具体页面
+            if(pur!=null){
+                if (Integer.parseInt(pur.getStatus())==OrderStatus.waitingQuote){
+                    //报价 /index/selectOne?id
+                    return "forward:/index/selectOne?id="+purId;
+                }
+                if (Integer.parseInt(pur.getStatus())==OrderStatus.pass || Integer.parseInt(pur.getStatus())==OrderStatus.refuse){
+                    //通过或淘汰 /sche/getScheduleOne?id
+                    return "forward:/sche/getScheduleOne?id="+purId;
+                }
+            }
+
+
         }
         Object salesmanObj = session.getAttribute("user");
         if(salesmanObj == null){
@@ -318,7 +378,7 @@ public class ThirdPlatformController {
     @RequestMapping(value = "/selectOne", method = RequestMethod.GET)
     public String selectOne(String id, ModelMap modelMap, HttpSession session) {
 
-        System.out.println(id);
+        log.info("查看订单详情，订单id："+id);
         fyPurchase purchase = platformService.selectOneById(id);
         purchase=platformService.ToChineseString(purchase);
         //查询报价商家的数量
@@ -590,7 +650,9 @@ public class ThirdPlatformController {
             pur.setUnit(purchaseArrayList.get(i).getUnit());
             pur.setNorms(purchaseArrayList.get(i).getNorms());
             //上次价格
-            pur.setAvgPriceHistory(platformService.getAvgPrice(supplierId,id));
+            Double avgPrice = platformService.getAvgPrice(supplierId, purchaseArrayList.get(i).getMaterialId());
+            pur.setAvgPriceHistory(avgPrice);
+            log.info("物品"+pur.getItemName()+"上次报价"+avgPrice);
             purList.add(pur);
         }
         map.addAttribute("purList", purList);

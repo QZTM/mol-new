@@ -47,7 +47,16 @@
         .picker .picker-panel .wheel-wrapper .wheel {
             font-size:14px!important;
         }
-
+        .nor-btn{
+            background-color: #fff;
+            color:#555;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 20px 5%;
+        }
+        .nor-btn:hover{
+            color:#555;
+        }
     </style>
 </head>
 <body>
@@ -179,15 +188,27 @@
     <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="/auth/downZhanlve">上传战略供应商协议</a></li>
     </ul>
-    <div style="width:100%;text-align: center">
-        <div style="width:100%">
-            <img th:src="@{/img/upimg.png}" width="70px" height="70px">
-        </div>
-        <label class="input-group-btn">
-            <input class="file" type="file" onchange="fileSelected(this,'protocolFile')" style="left: -9999px; position: absolute;" id="protocol_file_input"/>
-            <span class="btn btn-default">点击上传</span>
-        </label>
+<!--    <div style="width:100%;text-align: center">-->
+<!--        <div style="width:100%">-->
+<!--            <img th:src="@{/img/upimg.png}" width="70px" height="70px">-->
+<!--        </div>-->
+<!--        <label class="input-group-btn">-->
+<!--            <input class="file" type="file" onchange="fileSelected(this,'protocolFile')" style="left: -9999px; position: absolute;" id="protocol_file_input"/>-->
+<!--            <span class="btn btn-default">点击上传</span>-->
+<!--        </label>-->
+<!--    </div>-->
+</div>
+
+<div class="layui-upload" style="width:100%;padding-left:10px;padding-right:10px;">
+    <!--    <button type="button" class="layui-btn" id="test2" style="margin-left:35%;margin-top:20px;background-color:#fff;border:1px solid #ccc;border-radius: 5px;color:#444">点击上传</button>-->
+    <div style="width:100%;padding-left:10px;padding-right:10px;text-align: center">
+        <button type="button" class="layui-btn nor-btn" id="test2">选择</button>
+        <button type="button" class="layui-btn nor-btn" id="save2">上传</button>
     </div>
+    <blockquote class="layui-elem-quote layui-quote-nm" style="width:100%;border:none;">
+        预览：
+        <div class="layui-upload-list" id="demo2"></div>
+    </blockquote>
 </div>
 <!-- 上传战略供应商协议结束 -->
 <script>
@@ -315,9 +336,182 @@
 <script>
 
     var layer ;
-    layui.use(["layer","form"], function(){
+    layui.use(["layer","form",'upload'], function(){
         layer = layui.layer;
+        var upload = layui.upload;
+
+        //多图片上传
+        upload.render({
+            //绑定元素
+            elem: '#test2'
+            //上传接口
+            ,url: '/file/uploadMany?proType=zhanlve'
+            //允许上传的文件后缀。一般结合 accept 参数类设定。假设 accept 为 file 类型时，
+            // 那么你设置 exts: 'zip|rar|7z' 即代表只允许上传压缩格式的文件。如果 accept 未设定，那么限制的就是图片的文件格式
+            // ,exts: 'gif|jpg|jpeg|png|bmp|png'
+            // 规定打开文件选择框时，筛选出的文件类型，值为用逗号隔开的 MIME 类型列表。如：
+            // acceptMime: 'image/*'（只显示图片文件）
+            // acceptMime: 'image/jpg, image/png'（只显示 jpg 和 png 文件）
+            // 注：该参数为 layui 2.2.6 开始新增
+            ,acceptMime: 'image/*'
+            //设置同时可上传的文件数量，一般配合 multiple 参数出现。注意：该参数为 layui 2.2.3 开始新增
+            ,number: 20
+            //是否允许多文件上传。设置 true即可开启。不支持ie8/9
+            ,multiple: true
+            //是否选完文件后自动上传。如果设定 false，那么需要设置 bindAction 参数来指向一个其它按钮提交上传
+            ,auto: false
+            //设置文件最大可允许上传的大小，单位 KB。不支持ie8/9,0为不限制
+            ,size: 2*1024
+            ,asy: false
+            //指向一个按钮触发上传，一般配合 auto: false 来使用。值为选择器或DOM对象，如：bindAction: '#btn'
+            ,bindAction: "#save2"
+            //设定文件域的字段名
+            ,field: "file"
+
+            // ,choose: function (obj) {
+            //     //选择文件后的回调函数。返回一个object参数在文件被选择后触发，该回调会在 before 回调之前。一般用于非自动上传（即 auto: false ）的场景，比如预览图片等。
+            //     var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+            //     //读取本地文件
+            //     obj.preview(function (index, file, result) {
+            //
+            //         var name = file.name.substr(0,file.name.lastIndexOf("."));
+            //         var suffix = file.name.substr(file.name.lastIndexOf(".")+1);
+            //         var tr = $(['<tr>'
+            //             , '<td class="demo-edit" style="width:30%;white-space: nowrap;overflow: hidden"><div class="layui-table-cell">' + name + '</div></td>'
+            //             , '<td class="table-td">' + suffix + '</td>'
+            //             , '<td class="table-td">等待上传</td>'
+            //             , '<td class="table-td">'
+            //             , '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+            //             , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+            //             , '</td>'
+            //             , '</tr>'].join(''));
+            //
+            //         tr.find('.demo-edit').on('click',function(){
+            //             var e = $(this);
+            //             var o = e.children(".layui-table-cell");
+            //             var d = $('<input class="layui-input layui-table-edit">');
+            //             d[0].value = o.text(), e.find(".layui-table-edit")[0] || e.append(d), d.focus()
+            //             d.blur(function(){
+            //                 var l = $(this);
+            //                 l.siblings('.layui-table-cell').html(this.value);
+            //                 obj.resetFile(index, file, this.value+'.'+suffix);
+            //                 l.remove();
+            //             })
+            //         });
+            //         //单个重传
+            //         tr.find('.demo-reload').on('click', function () {
+            //             obj.upload(index, file);
+            //         });
+            //
+            //         //删除
+            //         tr.find('.demo-delete').on('click', function () {
+            //             delete files[index]; //删除对应的文件
+            //             tr.remove();
+            //             uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+            //         });
+            //
+            //         $(".layui-upload-list").append(tr);
+            //     });
+            // }
+
+            ,choose: function (obj) { //obj参数包含的信息，跟 choose回调完全一致
+                //将每次选择的文件追加到文件队列
+                console.log("choose...event...");
+                files = obj.pushFile();
+                console.log("files:");
+                console.log(files);
+                //layer.load(); //上传loading
+                obj.preview(function (index, file, result) {
+                    console.log("file:");
+                    console.log(file);
+                    file.name=index;
+                    console.log(file.name);
+                    console.log(file.size);
+                    $(".layui-upload-list").append('<img src="' + result + '" id="remove_' + index + '" style="width:100%;height:auto;">');
+                    $('#remove_' + index).bind('dblclick', function () {//双击删除指定预上传图片v
+                        var ind = index;
+
+                        //询问框
+                        var a = layer.confirm('确认要删除该图片吗？', {
+                            btn: ['是','否'] //按钮
+                            ,},function(ind){
+                            console.log("删除图片点击了是，，，ind:"+ind+",index:"+index);
+                            var key = $("#remove_"+index).attr('key');
+                            console.log("key:");
+                            console.log(key);
+                            if(key){
+                                delete files[index];//删除指定图片
+                                $("#remove_"+index).remove();
+                                delFilefromOOs(key,'zhanlve');
+                                alertMsg("删除成功");
+                            }else{
+                                delete files[index];//删除指定图片
+                                $("#remove_"+index).remove();
+                            }
+                            layer.close(ind);
+                        },function(){
+
+                        });
+                    })
+                    //console.log(1, index); //得到文件索引
+                    //console.log(2, file.name); //得到文件对象
+                    //console.log(3, result); //得到文件base64编码，比如图片
+                })
+            }
+            ,before: function(obj){
+                //文件提交上传前的回调。返回一个object参数,在 choose 回调之后、done/error 回调之前触发。返回的参数完全类似 choose 回调。一般用于上传完毕前的loading、图片预览等。
+                //预读本地文件示例，不支持ie8
+                console.log("before...");
+                console.log(obj);
+                // obj.preview(function(index, file, result){
+                //     $('#demo2').append('<img src="'+ result +'" alt="'+ file.name +'" id="img_"' + index +' class="layui-upload-img" style="width:100%;padding:none;">')
+                // });
+            }
+            ,progress: function(n){
+                var percent = n + '%' //获取进度百分比
+                element.progress('demo', percent); //可配合 layui 进度条元素使用
+            }
+            ,done: function(res, index, upload){
+
+                var item = this.item;
+                console.log(item); //获取当前触发上传的元素，layui 2.1.0 新增
+                if(res.message == '上传成功'){
+                    $("#remove_"+index).attr('key',res.result);
+                    delete files[index]
+                }else{
+                    $("#remove_"+index).remove();
+                }
+            }
+            ,allDone: function(obj){
+                //上传完毕回调
+                if(obj.aborted == 0){
+                    alertMsg("上传成功！");
+                }
+
+            }
+            ,error:function(res){
+                //请求异常回调
+            }
+        });
     });
+
+    function delFilefromOOs(key,proType){
+        return new Promise(function(resolve, reject){
+            $.ajax({
+                url: '/file/oosdel',
+                data:{'filename':key,'proType':proType},
+                type: 'get',
+                dataType: 'post',
+                success:function(res){
+                    //hideLoading();
+                    resolve(res);
+                    console.log(res);
+                },fail:function(res){
+                    reject(res);
+                }
+            })
+        })
+    }
 
     /*仿刷新：检测是否存在cookie*/
     if($.cookie("captcha")){
@@ -412,6 +606,25 @@
             }
         })
 
+        //获取oos上的供应商协议图片：
+        $.ajax({
+            url: '/down/proImages',
+            data: {'proType':'zhanlve'},
+            type: 'get',
+            dataType: 'json',
+            success: function(res){
+                var imgList = res.result;
+                for(var key in imgList){
+                    var pointIndex = key.indexOf(".");
+                    var keyname = key.substring(0,pointIndex);
+                    $(".layui-upload-list").append('<img src="data:image/png;base64,'   + imgList[key] + '" key="'+key+'" id="remove_' + keyname + '" ondblclick="delOosImg(this)" style="width:100%;height:auto;">');
+                }
+            }
+        })
+
+
+
+
         //转换图片二进制位base64
         //营业执照图片：
         var bussiness_img_blob = [[${session.supplier.businessLicenceImg}]];
@@ -478,7 +691,20 @@
 
     })
 
+    function delOosImg(e){
+        var obj = $(e);
+        var key = obj.attr('key');
+        layer.confirm('确认要删除该图片吗？', {
+            btn: ['是','否'] //按钮
+            ,},function(ind){
+            obj.remove();
+            delFilefromOOs(key,'zhanlve');
+            alertMsg("删除成功");
+            layer.close(ind);
+        },function(){
 
+        });
+    }
 
 
 

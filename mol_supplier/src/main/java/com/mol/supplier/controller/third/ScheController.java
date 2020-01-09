@@ -13,10 +13,12 @@ import com.mol.supplier.service.microApp.MicroUserService;
 import com.mol.supplier.service.third.ScheService;
 import com.mol.supplier.service.third.ThirdPlatformService;
 import com.mol.supplier.util.StatusScheUtils;
+import entity.ServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import util.BigDecimalUtils;
@@ -75,6 +77,31 @@ public class ScheController {
         return "schedule";
     }
 
+    @GetMapping("/findPass")
+    public String  getPassList(String status_first,int pageNum,int pageSize,HttpSession session,ModelMap map){
+        String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
+        List<FyQuote> quoteList=scheService.getList(supplierId,status_first,pageNum,pageSize);
+        List<fyPurchase> purList=scheService.getPurListByPurIdList(quoteList);
+        //如果订单状态是通过或者拒绝，查询报价表的状态来表示订单状态
+        purList=scheService.findFyquoteStatusByPurId(purList,status_first);
+//        purList=scheService.changeStatusToChinese(purList);
+        map.addAttribute("list",purList);
+        map.addAttribute("status",status_first);
+        map.addAttribute("pageindex","schedule");
+        return "schedule";
+    }
+    @GetMapping("/findNot")
+    public String  getNotList(String status_first,int pageNum,int pageSize,HttpSession session,ModelMap map){
+        String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
+        List<FyQuote> quoteList=scheService.findNotList(supplierId,status_first,pageNum,pageSize);
+        List<fyPurchase> purList=scheService.getPurListByPurIdList(quoteList);
+        purList=scheService.findFyquoteStatusByPurId(purList,status_first);
+
+        map.addAttribute("list",purList);
+        map.addAttribute("status",status_first);
+        map.addAttribute("pageindex","schedule");
+        return "schedule";
+    }
     /**
      * 进度详情页
      * @param id
@@ -83,14 +110,28 @@ public class ScheController {
      */
     @RequestMapping(value = "/getScheduleOne",method = RequestMethod.GET)
     public String getScheduleOne(String id, ModelMap modelMap, HttpSession session, HttpServletRequest request){
-        String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
+          String supplierId = microUserService.getUserFromSession(session).getPkSupplier();
 
         fyPurchase purchase=scheService.selectOneById(id);
-
 
         //查询订单相关报价
         List<FyQuote> quoteList=scheService.findQuoteById(id,supplierId);
 
+
+        //如果状态是7或者8，
+        if(OrderStatus.pass.equals(Integer.parseInt(purchase.getStatus())) || OrderStatus.refuse.equals(Integer.parseInt(purchase.getStatus()))){
+            int count =0;
+            for (FyQuote quote : quoteList) {
+                if (Integer.parseInt(quote.getApprovalOverStatus())==OrderStatus.QUOTE_REFUSE){
+                    count++;
+                }
+            }
+            if (count==quoteList.size()){
+                purchase.setStatus("淘汰");
+            }
+        }
+
+        purchase= scheService.toChineses(purchase);
         //--------------------------------
         //查询报价商家的数量
         String quoteCounts = purchase.getQuoteCounts();

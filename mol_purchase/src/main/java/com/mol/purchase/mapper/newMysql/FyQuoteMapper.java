@@ -38,7 +38,17 @@ public interface FyQuoteMapper extends BaseMapper<FyQuote> {
 
     List<FyQuote> findSupplierIdListByPurId(String id);
 
-    List<BigDataStar> getBigDataBySuppliedAndpkMaterialId(String supplierId,String pkMaterialId);
+    List<BigDataStar> getBigDataBySuppliedAndpkMaterialId(String supplierId,String pkMaterialId,String time);
 
     List<FyQuote> findQuteByPurIdAndIdNotEuqal(@Param("id") String purId,@Param("list") Set<String> supplierSet);
+
+    int updataApprovalOverRefuse(String quoteStatus, String time, String quoteStatusUesdOrNo, String purId);
+
+    int updataApprovalOver(String quoteStatus, String time, String quoteStatusUesdOrNo, String purId, String materId, String supplierId);
+
+    void updataApprovalStatusEnableByPurId(String purId, String time, String quoteStatusUesdOrNo);
+
+    void updataApprovalOverStatusAndTimeAndEnableByPurId(String quoteStatus, String time, String quoteStatusUesdOrNo);
+
+    List<FyQuote> findFyQuoteByPurid(String purId);
 }

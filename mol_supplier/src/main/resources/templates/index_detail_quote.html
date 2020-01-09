@@ -41,7 +41,7 @@
             /* placeholder颜色  */
             color: #aab2bd;
             /* placeholder字体大小  */
-            font-size: 12px;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -52,27 +52,27 @@
 </div>
 <div>
     <div >
-        <span class="col-xs-1 col-md-1 bor" style="font-size: 12px"></span>
-        <span class="col-xs-2 col-md-2 bor" style="font-size: 12px">名称</span>
-        <span class="col-xs-2 col-md-2 bor" style="font-size: 12px">规格</span>
-        <span class="col-xs-2 col-md-2 bor" style="font-size: 12px">数量</span>
-        <span class="col-xs-3 col-md-3 bor" style="font-size: 12px">报价</span>
-        <span class="col-xs-2 col-md-2 bor" style="font-size: 12px">总计</span>
+        <span class="col-xs-1 col-md-1 bor" style="font-size: 10px"></span>
+        <span class="col-xs-2 col-md-2 bor" style="font-size: 10px">名称</span>
+        <span class="col-xs-2 col-md-2 bor" style="font-size: 10px">规格</span>
+        <span class="col-xs-2 col-md-2 bor" style="font-size: 10px">数量</span>
+        <span class="col-xs-3 col-md-3 bor" style="font-size: 10px">报价</span>
+        <span class="col-xs-2 col-md-2 bor" style="font-size: 10px">总计</span>
     </div>
 </div>
 <div >
     <!--    <form action="/index/getQuoteFromForm" method="post" id="form1" onsubmit="return checkForm(this.id)">-->
-    <form id="form1"  name="form1" onsubmit="return false" >
-        <div th:each="er,in:${purList}" style="height: 40px;clear: both" class="each">
-            <span class="col-xs-1 col-md-1 bor"  th:text="${in.index}+1" >1</span>
-            <span class="col-xs-2 col-md-2 bor"  th:text="${er.itemName}" style="font-size: 10px">名称</span>
-            <span class="col-xs-2 col-md-2 bor"  th:text="${er.norms}" style="font-size: 12px">规格</span>
+    <form id="form1"  name="form1" onsubmit="return false" style="font-size: 10px" >
+        <div th:each="er,in:${purList}" style="height: 40px;clear: both;" class="each">
+            <span class="col-xs-1 col-md-1 bor"  th:text="${in.index}+1"  >1</span>
+            <span class="col-xs-2 col-md-2 bor"  th:text="${er.itemName}" style=" white-space:nowrap;overflow: auto; ">名称</span>
+            <span class="col-xs-2 col-md-2 bor"  th:text="${er.norms}" style=" white-space:nowrap;overflow: auto; ">规格</span>
             <!--            数量-->
-            <span class="col-xs-2 col-md-2 bor" ><input  th:value="${er.count}" readonly="readonly" th:id="co+${in.index}" style="width: 100%;outline: snow;border: none;"/></span>
+            <span class="col-xs-2 col-md-2 bor" ><input  th:value="${er.count}" readonly="readonly" th:id="co+${in.index}" style="width: 100%;outline: snow;border: none;text-align: center"/></span>
             <!--            报价-->
-            <span class="col-xs-3 col-md-3 bor"><input class="capital" th:name="${'quotes['+in.index+'].quote'}"  th:id="in+${in.index}" style="width: 100%;border: none;"  onblur="inputBlur(this.id)"  onclick="clic(this.id)" value="请输入"/></span>
+            <span class="col-xs-3 col-md-3 bor"><input class="capital" th:name="${'quotes['+in.index+'].quote'}"  th:id="in+${in.index}" style="width: 100%;border: none;font-size: 10px"  onblur="inputBlur(this.id)"  onclick="clic(this.id)" value="请输入"/></span>
             <!--            总计-->
-            <span class="col-xs-2 col-md-2 bor"  style="font-size: 12px" th:id="sum+${in.index}"></span>
+            <span class="col-xs-2 col-md-2 bor"  style="font-size: 10px" th:id="sum+${in.index}"></span>
             <!--            id-->
             <input type="hidden" th:id="id+${in.index}" th:name="${'quotes['+in.index+'].pkMaterialId'}"  th:value="${er.materialId}" style="clear: both;float: left;height: 1px;"/>
             <!--物品id-->

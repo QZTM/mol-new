@@ -59,8 +59,8 @@
             <p style="color: red;">已报价商家:<span th:text="${quoteCount}" style="color: black;"></span></p>
 
         </span>
-        <span style="float: right;width: 46%;text-align: center" >
-            <p style="color: red;">&nbsp;发布日期:<span th:text="${pur.createTime}" style="color: black;"></span></p>
+        <span style="float: right;width: 55%;text-align: right;padding-right: 10px" >
+            <p style="color: red;">&nbsp;发布日期:<span th:text="${pur.createTime}" style="color: black;white-space:nowrap;overflow: auto; "></span></p>
         </span>
     </div>
     <!--产品名称结束-->
@@ -109,16 +109,22 @@
     <div >
         <table class="table table-hover" style="border-bottom: 1px solid #dddddd;text-align: center;font-size: 12px">
             <tr>
-                <td style="width: 12%">序号</td>
-                <td  style="width: 30%;">名称</td>
-                <td  style="width: 30%;">规格</td>
-                <td style="width: 14%">单位</td>
-                <td style="width: 14%">数量</td>
+<!--                <td style="width: 12%">序号</td>-->
+<!--                <td  style="width: 30%;">名称</td>-->
+<!--                <td  style="width: 30%;">规格</td>-->
+<!--                <td style="width: 14%">单位</td>-->
+<!--                <td style="width: 14%">数量</td>-->
+
+                <td style="min-width: 33px">序号</td>
+                <td  style="">名称</td>
+                <td  style="">规格</td>
+                <td >单位</td>
+                <td style="min-width: 33px">数量</td>
             </tr>
             <tr th:each="en,f:${purList}">
                 <td th:text="${f.index+1}" style="width: 12%">序号</td>
-                <td th:text="${en.itemName}" style="width: 30%;">名称</td>
-                <td th:text="${en.norms}"  style="width: 30%;">规格</td>
+                <td th:text="${en.itemName}" style="width: 30%;white-space:nowrap;overflow: auto; ">名称</td>
+                <td th:text="${en.norms}"  style="width: 30%;white-space:nowrap;overflow: auto; ">规格</td>
                 <td th:text="${en.unit}" style="width: 16%">单位</td>
                 <td th:text="${en.count}" style="width: 12%">数量</td>
             </tr>

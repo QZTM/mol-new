@@ -36,4 +36,10 @@ public interface FyQuoteMapper extends BaseMapper<FyQuote> {
     List<FyQuote> findPassQuoteByPurId(String id);
 
     int findCountWinningKidSupplierByPurId(String id);
+
+    List<FyQuote> findQuoteBySupplierIdAndApprovalOverStatus(String supplierId, String status);
+
+    List<FyQuote> findPurAllRefuseBySupplierIdAndStatus(String supplierId, String status);
+
+    List<FyQuote> findPriceBySupplierIdAndMaterialId(String supplierId, String materId);
 }

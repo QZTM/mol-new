@@ -540,7 +540,7 @@ public class ActService {
         return quoteMapper.selectOne(t);
     }
 
-    public SupplierSalesman findSupplierById(String supplierSalesmanId) {
+    public SupplierSalesman findSupplierSalemanById(String supplierSalesmanId) {
         SupplierSalesman t=new SupplierSalesman();
         t.setId(supplierSalesmanId);
         return supplierSalesmanMapper.selectOne(t);
@@ -571,56 +571,89 @@ public class ActService {
 
     //4.专家发通知
     @Async
-    public ListenableFuture<Integer> getExpertSendMessage(List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitle,String notificationContant,String image) {
+    public ListenableFuture<Integer> getExpertSendMessage(String purId,List<PurchaseDetail> detailList,SendMsmHandler sendMsmHandler,XiaoNiuMsmTemplate templateName,String notificationTitlePass,String notificationTitleRefuse,String notificationContantPass,String notificationContantRefuse,String imagePass,String imageRefuse) {
         log.info("给订单推荐专家发送dd通知和短信");
-        if (detailList.get(0)==null){
-            log.info("没有推荐专家，不需要发送dd通知");
-            return new AsyncResult<>(0);
-        }
         Set<String> expetSet = new HashSet<>();
-        for (PurchaseDetail purchaseDetail : detailList) {
-            if(purchaseDetail.getExpertId().length()>0){
-                String[] split = purchaseDetail.getExpertId().split(",");
-                for (String s : split) {
-                    expetSet.add(s);
+
+        if (detailList.get(0)!=null ){
+            log.info("有推荐专家");
+            for (PurchaseDetail purchaseDetail : detailList) {
+                if(purchaseDetail.getExpertId().length()>0){
+                    String[] split = purchaseDetail.getExpertId().split(",");
+                    for (String s : split) {
+                        expetSet.add(s);
+                    }
+                }
+
+            }
+            List <ExpertUser> userList=new ArrayList<>();
+            for (String s : expetSet) {
+                ExpertUser exertUser=findExpertById(s);
+                userList.add(exertUser);
+            }
+            try{
+                for (ExpertUser expertUser : userList) {
+                    //发送钉钉通知
+                    NotificationModel nm = new NotificationModel();
+                    nm.setAgentId(Constant.getInstance().getExpertAgentId());
+                    nm.setContent(notificationContantPass);
+                    nm.setImage(imagePass);
+                    nm.setMessageUrl(NotificationConfig.EXPERT_APP);
+                    nm.setText("摩尔易购");
+                    nm.setToAllUser(false);
+                    nm.setToken(expertClient.getToken());
+                    nm.setUserList(expertUser.getDdId());
+                    nm.setTitle(notificationTitlePass);
+                    OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+
+                    log.info("钉钉给专家："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
+                    //发送短信通知
+                    String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
+                    log.info("钉钉给专家："+expertUser.getId()+"发送短信结果："+s);
+
+                }
+                return new AsyncResult<>(1);
+            }catch (Exception e){
+                e.printStackTrace();
+                return new AsyncResult<>(0);
+            }
+
+        }
+        log.info("查询推荐但是没有被选中的专家，发送通知和消息");
+        List<ExpertRecommend> eReList=expertRecommendMapper.findExpertRecommendByPurIdAndExpertIdNotIn(purId,expetSet);
+        if (eReList!=null && eReList.size()>0){
+            log.info("给没有选中的专家推荐开始");
+
+            List <ExpertUser> userNoChoiceList=new ArrayList<>();
+            for (ExpertRecommend expertRecommend : eReList) {
+                Example t = new Example(ExpertUser.class);
+                t.and().andEqualTo("id",expertRecommend.getExpertId());
+                ExpertUser eu = expertUserMapper.selectOneByExample(t);
+                userNoChoiceList.add(eu);
+            }
+            if (userNoChoiceList.size()>0 && userNoChoiceList!=null){
+                for (ExpertUser expertUser : userNoChoiceList) {
+                    //发送钉钉通知
+                    NotificationModel nm = new NotificationModel();
+                    nm.setAgentId(Constant.getInstance().getExpertAgentId());
+                    nm.setContent(notificationContantRefuse);
+                    nm.setImage(imageRefuse);
+                    nm.setMessageUrl(NotificationConfig.EXPERT_APP);
+                    nm.setText("摩尔易购");
+                    nm.setToAllUser(false);
+                    nm.setToken(expertClient.getToken());
+                    nm.setUserList(expertUser.getDdId());
+                    nm.setTitle(notificationTitleRefuse);
+                    OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
+
+                    log.info("钉钉给专家："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
+                    //发送短信通知
+                    String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
+                    log.info("钉钉给专家："+expertUser.getId()+"发送短信结果："+s);
                 }
             }
-
         }
-        List <ExpertUser> userList=new ArrayList<>();
-        for (String s : expetSet) {
-            ExpertUser exertUser=findExpertById(s);
-            userList.add(exertUser);
-        }
-        try{
-            for (ExpertUser expertUser : userList) {
-                //发送钉钉通知
-//                ServiceResult serviceResult = sendNotificationImp.sendOaFromExpert(expertUser.getId(), Constant.AGENTID_EXPERT, tokenService.getToken());
-//                log.info("钉钉给专家："+expertUser.getId()+"通知发送结果："+serviceResult.getMessage());
-                NotificationModel nm = new NotificationModel();
-                nm.setAgentId(Constant.getInstance().getExpertAgentId());
-                nm.setContent(notificationContant);
-                nm.setImage(image);
-                nm.setMessageUrl(NotificationConfig.EXPERT_APP);
-                nm.setText("摩尔易购");
-                nm.setToAllUser(false);
-                nm.setToken(expertClient.getToken());
-                nm.setUserList(expertUser.getDdId());
-                nm.setTitle(notificationTitle);
-                OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
-
-                log.info("钉钉给专家："+expertUser.getId()+"发送通知结果："+omar+",token:"+expertClient.getToken());
-                //发送短信通知
-                String s =sendMsmHandler.sendMsm(XiaoNiuMsm.SIGNNAME_MEYG, templateName, expertUser.getMobile());
-                log.info("钉钉给专家："+expertUser.getId()+"发送短信结果："+s);
-
-            }
-            return new AsyncResult<>(1);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new AsyncResult<>(0);
-        }
-
+        return null;
     }
 
     //报价人员
@@ -638,7 +671,8 @@ public class ActService {
             List<SupplierSalesman> saleManList=new ArrayList<>();
             for (String s : supplierSet) {
                 FyQuote quo=findQuoteById(s);
-                SupplierSalesman salesman =findSupplierById(quo.getSupplierSalesmanId());
+                //查询报价人员
+                SupplierSalesman salesman =findSupplierSalemanById(quo.getSupplierSalesmanId());
                 saleManList.add(salesman);
             }
             //发通知
@@ -656,6 +690,8 @@ public class ActService {
                     nm.setToken(supplierClient.getToken());
                     nm.setUserList(salesman.getDdUserId());
                     nm.setTitle(notificationTitlePass);
+                    nm.setPurId(purId);
+                    nm.setMessageToPlatform(2);
                     OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
                     log.info("钉钉给报价人员："+salesman.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
                     //发送短信通知
@@ -694,6 +730,8 @@ public class ActService {
                 nm.setToken(supplierClient.getToken());
                 nm.setUserList(sm.getDdUserId());
                 nm.setTitle(notificationTitleRefuse);
+                nm.setPurId(purId);
+                nm.setMessageToPlatform(2);
                 OapiMessageCorpconversationAsyncsendV2Response omar = sendNotificationImp.sendOANotification(nm);
                 log.info("钉钉给报价人员："+sm.getDdUserId()+"发送通知结果："+omar.getMessage()+",token:"+supplierClient.getToken());
                 //发送短信通知
@@ -718,6 +756,7 @@ public class ActService {
             nm.setAgentId(Constant.getInstance().getPurchaseAgentId());
             nm.setContent(notificationContant);
             nm.setImage(image);
+//            nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
             nm.setMessageUrl(NotificationConfig.PURCHASE_APP);
             nm.setText("摩尔易购");
             nm.setToAllUser(false);

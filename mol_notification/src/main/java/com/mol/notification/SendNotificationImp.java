@@ -78,6 +78,7 @@ public class SendNotificationImp implements SendNotification{
         OapiMessageCorpconversationAsyncsendV2Response rsp = null;
         try {
             rsp = client.execute(messageRequest,token);
+            log.info("通知发送结果："+rsp.getMessage()+",token:"+token);
             return ServiceResult.success("发送成功:"+rsp);
         } catch (ApiException e) {
             e.printStackTrace();
@@ -101,6 +102,9 @@ public class SendNotificationImp implements SendNotification{
         log.info("发送邀请供应商报价通知 参数purid:"+purId+",ddId:"+userIdList);
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
+        String messageUrl="http://"+Constant.getInstance().getSupplierDomain()+"/index/findAll?ddId="+userIdList+"&purId="+purId;
+        log.info("邀请供应商报价，拼接的messageUrl:"+messageUrl);
+
         OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
         messageRequest.setUseridList(userIdList);
         messageRequest.setAgentId(agentId);
@@ -108,7 +112,7 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl("http://"+Constant.getInstance().getSupplierDomain()+"/index/findAll?ddId="+userIdList+"&purId="+purId);
+        msg.getOa().setMessageUrl(messageUrl);
         //msg.getOa().setMessageUrl("http://fyycg2.vaiwan.com/index/findAll");
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText("摩尔易购");
@@ -172,8 +176,21 @@ public class SendNotificationImp implements SendNotification{
 
     @Override
     public OapiMessageCorpconversationAsyncsendV2Response sendOANotification(NotificationModel notificationModel) {
-        log.info("这里是调用通知模块的通知方法：传过来的参数为（notificationModel）：");
-        log.info(notificationModel.toString());
+        log.info("发送通知方法，参数："+notificationModel);
+        String messageUrl=notificationModel.getMessageUrl();
+        //判断nm是否带有订单id；  +"/index/findAll?ddId="+userIdList+"&purId="+purId);
+        log.info("判断参数是否有订单id："+notificationModel.getPurId());
+        if (notificationModel.getPurId()!=null){
+            log.info("通知模块，订单id"+notificationModel.getPurId());
+            //前往供应商
+            if (notificationModel.getMessageToPlatform()==2){
+                log.info("发送到供应商端");
+                messageUrl=messageUrl+"?"+"ddId="+notificationModel.getUserList()+"&"+"purId="+notificationModel.getPurId();
+                log.info("拼接的messageUrl:"+messageUrl);
+            }
+
+        }
+
         DingTalkClient client = new DefaultDingTalkClient(URLConstant.MESSAGE_ASYNCSEND);
 
         OapiMessageCorpconversationAsyncsendV2Request messageRequest = new OapiMessageCorpconversationAsyncsendV2Request();
@@ -183,7 +200,7 @@ public class SendNotificationImp implements SendNotification{
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setMessageUrl(notificationModel.getMessageUrl());
+        msg.getOa().setMessageUrl(messageUrl);
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().getHead().setText(notificationModel.getText());
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());

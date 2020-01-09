@@ -46,6 +46,8 @@ public class  ExpertUser {
     private String workLife;
     private String marId;
     private String idNumber;
+    private String alipayUserId;
+
 
     //推荐理由
     @Transient

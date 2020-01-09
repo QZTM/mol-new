@@ -13,7 +13,6 @@
     <link th:href="@{/css/style_common.css}" rel="stylesheet">
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/thirdPage_homePage.css}" rel="stylesheet">
-
     <!-- 公告   -->
     <link th:href="@{/css/jq22.css}" rel="stylesheet">
     <script th:src="@{/js/jq22.js}" type="text/javascript"></script>
@@ -46,7 +45,6 @@
     </a>
 </div>
 <!--轮播图结束-->
-
 <!--公告开始-->
 <!--<div class="page-header" style="padding-bottom:1px;margin:10px 0px 2px">-->
 <!--    <h5>公告： <small>德邦物流采购结果通知</small></h5>-->
@@ -164,7 +162,7 @@
         }else{
             console.log("session中没有user或supplier：");
             <!--获取缓存的变量-->
-            localStorage.clear();
+            //localStorage.clear();
             var localRunEnv = getRunEnv();
             console.log("获取运行环境：runEnv:");
             console.log(localRunEnv);
@@ -177,7 +175,9 @@
                 //getUserAndOrgByEnvWithdd();
             }else if("iphone----dd" == localRunEnv){
                 localRunEnvExl = "这是苹果手机的钉钉运行环境";
-                getUserAndOrgByEnvWithdd();
+                dd.ready(function(){
+                    android_dd_init_action();
+                })
             }else if("android--wx" == localRunEnv){
                 localRunEnvExl = "这是安卓微信运行环境";
                 getUserAndOrgByEnvWithwx();
