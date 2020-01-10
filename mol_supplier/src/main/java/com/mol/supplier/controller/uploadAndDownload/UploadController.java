@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 @Log
 @Controller
 @RequestMapping("/file")
+@CrossOrigin
 public class UploadController {
 
     static final Logger logger = LoggerFactory.getLogger(UploadController.class);

@@ -265,9 +265,4 @@ public class MicroDDLoginController {
         }
         return url;
     }
-
-
-
-
-
 }

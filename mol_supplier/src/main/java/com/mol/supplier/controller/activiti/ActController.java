@@ -27,6 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/ac")
+@CrossOrigin
 public class ActController {
     @Autowired
     ActService actService;
