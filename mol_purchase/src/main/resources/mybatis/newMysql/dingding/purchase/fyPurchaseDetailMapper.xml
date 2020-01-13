@@ -33,4 +33,12 @@
         select  count(a.pk_supplier_id) from (select DISTINCT pk_supplier_id from fy_quote where id in(select quote_id from fy_purchase_detail where fy_purchase_id =#{purId}
         )  )as a
     </select>
+    <update id="updateOneLevelArrivalStatusByPurIdAndQuoteId" parameterType="java.lang.String">
+        UPDATE fy_purchase_detail
+        SET one_level_arrival_status = #{arrivalYes},
+        one_level_arrival_time = #{time}
+        WHERE
+            fy_purchase_id = #{purId}
+            AND quote_id = #{quoteId}
+    </update>
 </mapper>

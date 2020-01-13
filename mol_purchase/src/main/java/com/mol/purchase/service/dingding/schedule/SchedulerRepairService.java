@@ -3,6 +3,7 @@ package com.mol.purchase.service.dingding.schedule;
 import com.github.pagehelper.PageHelper;
 import com.mol.oos.OOSConfig;
 import com.mol.oos.TYOOSUtil;
+import com.mol.purchase.config.OrderStatus;
 import com.mol.purchase.entity.*;
 import com.mol.purchase.entity.activiti.ActHiActinst;
 import com.mol.purchase.entity.activiti.ActHiComment;
@@ -196,7 +197,7 @@ public class SchedulerRepairService {
 
     public List<AppUser> getAppUserByList(List<ActHiActinst> list) {
         List<AppUser> userList=new ArrayList<>();
-        if (list!=null){
+        if (list!=null && list.size()>0){
             for (int i=0;i<list.size();i++){
                 AppUser t=new AppUser();
                 t.setId(list.get(i).getAssignee());
@@ -255,5 +256,42 @@ public class SchedulerRepairService {
             return actHiVarinstMapper.findActHiVarinstByProcInstId(procInstId);
         }
         return null;
+    }
+
+    public List<FyQuote> getQuoteListByPurIdAndSupplier(String purId, String supplier) {
+        if (purId!=null && supplier!=null){
+            Example o = new Example(FyQuote.class);
+            o.and().andEqualTo("fyPurchaseId",purId).andEqualTo("pkSupplierId",supplier);
+            return fyQuoteMapper.selectByExample(o);
+        }else {
+            return new ArrayList<>();
+        }
+
+    }
+
+    public int updatePurchaseDetailOneLevelArrival(String purId, List<FyQuote> quoteList) {
+        if(quoteList!=null && quoteList.size()>0 && purId!=null){
+            for (FyQuote quote : quoteList) {
+                fyPurchaseDetailMapper.updateOneLevelArrivalStatusByPurIdAndQuoteId(purId,quote.getId(), OrderStatus.ARRIVAL_YES+"",TimeUtil.getNow());
+            }
+            return 1;
+        }else {
+            return 0;
+        }
+    }
+
+    public Boolean getPurchaseDetailByPurIdAndQuoteId(String purId, List<FyQuote> quoteList) {
+        if (quoteList!=null && quoteList.size()>0 && purId!=null){
+            for (int i=0;i<quoteList.size();i++){
+                PurchaseDetail pd = fyPurchaseDetailMapper.findPurchaseDetailByPurIdAndQuoteId(purId,quoteList.get(i).getId());
+                if (Integer.parseInt(pd.getOneLevelArrivalStatus())==OrderStatus.ARRIVAL_NOT){
+                    return false;
+                }
+                if(Integer.parseInt(pd.getOneLevelArrivalStatus())==OrderStatus.ARRIVAL_YES && i==quoteList.size()-1){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

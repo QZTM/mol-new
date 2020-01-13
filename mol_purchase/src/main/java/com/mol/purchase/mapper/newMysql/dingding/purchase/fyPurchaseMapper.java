@@ -66,4 +66,6 @@ public interface fyPurchaseMapper extends BaseMapper<fyPurchase> {
     List<fyPurchase> findListByOrgIdAndBuychannelAndStatus(@Param("orgId") String orgId,@Param("status") String status,@Param("statusSecond")String statusSecond, @Param("list") List<String> buyChannelList);
 
     List<fyPurchase> findFyPurchaseByNegotiatePersonNotNullAndOrgId(String orgId);
+
+    List<fyPurchase> findListByOrgIdAndUserIdAndStatus(String orgId, String userId, String status, String status_second);
 }

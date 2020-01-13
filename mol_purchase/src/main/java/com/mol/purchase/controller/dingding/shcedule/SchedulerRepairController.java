@@ -119,7 +119,10 @@ public class SchedulerRepairController {
         log.info("查询订单的审批人员id："+list);
         userList=schedulerRepairService.getAppUserByList(list);
 
-        ActHiVarinst ahv=schedulerRepairService.findActHiVarinstByProcInstId(ahp.getProcInstId());
+        ActHiVarinst ahv=new ActHiVarinst();
+        if (ahp!=null){
+             ahv=schedulerRepairService.findActHiVarinstByProcInstId(ahp.getProcInstId());
+        }
 
         if (userList==null){
             log.info("E应用查看的订单还没有进入审批流程，暂无审批人员");
@@ -230,5 +233,35 @@ public class SchedulerRepairController {
 
         schedulerRepairService.downFromOOSImg(bucket,key);
         return null;
+    }
+
+
+    @PostMapping("/doArrival")
+    public ServiceResult doArrival(String purId,String supplier){
+        log.info("访问确认到货，参数:purId:"+purId+",supplier:"+supplier);
+        if(purId!=null && supplier!=null){
+            //1. 根据订单id + 供应商id  = 报价id
+            List<FyQuote> quoteList=schedulerRepairService.getQuoteListByPurIdAndSupplier(purId,supplier);
+            log.info("查询到quoteList的长度："+quoteList.size());
+            //2.查询是否已经操作过确认到货
+            Boolean arrBoolean=schedulerRepairService.getPurchaseDetailByPurIdAndQuoteId(purId,quoteList);
+            if (arrBoolean){
+                return ServiceResult.successMsg("已经确认收货，无需重复操作！");
+            }
+            //3. 订单id + 报价id = 修改订单详情表状态
+            int i = schedulerRepairService.updatePurchaseDetailOneLevelArrival(purId, quoteList);
+            log.info("修改订单详情表一级到货状态返回值：i="+i);
+            if (i==1){
+                log.info("修改订单详情表一级到货状态成功");
+                return ServiceResult.successMsg("成功！");
+            }else {
+                log.error("修改订单详情表一级到货状态失败");
+                return ServiceResult.failureMsg("提交失败，请稍后重试");
+            }
+        }else {
+            log.error("参数有空值，异常");
+            return ServiceResult.failureMsg("提交失败，请稍后重试");
+        }
+
     }
 }
