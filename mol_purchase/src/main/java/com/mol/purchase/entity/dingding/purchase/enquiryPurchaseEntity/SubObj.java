@@ -11,6 +11,6 @@ public class SubObj {
     //发起人id
     private String staffId;
     //区分加工维修
-    private String type;
+    private String type;//1 加工 2维修
 
 }

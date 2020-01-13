@@ -1,5 +1,11 @@
 package com.mol.ddmanage.config;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class Dingding_config {
     //************星联*************
     //小程序的配置
@@ -10,7 +16,13 @@ public class Dingding_config {
 
     //扫码登录配置
     public static String Appid="dingoa95guzn8q0hi2h69z";
-    public static String Appsecret="Gvg-lNJOSZ_q_CsxXJEnZDntE5ivCVKDm8kFiMsckTvMy_yNWvZOhcXZiLPZIEIQ";*/
+    public static String Appsecret="Gvg-lNJOSZ_q_CsxXJEnZDntE5ivCVKDm8kFiMsckTvMy_yNWvZOhcXZiLPZIEIQ";
+
+    //采购端ip
+    @Getter
+    @Setter
+    @Value("${managepurchaseURL}")
+    public  String PurchaseURL;*/
 
 //***********中科*********
     //小程序的配置
@@ -22,4 +34,9 @@ public class Dingding_config {
     //扫码登录配置
     public static String Appid="dingoastkrhljkkuhnwfuw";
     public static String Appsecret="2pg53rAA5_QdHDkb9u_t2PICKuLo9m2dh9Q_yFqKqm19ZjVW69TUFrRyR2A-dcbI";
+    //采购端ip
+    @Getter
+    @Setter
+    @Value("${managepurchaseURL}")
+    public  String PurchaseURL;
 }

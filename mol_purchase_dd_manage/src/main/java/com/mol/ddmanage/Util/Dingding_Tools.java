@@ -40,7 +40,7 @@ public class Dingding_Tools
 
 
     //获取扫码登录的token
-    public static String getAccessToken() throws ApiException {
+    public static String GetAccessToken() throws ApiException {
         OapiSnsGettokenResponse response = null;
 
         DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/gettoken");

@@ -122,7 +122,16 @@
                 <managehttp>http://</managehttp>
                 <manageip>localhost</manageip>
                 <manageport>8085</manageport>
-                <managedomain>fyycg66.vaiwan.com</managedomain>
+                <managedomain>http://fyycg66.vaiwan.com</managedomain>
+                <managepurchaseURL>http://localhost:8082</managepurchaseURL> <!--采购端url-->
+                <!--后端连接小程序配置-->
+                <managedsmallAppKey>dingpb0ifpcyqnslm7lt</managedsmallAppKey>
+                <managedsmallAppSecret>yk23QrwfOt3w416fNzy2diBakaUuXEi3aliD-K3hlBLQApN_5H2BEKGR6VxULK8W</managedsmallAppSecret>
+                <managedsmallCorpId>ding6ef23b66fc0611a335c2f4657eb6378f</managedsmallCorpId>
+               <!-- 扫码登录配置-->
+                <managedsmallAppid>dingoa95guzn8q0hi2h69z</managedsmallAppid>
+                <managedsmallAppsecret>Gvg-lNJOSZ_q_CsxXJEnZDntE5ivCVKDm8kFiMsckTvMy_yNWvZOhcXZiLPZIEIQ</managedsmallAppsecret>
+
 
                 <!--定时任务端配置-->
                 <quartzip>127.0.0.1</quartzip>
@@ -140,8 +149,18 @@
                 <!--eureka服务器注册地址-->
                 <eurekaserverurl>http://140.249.22.202:8700/eureka/</eurekaserverurl>
                 <!--redis配置-->
-                <redishost>140.249.22.202</redishost>
-                <redisport>6379</redisport>
+                <redis1host>192.168.1.171</redis1host>
+                <redis1port>7000</redis1port>
+                <redis2host>192.168.1.171</redis2host>
+                <redis2port>7001</redis2port>
+                <redis3host>192.168.1.171</redis3host>
+                <redis3port>7002</redis3port>
+                <redis4host>192.168.1.173</redis4host>
+                <redis4port>7003</redis4port>
+                <redis5host>192.168.1.173</redis5host>
+                <redis5port>7004</redis5port>
+                <redis6host>192.168.1.173</redis6host>
+                <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
             <!-- 这里代表默认使用dev环境配置文件 -->
@@ -161,9 +180,9 @@
                 <purchaseport>8082</purchaseport>
                 <purchasedomain>fyycg1.vaiwan.com</purchasedomain>
                 <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
-                <purchaseagentid>341441876</purchaseagentid>
-                <purchaseappkey>ding5befdidbmacp1cfi</purchaseappkey>
-                <purchaseappsecret>QY4yfg50t0VFWuKVvoAaOc3AET5QlN-NkCFGDjPWBhtZ_vyYJi2x2fOw0S36-Vgu</purchaseappsecret>
+                <purchaseagentid>272636313</purchaseagentid>
+                <purchaseappkey>dingihxujkflumjcssad</purchaseappkey>
+                <purchaseappsecret>xkThrr4omCZiswyF1NzlOtl0tfaL5fRMZ5wR8Pe6cUAVmSu08ewxH6p9RW_CHjum</purchaseappsecret>
                 <!--supplier微应用参数-->
                 <supplierhttp>http://</supplierhttp>
                 <supplierip>127.0.0.1</supplierip>
@@ -216,9 +235,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <!--*********************************************正式环境1**************************************************-->
         <profile>
@@ -259,6 +278,15 @@
                 <manageip>172.31.17.88</manageip>
                 <manageport>8085</manageport>
                 <managedomain>http://zj.moleertech.cn:8080</managedomain>
+                <managepurchaseURL>http://139.129.240.48:8080</managepurchaseURL> <!--采购端url-->
+                <!--后端连接小程序配置-->
+                <managedsmallAppKey>ding5zrzeenlcv5mnbll</managedsmallAppKey>
+                <managedsmallAppSecret>4Vbl93MpMSqUjRiZRarRFor2BW3Iu2vj9gChD77bNBShPJNHZ-0niExZk-yZ0uHZ</managedsmallAppSecret>
+                <managedsmallCorpId>ding4d32c63d9a3a6d95</managedsmallCorpId>
+                <!-- 扫码登录配置-->
+                <managedsmallAppid>dingoastkrhljkkuhnwfuw</managedsmallAppid>
+                <managedsmallAppsecret>2pg53rAA5_QdHDkb9u_t2PICKuLo9m2dh9Q_yFqKqm19ZjVW69TUFrRyR2A-dcbI</managedsmallAppsecret>
+
                 <!--定时任务端配置-->
                 <quartzip>172.31.17.89</quartzip>
                 <quartzport>8701</quartzport>
@@ -288,9 +316,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
 
         <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-ly-1YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->

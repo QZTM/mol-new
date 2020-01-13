@@ -21,7 +21,7 @@
             <option value="s5">审批通过</option>
             <option value="s6">驳回</option>
         </select>
-        <button onclick="Addpurchase()" type="button" class="layui-btn" style="float: right;margin-right: 20px"><i class="layui-icon">&#xe608;</i>添加申请</button>
+        <button id="Addpurchases" onclick="Addpurchase()" type="button" class="layui-btn" style="float: right;margin-right: 20px"><i class="layui-icon">&#xe608;</i>添加申请</button>
     </div>
 
     <div style="margin-left: 16px;">
@@ -73,7 +73,7 @@
 </div>
 <!--详情页显示-->
 <div id="Details">
-    <iframe  id="subWin"  style="width: 98.2%;height: 750px;border: none;overflow-x:hidden ;overflow-y: hidden"><!--width: 1670px-->
+    <iframe  id="subWin" name="subWin"  style="width: 98.2%;height: 750px;border: none;overflow-x:hidden ;overflow-y: hidden"><!--width: 1670px-->
 
     </iframe>
 

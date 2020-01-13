@@ -303,7 +303,7 @@ layui.use('element', function(){
     }
     else
     {
-      active.tabAdd('G2I7_bat_id',"采购发布",'<div id="G2I7_form" style="width:100%;height: auto;float:left; display:inline"><iframe style="width:98.8%;height: 800px;" src="/Home/PurchaseReleaseListPage"></iframe></div>');
+      active.tabAdd('G2I7_bat_id',"采购发布",'<div id="G2I7_form" style="width:100%;height: auto;float:left; display:inline"><iframe name="G2I7_iframe" style="width:98.8%;height: 800px;" src="/Home/PurchaseReleaseListPage"></iframe></div>');
       active.tabChange('G2I7_bat_id');
     }
   });
@@ -429,6 +429,8 @@ layui.use('element', function(){
       active.tabChange('G7I3_bat_id');
     }
   });
+
+
 ////Hash地址的定位
 //var layid = location.hash.replace(/^#test=/, '');
 //element.tabChange('test', layid);
@@ -438,6 +440,30 @@ layui.use('element', function(){
 //});
 //
 });
+
+  function G2I7_form(e) //采购发起页面监听事件
+  {
+    document.getElementById("G2I7").click()
+    setTimeout(function(){
+
+      var ifram=document.getElementsByName("G2I7_iframe")[0].contentWindow.document;//获取采购发起列表页面
+      //console.log(ifram)
+      setTimeout(function(){
+        ifram.getElementById("Addpurchases").click()//在采购列表也点击添加采购信息页面
+        var subWin=ifram.getElementsByName("subWin")[0].contentWindow.document//获取采购列表中的ifram
+        setTimeout(function () {
+          console.log(subWin)
+          console.log(subWin.getElementById("selectPurchaseType"))
+
+        },1000)
+      },1000);
+
+    },1000);
+
+
+ //   ifram.getElementById("Addpurchases").click()
+   // window.frames["G2I7_iframe"].document.getElementById("Addpurchases").click()
+  }
 </script> 
 </body>
 </html>
