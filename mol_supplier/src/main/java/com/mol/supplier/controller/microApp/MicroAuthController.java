@@ -70,6 +70,9 @@ public class MicroAuthController {
     @Autowired
     private MicroSalesmanMapper microSalesmanMapper;
 
+    @Autowired
+    private MicroAttr microAttr;
+
     @RequestMapping("/attr")
     public String showAuthChoosePage(HttpSession session) {
         Supplier oldSupplierObj = microUserService.getSupplierFromSession(session);
@@ -88,7 +91,7 @@ public class MicroAuthController {
 
         String pageName = "";
         if ("zhanlve".equals(authType)) {
-            model.addAttribute("cost",0.01);
+            model.addAttribute("cost",microAttr.getPaySupplierZhanlve());
             example.and().andEqualTo("supplierId",supplier.getPkSupplier()).andEqualTo("payFor",PuiSupplierDeposit.ORDER_PAY_FOR_STRATEGY_SUPPLIER_SERVICE);
             PuiSupplierDeposit puiSupplierDepositGet = payMapper.selectOneByExample(example);
             if(puiSupplierDepositGet != null && puiSupplierDepositGet.getStatus().equals(PuiSupplierDeposit.ORDER_STATUS_SUCCESS)){
@@ -96,7 +99,7 @@ public class MicroAuthController {
             }
             pageName = "authenticate_pay_zhanlve";
         }else if("danyi".equals(authType)){
-            model.addAttribute("cost",0.01);
+            model.addAttribute("cost",microAttr.getPaySupplierDanyi());
             example.and().andEqualTo("supplierId",supplier.getPkSupplier()).andEqualTo("payFor",PuiSupplierDeposit.ORDER_PAY_FOR_SINGON_SUPPLIER_SERVICE);
             PuiSupplierDeposit puiSupplierDepositGet = payMapper.selectOneByExample(example);
             if(puiSupplierDepositGet != null && puiSupplierDepositGet.getStatus().equals(PuiSupplierDeposit.ORDER_STATUS_SUCCESS)){

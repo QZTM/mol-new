@@ -46,6 +46,16 @@ public class MicroAttr {
     @Value("${httppotocol}")
     public String http ;
 
+    @Getter
+    @Setter
+    @Value("${paysupplierzhanlve}")
+    public String paySupplierZhanlve;
+
+    @Getter
+    @Setter
+    @Value("${paysupplierdanyi}")
+    public String paySupplierDanyi;
+
     /**
      * 域名
      */

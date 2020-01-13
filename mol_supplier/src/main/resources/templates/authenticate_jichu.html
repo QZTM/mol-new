@@ -322,12 +322,12 @@
 	    });
 	})
 	//验证码
-	var count =60;
+	var count =120;
 	function settime(val){
 		if(count ==0){
 			val.removeAttribute("disabled");
 			val.value="发送验证码";
-			count =60;
+			count =120;
 			return false;
 		}else{
 			val.setAttribute("disabled",true);
