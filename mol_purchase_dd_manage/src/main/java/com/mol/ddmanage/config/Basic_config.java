@@ -16,5 +16,5 @@ public class Basic_config
     @Setter
     @Value("${testurl}")
     public String testurl;
-    public final static String open_id="1202851016954982400";//接入法大大平台用户唯一id1202851016954982400
+    public  static String open_id="";//接入法大大平台用户唯一id1202851016954982400
 }
