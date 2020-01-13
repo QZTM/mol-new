@@ -138,17 +138,21 @@ public class ActService {
      */
     public List<TaskDTO> getHisTask(String assignee, String processId) {
         List<HistoricTaskInstance> list=null;
-        if (assignee == null && processId != null)
+        if (assignee == null && processId != null) {
             list=  historyService.createHistoricTaskInstanceQuery().processInstanceId(processId).list();
-        if(assignee != null && processId == null)
+        }
+        if(assignee != null && processId == null) {
             list= historyService.createHistoricTaskInstanceQuery().taskAssignee(assignee).list();
-        if (assignee != null && processId != null)
+        }
+        if (assignee != null && processId != null) {
             list=historyService.createHistoricTaskInstanceQuery().taskAssignee(assignee).processInstanceId(processId).list();
+        }
 
 
         List<TaskDTO> list1 = new ArrayList<>();
-        for (HistoricTaskInstance task : list)
+        for (HistoricTaskInstance task : list) {
             list1.add(new TaskDTO(task.getId(),task.getName(),task.getProcessInstanceId(),task.getAssignee(),null,task.getCreateTime(),task.getEndTime()));
+        }
         return list1;
     }
 
@@ -161,7 +165,9 @@ public class ActService {
         if(pi!=null){
             return "流程还在执行";
         }
-        else return "流程已结束";
+        else {
+            return "流程已结束";
+        }
     }
 
     /**
@@ -172,8 +178,9 @@ public class ActService {
     public List<TaskDTO> getGroupTask(String assignee) {
         List<Task> list=  taskService.createTaskQuery().taskCandidateUser(assignee).list();
         List<TaskDTO> list1 = new ArrayList<>();
-        for (Task task : list)
+        for (Task task : list) {
             list1.add(new TaskDTO(task.getId(),task.getName(),task.getProcessInstanceId(),task.getAssignee(),null,task.getCreateTime()));
+        }
         return list1;
 
     }

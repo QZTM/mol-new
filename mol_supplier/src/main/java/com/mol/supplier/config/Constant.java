@@ -1,9 +1,5 @@
 package com.mol.supplier.config;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +15,7 @@ public class Constant {
     /**
      * 企业corpid, 需要修改成开发者所在企业
      */
-    public static final String CORP_ID = "ding6ef23b66fc0611a335c2f4657eb6378f";
+    public static final String CORP_ID = "ding4d32c63d9a3a6d95";
     /**
      * 开发者后台->企业自建应用->选择您创建的E应用->查看->AppKey
      */

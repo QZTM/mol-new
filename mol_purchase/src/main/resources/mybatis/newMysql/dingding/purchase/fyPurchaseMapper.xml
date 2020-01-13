@@ -138,4 +138,22 @@
     <select id="findFyPurchaseByNegotiatePersonNotNullAndOrgId" parameterType="java.lang.String" resultType="com.mol.purchase.entity.dingding.solr.fyPurchase">
         SELECT * FROM `fy_purchase` where negotiate_person is not  null and org_id =#{orgId}
     </select>
+
+    <select id="findListByOrgIdAndUserIdAndStatus" parameterType="java.lang.String" resultType="com.mol.purchase.entity.dingding.solr.fyPurchase">
+        SELECT
+            id,
+            buy_channel_id,
+            goods_type,
+            apply_cause,
+            order_number,
+            `status`,
+            create_time
+        FROM
+            fy_purchase
+        WHERE
+            org_id = #{orgId}
+            AND staff_id = #{userId}
+            AND `status` BETWEEN (#{status} )
+            AND ( #{status_second} )
+    </select>
 </mapper>

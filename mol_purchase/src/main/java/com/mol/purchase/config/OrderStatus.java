@@ -73,4 +73,9 @@ public class OrderStatus {
     public static final Integer QUOTE_STATUS_USED=1;
     //否
     public static final Integer QUOTE_STATUS_NOUSERD=0;
+
+    //未到货
+    public static final Integer ARRIVAL_NOT=0;
+    //到货
+    public static final Integer ARRIVAL_YES=1;
 }

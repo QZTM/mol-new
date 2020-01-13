@@ -21,4 +21,6 @@ public interface fyPurchaseDetailMapper extends BaseMapper<PurchaseDetail> {
     PurchaseDetail findPurchaseDetailByPurIdAndQuoteId(String id, String quoteId);
 
     int findPassSupplierOfPassPurByPurId(String id);
+
+    void updateOneLevelArrivalStatusByPurIdAndQuoteId(String purId, String quoteId, String arrivalYes, String time);
 }

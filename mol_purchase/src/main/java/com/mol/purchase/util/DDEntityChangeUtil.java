@@ -71,7 +71,7 @@ public class DDEntityChangeUtil {
 //        ddUser.setJobnumber(user.getJobnumber());
 //        ddUser.setActive(user.getActive());
 //        ddUser.setOrgEmail(user.getOrgEmail());
-//        ddUser.setPosition(user.getPosition());
+        ddUser.setPosition(user.getPosition());
 //        ddUser.setRemark(user.getRemark());
 //        ddUser.setTel(user.getTel());
 //        ddUser.setWorkPlace(user.getWorkPlace());

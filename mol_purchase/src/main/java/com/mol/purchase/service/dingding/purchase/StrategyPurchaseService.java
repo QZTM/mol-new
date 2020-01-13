@@ -135,6 +135,8 @@ public class StrategyPurchaseService {
                 pd.setFyPurchaseId(stObj.getId());
                 pd.setPkMaterial(pur.getMaterialId());
                 pd.setGoodsQuantity(pur.getCount());
+                pd.setOneLevelArrivalStatus(OrderStatus.ARRIVAL_NOT+"");
+                pd.setTwoLevelArrivalStatus(OrderStatus.ARRIVAL_NOT+"");
                 purchaseDetailMapper.insert(pd);
                 System.out.println("--------------"+page_text);
                 //**

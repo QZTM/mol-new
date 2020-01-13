@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/pay/alipay")
 @Controller
 @Log
+@CrossOrigin
 public class MicroAlipayController {
 
 

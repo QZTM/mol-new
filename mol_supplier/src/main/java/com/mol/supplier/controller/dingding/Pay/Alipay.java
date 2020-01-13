@@ -1,10 +1,7 @@
 package com.mol.supplier.controller.dingding.Pay;
 
 import com.mol.supplier.service.dingding.Pay.AlipayService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -13,6 +10,7 @@ import java.util.Map;
 
 @RequestMapping("Alipay")
 @RestController
+@CrossOrigin
 public class Alipay {
     @Resource
     AlipayService alipayService;

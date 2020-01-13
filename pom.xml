@@ -92,9 +92,9 @@
                 <activatedProperties>dev</activatedProperties>
                 <!--purchase小程序参数-->
                 <purchasehttp>http://</purchasehttp>
-                <purchaseip>127.0.0.1</purchaseip>
+                <purchaseip>192.168.1.171</purchaseip>
                 <purchaseport>8082</purchaseport>
-                <purchasedomain>fyycg66.vaiwan.com</purchasedomain>
+                <purchasedomain>purchase.vaiwan.com</purchasedomain>
                 <purchasecorpid>ding6ef23b66fc0611a335c2f57eb6378f</purchasecorpid>
                 <purchaseagentid>330159066</purchaseagentid>
                 <purchaseappkey>dingfps4ilpbxa6wmw0z</purchaseappkey>
@@ -137,7 +137,7 @@
                 <quartzip>127.0.0.1</quartzip>
                 <quartzport>8701</quartzport>
                 <!--数据库配置-->
-  <!--              <dburl>jdbc:mysql://rm-m5e03h5q1182r0o9p9o.mysql.rds.aliyuncs.com:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
+<!--                <dburl>jdbc:mysql://rm-m5e03h5q1182r0o9p9o.mysql.rds.aliyuncs.com:3306/zkfy?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
                 <dbusername>mol</dbusername>
                 <dbpassword>!!mo$l20#19==P+W+D</dbpassword>-->
                 <dburl>jdbc:mysql://140.249.22.202:3306/zkfy_test_1?serverTimezone=UTC&amp;nullCatalogMeansCurrent=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useSSL=false</dburl>
@@ -163,11 +163,10 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-           <!--  这里代表默认使用dev环境配置文件-->
-<!--            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>-->
-
+            <!-- 这里代表默认使用dev环境配置文件 -->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
         </profile>
         <!--##########################################测试环境##################################################-->
         <profile>
@@ -236,9 +235,9 @@
                 <redis6port>7005</redis6port>
                 <redispassword>ald377</redispassword>
             </properties>
-<!--            <activation>
+            <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation>-->
+            </activation>
         </profile>
         <!--*********************************************正式环境1**************************************************-->
         <profile>
@@ -399,5 +398,7 @@
 <!--                            <activeByDefault>true</activeByDefault>-->
 <!--                        </activation>-->
         </profile>
+        <!--LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL个人测试-ly-2YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY-->
+
     </profiles>
 </project>
