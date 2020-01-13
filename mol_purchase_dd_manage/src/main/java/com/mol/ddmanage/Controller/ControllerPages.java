@@ -1,8 +1,10 @@
 package com.mol.ddmanage.Controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.mol.ddmanage.Service.LoginService;
 import com.mol.ddmanage.Service.Office.ReviewBargainingHistoryPageService;
 import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
+import com.mol.ddmanage.Util.HttpCommunication;
 import com.mol.ddmanage.config.Basic_config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,13 @@ public class ControllerPages {
     {
        String sssss=basic_config.getTesturl();
         httpSession.setAttribute("userid","083216482529129838");//083216482529129838
+         String str=HttpCommunication.HttpGet("http://localhost:8082/app/PClogin?dduserid="+"083216482529129838");
+        JSONObject jsonObject=JSONObject.parseObject(str);
+        String eticket=(JSONObject.parseObject(jsonObject.getString("result"))).getString("eticket");
+        httpSession.setAttribute("eticket",eticket);
+
+        httpSession.setAttribute("app_userid","1214088137582743552");
+        httpSession.setMaxInactiveInterval(60*60);
         return "newfile";
     }
 
@@ -154,6 +163,33 @@ public class ControllerPages {
         model.addAttribute("create_time","发布日期:"+map.get("create_time").toString());//创建日期
         model.addAttribute("goods_name",map.get("goods_name").toString());
         return "Office/ElectronicContractSigning/ElectronicContractSigninginforPage";
+    }
+    @RequestMapping("/PurchaseReleaseListPage")//采购发布
+    public String PurchaseReleaseListPage(HttpServletRequest httpServletRequest)
+    {
+/*        HttpSession httpSession=httpServletRequest.getSession();
+        if(verificationPermissionService.VerificationPermissionLogic(httpSession.getAttribute("userid").toString(),"electronicContract"))//查询用户是否有进入这个页面的权限
+        {
+            return "Office/ElectronicContractSigning/ElectronicContractSigningListPage";
+        }
+        else
+        {
+            return "Permission/NotVerificationPage";
+        }*/
+     return "Office/PurchaseRelease/PurchaseReleaseListPage";
+    }
+
+    @RequestMapping("/SelectMaterialPage")//选择物料
+    public String SelectMaterialPage(HttpServletRequest httpServletRequest)
+    {
+
+        return "Office/PurchaseRelease/SelectMaterialPage";
+    }
+
+    @RequestMapping("/PurchaseReleaseEditPage")//采购发布详情
+    public String PurchaseReleaseEditPage(HttpServletRequest httpServletRequest)
+    {
+        return "Office/PurchaseRelease/PurchaseReleaseEditPage";
     }
 
     @RequestMapping("/Purchase_Grogress")//采购进度#

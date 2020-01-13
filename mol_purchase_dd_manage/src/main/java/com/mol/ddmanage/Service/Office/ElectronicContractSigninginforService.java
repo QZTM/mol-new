@@ -39,74 +39,87 @@ public class ElectronicContractSigninginforService
     public ArrayList<ArrayList<PurchasOrderinforben>> GetConfirmSupplierLogic(String PurchasId)
     {
         ArrayList<ArrayList<PurchasOrderinforben>> Orderss=new ArrayList<>();//一个分组
-        ArrayList<PurchasOrderinforben> purchasOrderinforben=electronicContractSigninginforMapper.GetConfirmSupplier(PurchasId);
-
-        Map<String,String> map_corp=new HashMap();
-        for (int n=0;n<purchasOrderinforben.size();n++)//遍历出有多少公司报价
+        try
         {
-            if (purchasOrderinforben.get(n).getCorp_name()!=null)
-            {
-                if (map_corp.get(purchasOrderinforben.get(n).getCorp_name())==null)
-                {
-                    map_corp.put(purchasOrderinforben.get(n).getCorp_name(),purchasOrderinforben.get(n).getCorp_name());
-                }
-            }
-            if (purchasOrderinforben.get(n).getSign_status()!=null)//查看供应商合同状态
-            {
-                if (purchasOrderinforben.get(n).getSign_status().equals("1"))
-                {
-                    purchasOrderinforben.get(n).setSign_status("未签署合同");
-                }
-                else if (purchasOrderinforben.get(n).getSign_status().equals("2"))
-                {
-                    purchasOrderinforben.get(n).setSign_status("等待签署合同");
-                }
-                else if (purchasOrderinforben.get(n).getSign_status().equals("3"))
-                {
-                    purchasOrderinforben.get(n).setSign_status("已签署合同");
-                }
-            }
-            else
-            {
-                purchasOrderinforben.get(n).setSign_status("未上传合同");
-            }
-        }
 
-        for (String value :map_corp.values())//相同公司的报价归为同一组
-        {
+            ArrayList<PurchasOrderinforben> purchasOrderinforben=electronicContractSigninginforMapper.GetConfirmSupplier(PurchasId);
+
+            Map<String,String> map_corp=new HashMap();
+            for (int n=0;n<purchasOrderinforben.size();n++)//遍历出有多少公司报价
+            {
+                if (purchasOrderinforben.get(n).getCorp_name()!=null)
+                {
+                    if (map_corp.get(purchasOrderinforben.get(n).getCorp_name())==null)
+                    {
+                        map_corp.put(purchasOrderinforben.get(n).getCorp_name(),purchasOrderinforben.get(n).getCorp_name());
+                    }
+                }
+                if (purchasOrderinforben.get(n).getSign_status()!=null)//查看供应商合同状态
+                {
+                    if (purchasOrderinforben.get(n).getSign_status().equals("1"))
+                    {
+                        purchasOrderinforben.get(n).setSign_status("未签署合同");
+                    }
+                    else if (purchasOrderinforben.get(n).getSign_status().equals("2"))
+                    {
+                        purchasOrderinforben.get(n).setSign_status("等待签署合同");
+                    }
+                    else if (purchasOrderinforben.get(n).getSign_status().equals("3"))
+                    {
+                        purchasOrderinforben.get(n).setSign_status("已签署合同");
+                    }
+                }
+                else
+                {
+                    purchasOrderinforben.get(n).setSign_status("未上传合同");
+                }
+            }
+
+            for (String value :map_corp.values())//相同公司的报价归为同一组
+            {
+                ArrayList<PurchasOrderinforben> Orders=new ArrayList<>();//一个单列
+                for (int n=0;n< purchasOrderinforben.size();n++)
+                {
+                    if (value.equals(purchasOrderinforben.get(n).getCorp_name()) && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字 并且quote_id不为空代表是已经确定采购这个物品
+                    {
+                        Orders.add(purchasOrderinforben.get(n));
+                    }
+                }
+                if (Orders.size()!=0)
+                {
+                    Orderss.add(Orders);
+                }
+
+            }
+/*
             ArrayList<PurchasOrderinforben> Orders=new ArrayList<>();//一个单列
             for (int n=0;n< purchasOrderinforben.size();n++)
             {
-                if (value.equals(purchasOrderinforben.get(n).getCorp_name()) && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字 并且quote_id不为空代表是已经确定采购这个物品
+                if (purchasOrderinforben.get(n).getCorp_name()==null && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字
                 {
+                    purchasOrderinforben.get(n).setCorp_name("公司名称未知");
                     Orders.add(purchasOrderinforben.get(n));
                 }
             }
-            Orderss.add(Orders);
-        }
-
-        ArrayList<PurchasOrderinforben> Orders=new ArrayList<>();//一个单列
-        for (int n=0;n< purchasOrderinforben.size();n++)
-        {
-            if (purchasOrderinforben.get(n).getCorp_name()==null && purchasOrderinforben.get(n).getQuote_id()!=null)//有公司名字
+            if (Orders.size()!=0)
             {
-                purchasOrderinforben.get(n).setCorp_name("公司名称未知");
-                Orders.add(purchasOrderinforben.get(n));
-            }
-        }
-        if (Orders.size()!=0)
-        {
-            Orderss.add(Orders);
-        }
+                Orderss.add(Orders);
+            }*/
 
-        for (int n=0;n<Orderss.size();n++)//为分组添加序号
-        {
-            for (int n_1=0;n_1<Orderss.get(n).size();n_1++)
+            for (int n=0;n<Orderss.size();n++)//为分组添加序号
             {
-                Orderss.get(n).get(n_1).setNumber(String.valueOf(n_1));
+                for (int n_1=0;n_1<Orderss.get(n).size();n_1++)
+                {
+                    Orderss.get(n).get(n_1).setNumber(String.valueOf(n_1));
+                }
             }
+            return Orderss;
         }
-        return Orderss;
+        catch (Exception e)
+        {
+            log.info(e.toString());
+            return Orderss;
+        }
     }
 
     /**
@@ -194,12 +207,20 @@ public class ElectronicContractSigninginforService
      *  手动签署合同回调
      * @param map
      */
-    public void signContractNotityLogic(Map map)
+    public String signContractNotityLogic(Map map)
     {
-        if ( electronicContractSigninginforMapper.Get_fy_purchase_supplier_contract(map.get("contract_id").toString()).get("sign_status").equals("1"))
-        {
-            electronicContractSigninginforMapper.SignContractNotity(map.get("contract_id").toString(),"2");
+        try {
+            if ( electronicContractSigninginforMapper.Get_fy_purchase_supplier_contract(map.get("contract_id").toString()).get("sign_status").equals("1"))
+            {
+                electronicContractSigninginforMapper.SignContractNotity(map.get("contract_id").toString(),"2");
+            }
+            return "<a>签署合同成功！</a>";
         }
+        catch (Exception e)
+        {
+            return e.toString();
+        }
+
     }
     /**
      *上传合同
@@ -280,14 +301,17 @@ public class ElectronicContractSigninginforService
      */
     public Map signContractLogic(String purchasId,String supplierid)
     {
+
         Map map=new HashMap();
         try
         {
+
             Map map1=electronicContractSigninginforMapper.GetContractId(purchasId,supplierid);//获取
             Map map2= electronicContractSigninginforMapper.GetCustomer_id(Basic_config.open_id);//获取注册记录表
             ServiceResult serviceResult=ContractHandler.extsign(map2.get("customer_id").toString(),String.valueOf(new  IdWorker().nextId()),map1.get("contract_id").toString(),"编写目的", basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity?contract_id="+map1.get("contract_id").toString());//手动签署合同
             map.put("statu",serviceResult.isSuccess());
             map.put("url",serviceResult.getResult());
+            String bbb= basic_config.domain_name +"/ElectronicContractSigninginforController/signContractNotity";//?contract_id="+map1.get("contract_id").toString();
             return map;
         }
         catch (Exception e)

@@ -51,9 +51,9 @@ public class ElectronicContractSigninginforController
     }
 
     @RequestMapping("/signContractNotity")//手动签署合同状态回调
-    public void signContractNotity(@RequestParam Map map)
+    public String signContractNotity(@RequestParam Map map)
     {
-       electronicContractSigninginforService.signContractNotityLogic(map);
+      return electronicContractSigninginforService.signContractNotityLogic(map);
     }
 
     @RequestMapping("/Upload_Contract")//上传合同

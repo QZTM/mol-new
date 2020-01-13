@@ -51,10 +51,10 @@ function getRunEnv(){
 //     4.如果点击去注册，会把数据缓存，然后跳转到注册页面进行注册业务
 //     -->
 /*获取免登授权码*/
-function get_access_code(){
-    console.log("get_access_code()");
+function get_access_code(corpid){
+    console.log("get_access_code()..corpid:"+corpid);
     return dd.runtime.permission.requestAuthCode({
-        corpId: "ding6ef23b66fc0611a335c2f4657eb6378f",
+        corpId: corpid,
         onSuccess: function(result) {
             access_code = result.code;
             console.log("access_code:"+result.code);
@@ -139,12 +139,12 @@ function getOrderInfo(){
 };
 
 /*安卓钉钉初始化*/
-function android_dd_init_action(){
+function android_dd_init_action(corpid){
     console.log("android_dd_init_action")
     //alertMsg("获取用户信息中...请稍后",2000);
     showLoading("获取用户信息中");
     Promise.resolve().then(function(){
-        return  get_access_code();
+        return  get_access_code(corpid);
     }).then(function(a){
         //showLoading();
     }).then(function(){

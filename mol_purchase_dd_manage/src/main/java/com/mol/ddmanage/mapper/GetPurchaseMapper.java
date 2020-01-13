@@ -1,9 +1,11 @@
 package com.mol.ddmanage.mapper;
 
 import com.mol.ddmanage.Ben.App_user_table;
-import com.mol.ddmanage.Ben.Workench.GetProductTypeben;
 import com.mol.ddmanage.Ben.Purchase_track_ben;
 import com.mol.ddmanage.Ben.Supplier_Review_ben;
+import com.mol.ddmanage.Ben.Workench.GetNeedQuoteAlertben;
+import com.mol.ddmanage.Ben.Workench.GetProductTypeben;
+import com.mol.ddmanage.Ben.Workench.GethistoryQuotesben;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,5 +26,10 @@ public interface GetPurchaseMapper {
 
     ArrayList<String> GetMaterialsType();
     ArrayList<GetProductTypeben> GetProductType(String time1,String time2);
+
+   // ArrayList<QuoteAlertben> GetQuoteAlert();
+    ArrayList<GethistoryQuotesben>GethistoryQuotes(String material_id,String time_range);//获取这个物料的历史报价
+    ArrayList<GetNeedQuoteAlertben> GetNeedQuoteAlert(String time_day);//获取最近那些物料报价超过10%
+
 
 }

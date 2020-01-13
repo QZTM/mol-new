@@ -2,6 +2,7 @@ package com.mol.ddmanage.Controller.Workench;
 
 import com.mol.ddmanage.Ben.Purchase_track_ben;
 import com.mol.ddmanage.Ben.Supplier_Review_ben;
+import com.mol.ddmanage.Ben.Workench.GetNeedQuoteAlertben;
 import com.mol.ddmanage.Service.Get_Purchase_inforService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,14 +36,19 @@ public class Home
       return get_purchase_inforService.Get_Supplier_Review_Service();
   }
 
-  @RequestMapping("/GetNewSupplierView")
+  @RequestMapping("/GetNewSupplierView")//获取新增供应商的数据
   public Map GetNewSupplierView(@RequestParam String times)
   {
       return get_purchase_inforService.GetNewSupplierViewLogic(times);
   }
-  @RequestMapping("/GetProductType")
+  @RequestMapping("/GetProductType")//获取单月物品采购金额数据
   public Map GetProductType(@RequestParam String times)
   {
     return  get_purchase_inforService.GetProductTypeLogic(times);
+  }
+  @RequestMapping("/GetQuoteAlert")
+  public ArrayList<GetNeedQuoteAlertben> GetQuoteAlert(@RequestParam String time_day)//获取报价预警
+  {
+         return get_purchase_inforService.GetQuoteAlertLogic(time_day);
   }
 }

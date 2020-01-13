@@ -6,6 +6,7 @@ import com.dingtalk.api.response.OapiDepartmentGetResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.mol.supplier.config.BuyChannelResource;
 import com.mol.supplier.config.ContractConfig;
+import com.mol.supplier.config.MicroAttr;
 import com.mol.supplier.config.OrderStatus;
 import com.mol.supplier.entity.MicroApp.DDDept;
 import com.mol.supplier.entity.MicroApp.DDUser;
@@ -65,6 +66,9 @@ public class ThirdPlatformController {
 
     @Autowired
     private ScheService scheService;
+
+    @Autowired
+    private MicroAttr microAttr;
 
 
     private String htmlName = null;
@@ -197,6 +201,7 @@ public class ThirdPlatformController {
         map.addAttribute("pageName", pageName);
         map.addAttribute("index", true);
         map.addAttribute("pageindex","index");
+        map.addAttribute("corpid",microAttr.getCorpId());
         return "index";
     }
 

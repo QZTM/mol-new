@@ -39,5 +39,53 @@ LEFT JOIN fy_quote ON fy_quote.id=fy_purchase_detail.quote_id
 WHERE fy_purchase.`status`="7" AND #{time2}>create_time and create_time>#{time1}
     </select>
 
+    <select id="GetNeedQuoteAlert" resultType="com.mol.ddmanage.Ben.Workench.GetNeedQuoteAlertben">
+select a.materialId as pkMaterialId,a.purchaseId,a.endTime,a.supplierId,a.supplier_name,a.material_name,a.creationtime,
+(select fq.quote
+from fy_quote fq
+left join fy_purchase fp on fp.id=fq.fy_purchase_id
+left join fy_purchase_detail fpd on fpd.fy_purchase_id=fp.id and fpd.quote_id=fq.id
+where fp.status='7' and pk_material_id= a.materialId
+order by fp.approval_end_time desc limit 0,1) as quote,
+(select fq.quote
+from fy_quote fq
+left join fy_purchase fp on fp.id=fq.fy_purchase_id
+left join fy_purchase_detail fpd on fpd.fy_purchase_id=fp.id and fpd.quote_id=fq.id
+where fp.status='7' and pk_material_id= a.materialId
+order by fp.approval_end_time desc limit 1,1) as last_quote,
+(select fq.quote
+from fy_quote fq
+left join fy_purchase fp on fp.id=fq.fy_purchase_id
+left join fy_purchase_detail fpd on fpd.fy_purchase_id=fp.id and fpd.quote_id=fq.id
+where fp.status='7' and pk_material_id= a.materialId
+order by fp.approval_end_time desc limit 0,1)-
+(select fq.quote
+from fy_quote fq
+left join fy_purchase fp on fp.id=fq.fy_purchase_id
+left join fy_purchase_detail fpd on fpd.fy_purchase_id=fp.id and fpd.quote_id=fq.id
+where fp.status='7' and pk_material_id= a.materialId
+order by fp.approval_end_time desc limit 1,1) as quote_difference
+from
+(select fpd.fy_purchase_id as purchaseId,fpd.pk_material as materialId,fpd.quote_id as quoteId,fp.approval_end_time as endTime,fq.quote as quote,fq.pk_supplier_id as supplierId,bds.name as supplier_name,bdm.name as material_name,fq.creationtime as creationtime,row_number() over(partition by fpd.pk_material order by fp.approval_end_time desc)as rid
+from fy_purchase_detail fpd
+left join fy_purchase fp on fpd.fy_purchase_id = fp.id
+left join fy_quote fq on fq.id=fpd.quote_id and fq.id=fpd.quote_id
+left join bd_supplier bds on bds.pk_supplier = fq.pk_supplier_id
+left join bd_material bdm on bdm.pk_material=fpd.pk_material
+where fp.status = '7' and fp.approval_end_time LIKE #{time_day}
+order by fp.approval_end_time desc) a
+where rid=1
+having NOT(ISNULL(last_quote)) and (quote-last_quote)>(last_quote/10)
+    </select>
+    <select id="GethistoryQuotes" resultType="com.mol.ddmanage.Ben.Workench.GethistoryQuotesben">
+       SELECT (fy_quote.quote)quotes,(fy_quote.creationtime)times
+       FROM fy_quote_payresult
+       LEFT JOIN fy_purchase_detail ON fy_purchase_detail.fy_purchase_id=fy_quote_payresult.purchase_id
+       LEFT JOIN fy_quote ON fy_quote.id=fy_purchase_detail.quote_id
+       WHERE fy_quote_payresult.pay_result="1" AND fy_quote.pk_material_id=#{material_id} AND fy_quote.creationtime>#{time_range}
+       GROUP BY fy_quote.id
+    </select>
+
+
 
 </mapper>

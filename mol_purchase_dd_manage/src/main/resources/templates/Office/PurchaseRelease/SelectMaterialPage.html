@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="/layui/css/layui.css">
+<script src="/echarts.min.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+<body onload="start_landing()">
+
+   <div>
+      <div id="items" style="font-size: 18px;margin: 24px">
+
+      </div>
+   </div>
+   <script src="/layui/layui.all.js"></script>
+<script>
+    function start_landing()
+    {
+        getTypeFirst()
+
+    }
+    function getTypeFirst() //获取第一级分类
+    {
+        $.ajax({
+            type: 'POST',
+            url: 'http://139.129.240.48:8080/item/getTypeFirst',
+            dataType: 'json',
+           // data:{DeparmentId:DeparmentId},
+            // headers:{  'eticket': app.globalData.eticket},
+            success: function (data) 
+            {
+                for (var n=0;n<data.result.length;n++)
+                {
+                    var  items=document.getElementById("items")//获取容器
+                    var item=document.createElement("div");
+                    item.style.margin="6px"
+                    item.innerHTML=
+                  '<div class="ParentsFirst" name="First" style="cursor:pointer">'+
+                        '<p  onclick="getTypeByParentId(this)">'+data.result[n].name+'</p>'+
+                        '<p style="display: none">'+data.result[n].id+'</p>'+
+                  '</div>'+
+                  '<div class="ChildsFirst" style="margin-left: 12px">'+
+
+                   '</div>'
+                    items.appendChild(item);
+                }
+
+            },
+            error: function (data) {
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.msg('获取信息失败！');
+                });
+            }
+        });
+    }
+
+    function getTypeByParentId(e)
+    {
+        var item=e.parentElement
+        //console.log( item.childNodes[1])
+        var id=item.childNodes[1].innerText;
+        var Child=item.parentElement.childNodes[1]
+        //console.log(Child)
+
+        if (Child.childNodes.length>0)
+        {
+            Child.innerHTML=null;
+        }
+        else
+        {
+            $.ajax({
+                type: 'POST',
+                url: 'http://139.129.240.48:8080/item/getTypeByParentId',
+                dataType: 'json',
+                data:{id:id},
+                // headers:{  'eticket': app.globalData.eticket},
+                success: function (data)
+                {
+                    if (data.result.length>0)
+                    {
+                        for (var n=0;n<data.result.length;n++)
+                        {
+                            var  items=Child;//document.getElementById("items")//获取容器
+                            var item=document.createElement("div");
+                            item.style.margin="6px"
+                            item.innerHTML=
+                                '<div class="Parents">'+
+                                '<p onclick="getTypeByParentId(this)" style="cursor:pointer">'+data.result[n].name+'</p>'+
+                                '<p style="display: none">'+data.result[n].id+'</p>'+
+                                '</div>'+
+                                '<div class="Childs" style="margin-left: 12px">'+
+
+                                '</div>'
+                            items.appendChild(item);
+                        }
+                    }
+                    else //拿出这个物料的详情
+                    {
+                        $.ajax({
+                            type: 'POST',
+                            url: 'http://139.129.240.48:8080/item/getItemByTypeId',
+                            dataType: 'json',
+                            data:{id:id},
+                            // headers:{  'eticket': app.globalData.eticket},
+                            success: function (data)
+                            {
+                                    for (var n=0;n<data.result.length;n++)
+                                    {
+                                        for (var n_1=0;n_1<data.result[n].itemList.length;n_1++)
+                                        {
+                                            if (data.result[n].itemList[n_1].materialspec==null)//如果型号为空
+                                            {
+                                                data.result[n].itemList[n_1].materialspec="无"
+                                            }
+                                            var  items=Child;//document.getElementById("items")//获取容器
+                                            var item=document.createElement("div");
+                                            item.style.margin="6px"
+                                            item.innerHTML=
+                                                '<div class="Parents" onclick="Getmaterial(this)" style="margin-top: 4px;cursor:pointer;width: 100%;height: 24px">'+
+                                              //  '<p style="color: darksalmon">'+'名称:'+data.result[n].itemList[n_1].name+'  物料id:'+data.result[n].itemList[n_1].pkMaterial+'  型号:'+data.result[n].itemList[n_1].materialspec+'  单位:'+data.result[n].itemList[n_1].pkMeasdoc+'</p>'+//物料编号
+                                                '<p style="float: left;margin-left: 6px;color: darksalmon">   名称:'+data.result[n].itemList[n_1].name+'</p>'+//名称
+                                                '<p style="float: left;margin-left: 6px;color: darksalmon;display: none">   物料id:'+data.result[n].itemList[n_1].pkMaterial+'</p>'+
+                                                '<p style="float: left;margin-left: 6px;color: darksalmon">  型号:'+data.result[n].itemList[n_1].materialspec+'</p>'+//型号
+                                                '<p style="float: left;margin-left: 6px;color: darksalmon">  单位:'+data.result[n].itemList[n_1].pkMeasdoc+'</p>'+//单位
+                                                '</div>'
+                                            items.appendChild(item);
+                                        }
+                                    }
+
+                            },
+                            error: function (data) {
+                                layui.use('layer', function(){
+                                    var layer = layui.layer;
+                                    layer.msg('获取信息失败！');
+                                });
+                            }
+                        });
+                    }
+
+                },
+                error: function (data) {
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('获取信息失败！');
+                    });
+                }
+            });
+        }
+
+    }
+
+    function Getmaterial(e) //给一个id拿主类属性
+    {
+        var div= e.parentElement
+        var typeName=''
+        while (typeName==='')//获取这个物料的主类名称
+        {
+           // console.log(div.childNodes)
+            if (div.childNodes[0].className=="ParentsFirst")
+            {
+                typeName=div.childNodes[0].childNodes[0].innerText
+                //console.log(div)
+            }
+            {
+                div=div.parentElement
+            }
+        }
+
+        var material=e
+        var name=material.childNodes[0].innerText.split(':')[1]
+        var pkMaterial=material.childNodes[1].innerText.split(':')[1]
+        var materialspec=material.childNodes[2].innerText.split(':')[1]
+        var pkMeasdoc=material.childNodes[3].innerText.split(':')[1]
+        parent.GetMaterial(name,pkMaterial,materialspec,pkMeasdoc,typeName)//调用父类函数把值传走
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    }
+    
+</script>
+</body>
+</html>

@@ -1,12 +1,14 @@
 package com.mol.supplier.controller.third;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@CrossOrigin
 public class ToPage {
 
     @RequestMapping(value = "/toPage",method = RequestMethod.GET)

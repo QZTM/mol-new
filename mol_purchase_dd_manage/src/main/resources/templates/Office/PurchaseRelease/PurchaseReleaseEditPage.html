@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="/layui/css/layui.css">
+<script src="/echarts.min.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+<body onload="Landing_start()">
+<div style="padding: 12px;">
+
+    <div style="width: 100%;height: 50px;font-size: 18px">
+        <div style="float: left; height: 40px;">
+            <a>采购类型:</a>
+            <select style="margin-left: 12px;font-size: 16px;width: 200px; height: 28px;" ><!--width: 120px-->
+                <option value ="s1" >询价采购</option>
+                <option value ="s2">战略采购</option>
+                <option value="s3">单一采购</option>
+                <option value="s4">维修</option>
+                <option value="s5">加工</option>
+            </select>
+        </div>
+        <div style="margin-left: 5%;float: left;height: 40px;">
+            <a>采购名称</a>
+            <input class="inputs" style="margin-left: 12px;width: 200px;" id="titlname" type="text" name="vehicle" value="" />
+        </div>
+    </div>
+
+    <div>
+        <hr class="layui-bg-green">
+    </div>
+    <div style="width: 100%; height:550px;overflow-y:auto;overflow-x: hidden">
+
+     <div style="width: 100%; height:auto">
+
+         <div>
+             <table class="layui-hide" id="test" lay-filter="test"></table>
+         </div>
+
+         <div style="width: 100% ;height: 50px">
+             <button onclick="show_from()" type="button" class="layui-btn" style="float: right;"><i class="layui-icon">&#xe608;</i>添加明细</button>
+         </div>
+     </div>
+        <div>
+            <hr class="layui-bg-green">
+        </div>
+
+        <div style="height: 200px;width: 100%;margin-top: 12px;font-size: 20px">
+            <div style="width: 100%;height: 50px;margin-top: 12px;">
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>截止日期</a>
+                    <div style="margin-left: 12px" class="layui-input-inline">
+                        <input style="width: 200px;" type="text" class="layui-input" id="stopTime" placeholder="选择时间">
+                    </div>
+                </div>
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <p id="deviceNum">设备供应商数:1</p>
+                </div>
+            </div>
+            <div style="width: 100%;height: 50px;margin-top: 12px;">
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>供货周期</a>
+                    <input class="inputs" style="margin-left: 12px;width: 200px;" id="Delivery_cycle" type="text" name="vehicle" value="" />
+                </div>
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>支持电话</a>
+                    <input class="inputs" style="margin-left: 12px;width: 200px;" id="phone" type="text" name="vehicle" value="" />
+                </div>
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>专家评审</a>
+                    <input class="inputs" id="expert" style="margin-left: 12px;" type="checkbox" name="vehicle" value="Bike" />
+                </div>
+            </div>
+            <div style="width: 100%;height: 50px;margin-top: 12px;">
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>支付方式</a>
+                    <select id="payType" style=" margin-left: 12px;width: 200px; height: 30px;" ><!--width: 120px-->
+                        <option value ="s1" >货到付款</option>
+                        <option value ="s2">在线支付</option>
+                    </select>
+                </div>
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>报价商家数</a>
+                    <input class="inputs" style="margin-left: 12px;width: 200px;" id="QuoteSupplierNum" type="text" name="vehicle" value="" />
+                </div>
+                <div style="float: left;height: 50px;margin-left:5%">
+                    <a>电子合同</a>
+                    <input class="inputs" id="electronic" style="margin-left: 12px;" type="checkbox" name="vehicle" value="Bike" />
+                </div>
+            </div>
+
+            <div style="width: 100%;height: auto;margin-top: 12px;">
+                <div style="margin-left: 5%;">
+                    <p>备注:</p>
+                </div>
+                <textarea  id="Remark" cols="2"   rows="6"   style="margin-left: 5%;width:70%;OVERFLOW:   hidden">
+
+                </textarea>
+            </div>
+
+        </div>
+
+    </div>
+    <div>
+        <hr class="layui-bg-green">
+    </div>
+    <div>
+        <div style="width: 50%;height: 60px;margin:  0 auto;margin-top: 36px">
+            <div style="float: left;border-radius: 6px;background-color: #2D93CA;color:#fbfbfb;width: 120px;height:40px;font-size: 24px;text-align: center;cursor:pointer" onclick="Save_form()">
+                <p>保 存</p>
+            </div>
+            <div style="float: right;border-radius: 6px;background-color:#eb7350;color:#fbfbfb;width: 120px;height:40px;font-size: 24px;text-align: center;cursor:pointer" onclick="return_top()">
+                <p>退 出</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+
+<script src="/layui/layui.all.js"></script>
+<script th:inline="javascript">
+
+    function Landing_start()
+    {
+        AddMaterial(null)
+    }
+
+    function  show_from(e)//显示物料窗体
+    {  indexs=e;
+        layer.open({
+            type: 2,
+            area:['900px','600px'],
+            content:"/Home/SelectMaterialPage"
+        });
+    }
+
+     var  purchaseArray=null//存储数据表中的数据json字符串
+     function GetMaterial(name,pkMaterial,materialspec,pkMeasdoc,typeName) //获取弹出框的物料选择信息  名称 物料id 型号 单位 类型
+     {
+        // console.log(name, pkMaterial, materialspec, pkMeasdoc, typeName)
+         var  str=[{"number":0,"typeName":typeName,"itemName":name,"norms":materialspec,"count":"1","unit":pkMeasdoc,"materialId":pkMaterial,"right":"12111"}]
+         if (purchaseArray==null)
+         {
+             purchaseArray=str
+         }
+         else
+         {
+             purchaseArray.push({"number":purchaseArray.length,"typeName":typeName,"itemName":name,"norms":materialspec,"count":"1","unit":pkMeasdoc,"materialId":pkMaterial,"right":"12111"})
+         }
+
+        // tableJsonData.add(str)
+        // console.log(tableJsonData)
+         AddMaterial(purchaseArray)
+     }
+
+    function AddMaterial(data)
+    {
+        layui.use('table', function(){
+            var table = layui.table;
+            var Data=data//[{"number":"BeJson","purchaseType":"http://www.bejson.com","name":true,"materialspec":"12","num":"12","pkMeasdoc":"12","right":"12111"},{"number":"BeJson","purchaseType":"http://www.bejson.com","name":true,"materialspec":"12","num":"12","pkMeasdoc":"12","right":"12111"}]
+
+            table.render({
+                elem: '#test'
+                // ,url:'data.json'//json路径
+                , data:Data
+                //,toolbar: '#toolbarDemo'
+                ,title: '用户数据表'
+                ,cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left'}
+                        ,{field:'number', title:'序号', width:80}
+                        ,{field:'typeName', title:'采购类型', width:220}
+                        ,{field:'itemName', title:'采购名称', width:280}
+                        ,{field:'norms', title:'规格', width:200}
+                        ,{field:'count', title:'数量', width:80,edit: 'text'}
+                        ,{field:'unit', title:'单位', width:150}
+                        ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+                    ]
+                ]
+                ,limit:10
+                ,page: true
+            });
+
+            //头工具栏事件
+            table.on('toolbar(test)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch(obj.event){
+                    case 'getCheckData':
+                        var data = checkStatus.data;
+                        layer.alert(JSON.stringify(data));
+                        break;
+                    case 'getCheckLength':
+                        var data = checkStatus.data;
+                        layer.msg('选中了：'+ data.length + ' 个');
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选': '未全选');
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                //console.log(obj)
+                if(obj.event === 'del'){
+                    layer.confirm('真的删除行么', function(index){
+                        purchaseArray.splice(obj.data.number,1)//移除对应的元素
+                        //console.log(tableJsonData)
+                        obj.del();
+                        layer.close(index);
+                    });
+                }
+                else if(obj.event === 'edit')
+                {
+                    layer.prompt({
+                        formType: 2
+                        ,value: data.email
+                    }, function(value, index){
+                        obj.update({
+                            email: value
+                        });
+                        layer.close(index);
+                    });
+                   // console.log(obj.data())
+                }
+            });
+
+        });
+    }
+
+    function  Save_form()
+    {
+        if (confirm("确定要提交表单吗？"))
+        {
+           // File_upload("domeform")
+
+            console.log(purchaseArray)
+            var pageArray={}; //表单内容
+            pageArray["applyCause"]=document.getElementById("titlname").value //标题
+            pageArray["purchaseArray"]=purchaseArray//采购物料
+            pageArray["quoteSellerNum"]=parseInt(document.getElementById("QuoteSupplierNum").value.toString())//报价供应商
+            pageArray["remarks"]=document.getElementById("Remark").value//备注
+            pageArray["deadLine"]=document.getElementById("stopTime").value//截止日期
+            pageArray["supplyCycle"]=document.getElementById("Delivery_cycle").value//供货周期
+            pageArray["payMent"]=document.getElementById("payType")[document.getElementById("payType").selectedIndex].text//付款方式
+            pageArray["technicalSupportTelephone"]=document.getElementById("phone").value//手机号
+            pageArray["expertReview"]=document.getElementById("expert").checked//是否启用专家
+            pageArray["electronicContract"]=document.getElementById("electronic").checked//是否启用电子合同
+
+            var obj={}
+            obj["pageArray"]=pageArray
+            obj["orgId"]="1214829912799408128"
+            obj["staffId"]=[[${session.app_userid}]]
+            obj["type"]=null
+
+
+            obj=JSON.stringify(obj)
+            console.log("eticket："+[[${session.eticket}]])
+
+
+            var eticket=[[${session.eticket}]];
+                //,characterName:document.getElementById("characterName").value   http://localhost:8082
+            $.ajax({
+                type: 'POST',
+                url: 'http://139.129.240.48:8080/shopping/start',
+                dataType: 'json',
+                data:obj,
+                headers:{
+                    'Content-type':'application/json',
+            'eticket':eticket
+                 },
+                success: function (data)
+                {
+                },
+                error: function (data) {
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        layer.msg('提交失败！');
+                    });
+                }
+            });
+        }
+    }
+
+    function return_top()//返回上一层
+    {
+        if (confirm("退出后数据将不会保存！"))
+        {
+            parent.close_Details_page();
+        }
+    }
+
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //日期时间选择器
+        laydate.render({
+            elem: '#stopTime'
+            ,type: 'datetime'
+        });
+    });
+
+</script>
+
+</body>
+</html>

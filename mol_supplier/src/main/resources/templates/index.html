@@ -148,6 +148,7 @@
         //从session获取用户信息：
         var user = [[${session.user}]];
         var supplier = [[${session.supplier}]];
+        var corpid = [[${corpid}]];
         console.log("user:");
         console.log(user);
         console.log("supplier:");
@@ -162,7 +163,7 @@
         }else{
             console.log("session中没有user或supplier：");
             <!--获取缓存的变量-->
-            //localStorage.clear();
+            localStorage.clear();
             var localRunEnv = getRunEnv();
             console.log("获取运行环境：runEnv:");
             console.log(localRunEnv);
@@ -170,13 +171,13 @@
             if("android----dd" == localRunEnv){
                 localRunEnvExl = "这是安卓手机的钉钉运行环境";
                 dd.ready(function(){
-                    android_dd_init_action();
+                    android_dd_init_action(corpid);
                 })
                 //getUserAndOrgByEnvWithdd();
             }else if("iphone----dd" == localRunEnv){
                 localRunEnvExl = "这是苹果手机的钉钉运行环境";
                 dd.ready(function(){
-                    android_dd_init_action();
+                    android_dd_init_action(corpid);
                 })
             }else if("android--wx" == localRunEnv){
                 localRunEnvExl = "这是安卓微信运行环境";

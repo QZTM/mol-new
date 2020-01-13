@@ -4,7 +4,6 @@ import com.mol.cache.CacheHandle;
 import com.mol.oos.TYOOSUtil;
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -15,8 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import util.IdWorker;
-
-import static com.mol.fadada.handler.RecordDbHandler.*;
 
 @EnableScheduling
 @EnableAsync
