@@ -73,7 +73,7 @@ public class StrategyPurController {
         }
 
         //添加定时任务：
-        quartzClient.addquoteendjobwithendtime(stobj.getId(),stobj.getDeadLine());
+        //quartzClient.addquoteendjobwithendtime(stobj.getId(),stobj.getDeadLine());
         //所属行业供应商
         List<Supplier> list=strategyPurchaseService.findSupplierByPur(stobj);
         if (list.size()>0 && list!=null){

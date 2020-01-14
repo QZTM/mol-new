@@ -6,7 +6,6 @@ import com.mol.ddmanage.Service.Office.ReviewBargainingHistoryPageService;
 import com.mol.ddmanage.Service.Permission.VerificationPermissionService;
 import com.mol.ddmanage.Util.HttpCommunication;
 import com.mol.ddmanage.config.Basic_config;
-import com.mol.ddmanage.config.Dingding_config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +24,6 @@ public class ControllerPages {
 
     @Autowired
     Basic_config basic_config;
-    @Autowired
-    Dingding_config dingding_config;
     @Resource
     VerificationPermissionService verificationPermissionService;//验证访问人权限
     @Autowired
@@ -40,13 +37,13 @@ public class ControllerPages {
     @RequestMapping("/new_file")//测试首页框架
     public String new_file(@RequestParam Map map , HttpSession httpSession)
     {
+       String sssss=basic_config.getTesturl();
         httpSession.setAttribute("userid","083216482529129838");//083216482529129838
-         String str=HttpCommunication.HttpGet(dingding_config.PurchaseURL +"/app/PClogin?dduserid="+"083216482529129838");
-        JSONObject jsonObject= JSONObject.parseObject(str);
+         String str=HttpCommunication.HttpGet("http://localhost:8082/app/PClogin?dduserid="+"083216482529129838");
+        JSONObject jsonObject=JSONObject.parseObject(str);
         String eticket=(JSONObject.parseObject(jsonObject.getString("result"))).getString("eticket");
         httpSession.setAttribute("eticket",eticket);
 
-        httpSession.setAttribute("PurchaseURL",dingding_config.PurchaseURL);
         httpSession.setAttribute("app_userid","1214088137582743552");
         httpSession.setMaxInactiveInterval(60*60);
         return "newfile";

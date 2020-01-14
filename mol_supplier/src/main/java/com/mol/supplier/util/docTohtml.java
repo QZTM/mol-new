@@ -61,10 +61,12 @@ public class docTohtml {
             ioe.printStackTrace();
         } finally {
             try {
-                if (bw != null)
+                if (bw != null) {
                     bw.close();
-                if (fos != null)
+                }
+                if (fos != null) {
                     fos.close();
+                }
             } catch (IOException ie) {
             }
         }

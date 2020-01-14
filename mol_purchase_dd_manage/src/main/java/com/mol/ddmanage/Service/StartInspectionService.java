@@ -1,7 +1,6 @@
 package com.mol.ddmanage.Service;
 
 import com.mol.ddmanage.client.purchase.PurchaseClient;
-import com.mol.ddmanage.config.Dingding_config;
 import com.mol.ddmanage.mapper.StartInspectionMapper;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +125,7 @@ public class StartInspectionService
             for (int n=1;n<=8;n++)
             {
                 //获取公司表
-                ArrayList<Map> app_auth_org=startInspectionMapper.Get_app_auth_org(Dingding_config.CorpId);
+                ArrayList<Map> app_auth_org=startInspectionMapper.Get_app_auth_org();
                 //表不为空时
                 if (app_org_buy_channel_approve_middle.size()!=0)
                 {

@@ -117,8 +117,8 @@ public class LoginService {
         }else{
 
            Example userExample = new Example(AppUser.class);
-           userExample.and().andEqualTo("userName",ddUser.getName());
-           userExample.and().andEqualTo("appAuthOrgId",appAuthOrg.get(0).getId());
+           userExample.and().andEqualTo("userName",ddUser.getName())
+                    .andEqualTo("appAuthOrgId",appAuthOrg.get(0).getId());
            List<AppUser> appUserlist = appUserMapper.selectByExample(userExample);
            if(appUserlist.size() == 0){
                AppUser newAppUser = saveUser(ddUser,appAuthOrg.get(0).getId());

@@ -14,6 +14,7 @@ import com.mol.purchase.service.dingding.purchase.StrategyPurchaseService;
 import com.mol.purchase.service.dingding.workBean.TobeNegotiatedService;
 import entity.ServiceResult;
 import lombok.extern.java.Log;
+import org.apache.solr.client.solrj.io.eval.IFFTEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,41 +50,195 @@ public class TobeNegotiatedController {
      * @param status negotiateding
      * @return
      */
-    @RequestMapping(value = "/getList", method = RequestMethod.GET)
-    public List<fyPurchase> getNetoList(String orgId,String status,String secondStatus,String userId ,int pageNum,int pageSize){
+//    @RequestMapping(value = "/getList", method = RequestMethod.GET)
+//    public List<fyPurchase> getNetoList(String orgId,String status,String secondStatus,String userId ,int pageNum,int pageSize){
+//
+//        List<fyPurchase> list = new ArrayList<>();
+//        //通过组织id 查询登录人的组织信息
+//        AppAuthOrg appAuthOrg=loginService.AppAuthOrgByOrgId(orgId);
+//        log.info("通过组织id 查询登录人的组织信息："+appAuthOrg);
+//        //通过公司id，查询所有采购的议价负责人员list
+//        List<AppOrgBuyChannelApproveMiddle> appOrgMidList=loginService.findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(orgId,userId);
+//        //在list中查询当前登录人负责的内容list
+//        //String mainPersonId = appAuthOrg.getPurchaseMainPerson();
+//        //议价人员信息
+//        //AppUser appUser = loginService.one(mainPersonId);
+//
+//        if (appOrgMidList!=null && appOrgMidList.size()>0){
+//            log.info("登录信息属于采购负责人");
+//            //是 展示所有状态，公司符合的order
+//            //list=negotiatedService.findListByOrgId(orgId,status,secondStatus,pageNum,pageSize);
+//            //获取负责的采购途径buychannelId
+//            List<String > buyChannelList=loginService.getBuyChannelIdArrFromAppOrgMidList(appOrgMidList);
+//            log.info("当前登录人负责议价的采购途径:"+buyChannelList);
+//            list=negotiatedService.findListByOrgIdAndBuychannelAndStatus(orgId,status,secondStatus, buyChannelList,pageNum,pageSize);
+//            if (pageNum==1){
+//                //首页添加
+//                List<fyPurchase> listIfOk = negotiatedService.findListIfOk(orgId, status, secondStatus, userId, pageNum, pageSize);
+//                if (listIfOk.size()>0){
+//                    list.addAll(listIfOk);
+//                }
+//            }
+//        }else {
+//            log.info("登录信息属于不采购负责人");
+//            //查询全部，遍历
+//            list=negotiatedService.findListIfOk(orgId,status,secondStatus,userId,pageNum,pageSize);
+//        }
+//
+//
+//        //要求list
+//         return list;
+//    }
 
-        List<fyPurchase> list = new ArrayList<>();
-        //通过组织id 查询登录人的组织信息
-        AppAuthOrg appAuthOrg=loginService.AppAuthOrgByOrgId(orgId);
-        log.info("通过组织id 查询登录人的组织信息："+appAuthOrg);
-        //通过公司id，查询所有采购的议价负责人员list
-        List<AppOrgBuyChannelApproveMiddle> appOrgMidList=loginService.findAppOrgBuyChannelApproveMiddleByOrgIdAndPurchaseMainPersonId(orgId,userId);
-        //在list中查询当前登录人负责的内容list
-        //String mainPersonId = appAuthOrg.getPurchaseMainPerson();
-        //议价人员信息
-        //AppUser appUser = loginService.one(mainPersonId);
+    /**
+     * 待议价数量
+     */
+    @GetMapping("/getTobenegotiatedCount")
+    public ServiceResult getTobenegotiatedCount(String orgId,String status,String userId){
+        log.info("查询待议价数量，参数：status:"+status+",userId:"+userId+",orgId"+orgId);
 
-        if (appOrgMidList!=null && appOrgMidList.size()>0){
-            log.info("登录信息属于采购负责人");
-            //是 展示所有状态，公司符合的order
-            //list=negotiatedService.findListByOrgId(orgId,status,secondStatus,pageNum,pageSize);
-            //获取负责的采购途径buychannelId
-            List<String > buyChannelList=loginService.getBuyChannelIdArrFromAppOrgMidList(appOrgMidList);
-            log.info("当前登录人负责议价的采购途径:"+buyChannelList);
-            list=negotiatedService.findListByOrgIdAndBuychannelAndStatus(orgId,status,secondStatus, buyChannelList,pageNum,pageSize);
-            if (pageNum==1){
-                //首页添加
-                List<fyPurchase> listIfOk = negotiatedService.findListIfOk(orgId, status, secondStatus, userId, pageNum, pageSize);
-                if (listIfOk.size()>0){
-                    list.addAll(listIfOk);
-                }
-            }
+        if(status != null && userId != null && orgId!=null ){
+            log.info("待议价查数量参数合法");
+            Integer count=negotiatedService.findCountByUserIdAndStatus(orgId,userId,status);
+            log.info("查询到自己发布的待议价的订单数量为："+count);
+            Integer count_2=negotiatedService.findCountByStatusAndNePNotNullAndStaffIdNotEqualUserId(orgId,userId,status);
+            log.info("查询到参与待议价的订单数量为："+count_2);
+            return ServiceResult.success(count+count_2);
         }else {
-            log.info("登录信息属于不采购负责人");
-            //查询全部，遍历
-            list=negotiatedService.findListIfOk(orgId,status,secondStatus,userId,pageNum,pageSize);
+            log.info("待议价查数量参数不合法");
+            return ServiceResult.failureMsg("查询失败");
         }
-         return list;
+    }
+
+    /**
+     * 待议价list
+     */
+    @GetMapping("/getTobenegotiatedList")
+    public ServiceResult getTobenegotiatedList(String orgId,String status,String userId,int pageNum,int pageSize){
+        log.info("查询待议价list，参数：status:"+status+",userId:"+userId);
+        List<fyPurchase> list =new ArrayList<>();
+        if(status != null && userId != null){
+            log.info("待议价查list参数合法");
+            list=negotiatedService.findListByUsrIdAndStatus(orgId,userId,status,pageNum,pageSize);
+            if(pageNum==1){
+              List<fyPurchase> purList=negotiatedService.findListByOrgIdAndStatusAndStaffIdNotEuqalUserId(orgId,userId,status);
+              purList=negotiatedService.getList(purList,userId);
+              log.info("参与的待议价的list："+purList.size());
+              list.addAll(purList);
+            }
+            log.info("查询到待议价的订单数量为："+list.size());
+            return ServiceResult.success(list);
+        }else {
+            log.info("待议价查list参数不合法");
+            return ServiceResult.failureMsg("查询失败");
+        }
+    }
+
+    /**
+     * 已审批数量
+     */
+    @GetMapping("/getCompleteBargainingount")
+    public ServiceResult getCompleteBargainingount(String orgId,String statusPass,String statusRefuse,String userId){
+        log.info("查询已审批数量，参数：orgid："+orgId+",statusPass:"+statusPass+",statusRefuse:"+statusRefuse+",userId:"+userId);
+
+        //查询
+        if(orgId != null && userId != null && statusPass!=null && statusRefuse!=null){
+            log.info("已审批查询数量参数合法");
+
+            List<AppOrgBuyChannelApproveMiddle> aobcmList=negotiatedService.findAppOrgBuyChannelApproveMiddleByOrgId(orgId);
+            List<String> channelIdList=negotiatedService.getChannelIdByUserId(aobcmList,userId);
+
+            Integer count=0;
+            if(channelIdList!=null && channelIdList.size()>0){
+                count=negotiatedService.findCountByChannelListAndStatus(channelIdList,statusPass,statusRefuse);
+                log.info("查询到已审批的订单数量为："+count);
+
+            }
+            return ServiceResult.success(count);
+
+        }else {
+            log.info("已审批查询数量参数不合法");
+            return ServiceResult.failureMsg("查询失败");
+        }
+    }
+
+    /**
+     *已审批list
+     */
+    @GetMapping("/getCompleteBargainingList")
+    public ServiceResult getCompleteBargainingList(String orgId,String statusPass,String statusRefuse,String userId,int pageNum,int pageSize){
+        log.info("查询已审批数量，参数：orgid："+orgId+",statusPass:"+statusPass+",statusRefuse:"+statusRefuse+",userId:"+userId);
+        if(orgId != null && userId != null && statusPass!=null && statusRefuse!=null){
+            log.info("已审批查list参数合法");
+
+            List<AppOrgBuyChannelApproveMiddle> aobcmList=negotiatedService.findAppOrgBuyChannelApproveMiddleByOrgId(orgId);
+            List<String> channelIdList=negotiatedService.getChannelIdByUserId(aobcmList,userId);
+
+            List<fyPurchase>list = new ArrayList<>();
+            if(channelIdList!=null && channelIdList.size()>0){
+                list=negotiatedService.findPurlistByChannelListAndStatus(channelIdList,statusPass,statusRefuse,pageNum,pageSize);
+                log.info("查询到已审批的订单数量为："+list.size());
+
+            }
+            log.info("查询到已审批的订单数量为："+list.size());
+            return ServiceResult.success(list);
+        }else {
+            log.info("已审批查询list参数不合法");
+            return ServiceResult.failureMsg("查询失败");
+        }
+    }
+
+    /**
+     * 已议价数量
+     */
+    @GetMapping("/getCompleteBargainedCount")
+    public ServiceResult getCompleteBargainedCount(String orgId,String status,String userId){
+        log.info("查询已议价数量，参数：orgid："+orgId+",status:"+status+",userId:"+userId);
+
+        int sum=0;
+        //查询
+        if(orgId != null && userId != null && status!=null ){
+            log.info("已议价查询数量参数合法");
+
+            //1.先查询自己发布的订单数量
+            int count=negotiatedService.findCountByOrgIdAndUserIdAndStatus(orgId,userId,status);
+            log.info("第一个count："+count);
+            //2.查询有参与议价的订单
+            List<fyPurchase> list=negotiatedService.findListByUserIdNotEqualStaffIdAndStatus(userId,status);
+            //2.1 查询自己参与的数量
+            int count2=negotiatedService.getCountFromPurList(list,userId);
+            log.info("第二个count:"+count2);
+            //3.返回sum;
+            sum=count+count2;
+            log.info("已议价sum:"+sum);
+            return ServiceResult.success(sum);
+        }else {
+            log.info("已议价查询数量参数不合法");
+            return ServiceResult.failureMsg("查询失败");
+        }
+    }
+
+    /**
+     *已议价list
+     */
+    @GetMapping("/getCompleteBargainedList")
+    public ServiceResult getCompleteBargainedList(String orgId,String status,String userId,int pageNum,int pageSize){
+        log.info("查询已议价List，参数：orgid："+orgId+",status:"+status+",userId:"+userId);
+        if(orgId != null && userId != null && status!=null ){
+            log.info("已议价查询list参数合法");
+            List<fyPurchase> purList=negotiatedService.findListByOrgIdAndStaffId(orgId,userId,status,pageNum,pageSize);
+            purList=negotiatedService.getList(purList,userId);
+            if (purList==null || purList.size()<pageSize){
+                pageNum++;
+                List<fyPurchase> purList2=negotiatedService.findListByOrgIdAndStaffId(orgId,userId,status,pageNum,pageSize);
+                purList2=negotiatedService.getList(purList,userId);
+                purList.addAll(purList2);
+            }
+            return ServiceResult.success(purList);
+        }else {
+            log.info("已议价查询list参数不合法");
+            return ServiceResult.failureMsg("查询失败");
+        }
     }
 
     /**

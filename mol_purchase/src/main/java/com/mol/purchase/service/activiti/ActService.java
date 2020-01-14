@@ -831,10 +831,9 @@ public class ActService {
         return null;
     }
 
-    public AppPurchaseApprove findAppPurchaseApproveByIdAndPurchaseMainPerson(String id, String userId) {
+    public AppPurchaseApprove findAppPurchaseApproveByIdAndPurchaseMainPerson(String id) {
         AppPurchaseApprove t = new AppPurchaseApprove();
         t.setId(id);
-        t.setPurchaseMainPerson(userId);
         return appPurchaseApproveMapper.selectOne(t);
     }
 

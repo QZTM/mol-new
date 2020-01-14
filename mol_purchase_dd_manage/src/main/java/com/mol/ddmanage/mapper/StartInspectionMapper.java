@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface StartInspectionMapper
 {
-    ArrayList<Map> Get_app_auth_org(String dd_org_corp_id);//获取公司表
+    ArrayList<Map> Get_app_auth_org();//获取公司表
      ArrayList<Map> Get_fy_buy_channel();//获取状态表
     void insert_fy_buy_channel_row(String id,String name,String state);//在状态表插入一条数据
 

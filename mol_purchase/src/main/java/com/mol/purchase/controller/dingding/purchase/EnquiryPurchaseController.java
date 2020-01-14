@@ -68,7 +68,7 @@ public class EnquiryPurchaseController {
            return ServiceResult.failureMsg("提交失败");
         }
         //添加定时任务：
-        quartzClient.addquoteendjobwithendtime(stobj.getId(),stobj.getDeadLine());
+        //quartzClient.addquoteendjobwithendtime(stobj.getId(),stobj.getDeadLine());
         logger.info("定时任务设置成功");
         shoppingService.sendMessage(stobj,sendMsmHandler,sendNotification,XiaoNiuMsmTemplate.提醒供应商报价模板());
         return ServiceResult.successMsg("提交成功");

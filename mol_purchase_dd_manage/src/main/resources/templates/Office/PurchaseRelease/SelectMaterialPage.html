@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -15,7 +15,7 @@
       </div>
    </div>
    <script src="/layui/layui.all.js"></script>
-<script th:inline="javascript">
+<script>
     function start_landing()
     {
         getTypeFirst()
@@ -25,7 +25,7 @@
     {
         $.ajax({
             type: 'POST',
-            url: [[${session.PurchaseURL}]]+'/item/getTypeFirst',
+            url: 'http://139.129.240.48:8080/item/getTypeFirst',
             dataType: 'json',
            // data:{DeparmentId:DeparmentId},
             // headers:{  'eticket': app.globalData.eticket},
@@ -73,7 +73,7 @@
         {
             $.ajax({
                 type: 'POST',
-                url: [[${session.PurchaseURL}]]+'/item/getTypeByParentId',
+                url: 'http://139.129.240.48:8080/item/getTypeByParentId',
                 dataType: 'json',
                 data:{id:id},
                 // headers:{  'eticket': app.globalData.eticket},
@@ -101,7 +101,7 @@
                     {
                         $.ajax({
                             type: 'POST',
-                            url: [[${session.PurchaseURL}]]+'/item/getItemByTypeId',
+                            url: 'http://139.129.240.48:8080/item/getItemByTypeId',
                             dataType: 'json',
                             data:{id:id},
                             // headers:{  'eticket': app.globalData.eticket},

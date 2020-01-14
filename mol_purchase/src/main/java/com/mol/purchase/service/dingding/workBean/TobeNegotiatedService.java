@@ -469,4 +469,137 @@ public class TobeNegotiatedService {
             return null;
         }
     }
+
+    public List<fyPurchase> findListByUsrIdAndStatus(String orgId,String userId, String status, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        Example e = new Example(fyPurchase.class);
+        e.and().andEqualTo("staffId",userId).andEqualTo("status",status).andEqualTo("orgId",orgId);
+        return fyPurchaseMapper.selectByExample(e);
+    }
+
+    public Integer findCountByUserIdAndStatus(String orgId,String userId, String status) {
+        Example e = new Example(fyPurchase.class);
+        e.and().andEqualTo("staffId",userId).andEqualTo("status",status).andEqualTo("orgId",orgId);
+        e.setOrderByClause("createTime desc");
+        return fyPurchaseMapper.selectCountByExample(e);
+    }
+
+    public List<AppOrgBuyChannelApproveMiddle> findAppOrgBuyChannelApproveMiddleByOrgId(String orgId) {
+        Example e = new Example(AppOrgBuyChannelApproveMiddle.class);
+        e.and().andEqualTo("appOrgId",orgId);
+        return appOrgBuyChannelApproveMiddleMapper.selectByExample(e);
+    }
+
+    public List<String> getChannelIdByUserId(List<AppOrgBuyChannelApproveMiddle> aobcmList, String userId) {
+        List<String> list=new ArrayList<>();
+        if (aobcmList!=null && aobcmList.size()>0){
+            for (AppOrgBuyChannelApproveMiddle aobc : aobcmList) {
+                Example e = new Example(AppPurchaseApprove.class);
+                e.and().andEqualTo("id",aobc.getPurchaseApproveId());
+                AppPurchaseApprove apa = appPurchaseApproveMapper.selectOneByExample(e);
+                if (apa!=null){
+                    String paList = apa.getPurchaseApproveList();
+                    if (paList!=null && paList.length()>0){
+                        for (String s : paList.split(",")) {
+                            if (userId.equals(s)){
+                                list.add(aobc.getBuyChannelId());
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public Integer findCountByChannelListAndStatus(List<String> channelIdList, String statusPass, String statusRefuse) {
+        return fyPurchaseMapper.findCountByStatusAndChnnelList(statusPass,statusRefuse,channelIdList);
+    }
+
+    public List<fyPurchase> findPurlistByChannelListAndStatus(List<String> channelIdList, String statusPass, String statusRefuse,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        return fyPurchaseMapper.findListByStatusAndChnnelList(statusPass,statusRefuse,channelIdList);
+    }
+
+    public int findCountByOrgIdAndUserIdAndStatus(String orgId, String userId, String status) {
+        Example e = new Example(fyPurchase.class);
+        e.and().andEqualTo("orgId",orgId).andEqualTo("staffId",userId).andGreaterThanOrEqualTo("status",status);
+        return fyPurchaseMapper.selectCountByExample(e);
+    }
+
+    public List<fyPurchase> findListByUserIdNotEqualStaffIdAndStatus(String userId, String status) {
+        Example e = new Example(fyPurchase.class);
+        e.and().andNotEqualTo("staffId",userId).andGreaterThanOrEqualTo("status",status);
+        return fyPurchaseMapper.selectByExample(e);
+    }
+
+    public int getCountFromPurList(List<fyPurchase> list, String userId) {
+        int count=0;
+        if (list!=null && list.size()>0){
+            for (fyPurchase purchase : list) {
+                String negotiatePerson = purchase.getNegotiatePerson();
+                if (negotiatePerson!=null && negotiatePerson.length()>0){
+                    for (String s : negotiatePerson.split(",")) {
+                        if (userId.equals(s)){
+                            count++;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    public List<fyPurchase> findListByOrgIdAndStaffId(String orgId, String userId, String status, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        Example e = new Example(fyPurchase.class);
+        e.and().andEqualTo("orgId",orgId)
+                .andGreaterThan("status",OrderStatus.UNDER_REVIEW)
+                .andEqualTo("staffId",userId)
+                .orIsNotNull("negotiatePerson");
+        e.setOrderByClause("create_time desc");
+        return fyPurchaseMapper.selectByExample(e);
+    }
+
+    public List<fyPurchase> getList(List<fyPurchase> purList,String userId) {
+        List<fyPurchase> list =new ArrayList<>();
+        if (purList!=null && purList.size()>0){
+            for (fyPurchase pur : purList) {
+                if (pur.getStaffId()!=null && pur.getStaffId().equals(userId)){
+                    list.add(pur);
+                }else {
+                    String negotiatePerson = pur.getNegotiatePerson();
+                    if (negotiatePerson!=null && negotiatePerson.length()>0){
+                        for (String s : negotiatePerson.split(",")) {
+                            if (userId.equals(s)){
+                                list.add(pur);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public Integer findCountByStatusAndNePNotNullAndStaffIdNotEqualUserId(String orgId,String userId, String status) {
+        Example e = new Example(fyPurchase.class);
+        e.and().andEqualTo("status",status)
+                .andEqualTo("orgId",orgId)
+                .andNotEqualTo("staffId",userId)
+                .andIsNotNull("negotiatePerson");
+        return fyPurchaseMapper.selectCountByExample(e);
+    }
+
+    public List<fyPurchase> findListByOrgIdAndStatusAndStaffIdNotEuqalUserId(String orgId, String userId, String status) {
+        Example e =new Example(fyPurchase.class);
+        e.and().andEqualTo("orgId",orgId)
+                .andNotEqualTo("staffId",userId)
+                .andEqualTo("status",status)
+                .andIsNotNull("negotiatePerson");
+        return fyPurchaseMapper.selectByExample(e);
+    }
 }

@@ -3,7 +3,7 @@ package com.mol.ddmanage.Service.Office;
 import com.mol.ddmanage.Ben.Office.AnnouncementEditPageben;
 import com.mol.ddmanage.Util.DataUtil;
 import com.mol.ddmanage.Util.Dingding_Tools;
-import com.mol.ddmanage.mapper.Office.AnnouncementEditPageMapper;
+import com.mol.ddmanage.mapper.Office.announcementEditPageMapper;
 import org.springframework.stereotype.Service;
 import util.IdWorker;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 public class AnnouncementEditPageService
 {
     @Resource
-    private AnnouncementEditPageMapper announcementEditPageMapper;
+    private announcementEditPageMapper announcementEditPageMapper;
     public Map AnnouncementListLogic(AnnouncementEditPageben json)
     {
         Map map=new HashMap();
