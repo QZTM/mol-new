@@ -250,7 +250,7 @@ public class EnquiryPurchaseService {
 
         Example e=new Example(Supplier.class);
         Example.Criteria and = e.and();
-        and.andEqualTo("industryFirst",stobj.getPkMarbasclass()).andEqualTo("ifAttrNormal",1);
+        and.andEqualTo("supstateNormal",1).andEqualTo("ifAttrNormal",1);
         return  supplierMapper.selectByExample(e);
 
     }

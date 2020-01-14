@@ -226,7 +226,7 @@ public class StrategyPurchaseService {
     public List<Supplier> findSupplierByPur(StraregyObj stobj) {
         Example e=new Example(Supplier.class);
         Example.Criteria and = e.and();
-        and.andEqualTo("industryFirst",stobj.getPkMarbasclass()).andEqualTo("ifAttrStrategy",1);
+        and.andEqualTo("supstateStrategy",1).andEqualTo("ifAttrStrategy",1);
         return  supplierMapper.selectByExample(e);
     }
 }
