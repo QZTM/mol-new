@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
@@ -10,7 +11,7 @@
 
     <meta name="keywords" content="">
     <meta name="description" content="">
-
+<!---->
     <!--[if lt IE 9]>
     <meta http-equiv="refresh" content="0;ie.html" />
     <![endif]-->
@@ -453,10 +454,47 @@
     <!-- 自定义js -->
     <script src="/js/hAdmin.js?v=4.1.0"></script>
     <script type="text/javascript" src="/js/index.js"></script>
-
+    <script th:src="@{/js/dingtalk.open.js}"></script>
+    <script src="/js/init.js"></script>
     <!-- 第三方插件 -->
     <script src="/js/plugins/pace/pace.min.js"></script>
 
+<script th:inline="javascript">
+    /**
+     * 初始化逻辑：
+     */
+            localStorage.clear();
+            //获取运行环境
+            var localRunEnv = getRunEnv();
+            console.log("获取到的运行环境为：runEnv:"+localRunEnv);
+            var localRunEnvExl = "";
+            if ("android----dd" == localRunEnv) {
+                localRunEnvExl = "这是安卓手机的钉钉运行环境";
+                dd.ready(function () {
+                    android_dd_init_action(corpid);
+                })
+                //getUserAndOrgByEnvWithdd();
+            } else if ("iphone----dd" == localRunEnv) {
+                localRunEnvExl = "这是苹果手机的钉钉运行环境";
+                dd.ready(function () {
+                    android_dd_init_action(corpid);
+                })
+            } else if ("android--wx" == localRunEnv) {
+                localRunEnvExl = "这是安卓微信运行环境";
+                //getUserAndOrgByEnvWithwx();
+            } else if ("android----wxwork" == localRunEnv) {
+                localRunEnvExl = "这是安卓企业微信运行环境";
+                getUserAndOrgByEnvWithwxwork();
+            } else if (localRunEnv.indexOf("pc") != -1) {
+                localRunEnvExl = "电脑运行环境";
+                // getUserAndOrgByEnvWithPc();
+                android_dd_init_action('ding6ef23b66fc0611a335c2f4657eb6378f');
+            }
+            console.log("判断当前运行的环境为：");
+            console.log(localRunEnvExl);
+
+
+</script>
 </body>
 
 </html>
