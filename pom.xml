@@ -21,6 +21,7 @@
         <module>mol_purchase_dd_manage</module>
         <module>mol_expert</module>
         <module>mol_notification</module>
+        <module>mol_purchase_pc</module>
 
     </modules>
     <packaging>pom</packaging>
@@ -258,7 +259,7 @@
                 <supplierhttp>http://</supplierhttp>
                 <supplierip>172.31.17.90</supplierip>
                 <supplierport>8083</supplierport>
-                <supplierdomain>114.215.24.113:8080</supplierdomain>
+                <supplierdomain>118.190.88.46:8080</supplierdomain>
                 <suppliercorpid>ding4d32c63d9a3a6d95</suppliercorpid>
                 <supplieragentid>345729168</supplieragentid>
                 <supplierappkey>dingylxzi0scjy4elivp</supplierappkey>

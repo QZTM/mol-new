@@ -44,7 +44,7 @@ public class XiaoNiuMsm implements SendMsmHandler{
     /**
      * 小牛云应用名称
      */
-    public static final String SIGNNAME_MEYG = "茉尔易购";
+    public static final String SIGNNAME_MEYG = "茉尔";
 
 
     //产品名称:云通信短信API产品,开发者无需替换
@@ -82,6 +82,7 @@ public class XiaoNiuMsm implements SendMsmHandler{
             SendSmsResponse response = this.sendSms(signName,template.getId(),phoneNumber,oldPhoneCode);
             log.info("短信发送响应结果："+response.getMessage());
             if("OK".equals(response.getMessage())){
+                cacheHandle.saveStr(phoneNumber,5*60,oldPhoneCode);
                 return "success"+oldPhoneCode;
             }
 //            if (true) {
