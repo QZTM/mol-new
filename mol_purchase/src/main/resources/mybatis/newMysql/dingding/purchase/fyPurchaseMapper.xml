@@ -156,4 +156,29 @@
             AND `status` BETWEEN (#{status} )
             AND ( #{status_second} )
     </select>
+
+    <select id="findCountByStatusAndChnnelList"  resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM `fy_purchase` where status =#{statusPass} or `status`=#{statusRefuse} and buy_channel_id in
+        <foreach collection="list" open="(" close=")" index="index" item="item" separator=",">
+            #{item}
+        </foreach>
+
+    </select>
+
+    <select id="findListByStatusAndChnnelList" resultType="com.mol.purchase.entity.dingding.solr.fyPurchase">
+        SELECT
+        id,
+        buy_channel_id,
+        goods_type,
+        apply_cause,
+        order_number,
+        `status`,
+        create_time FROM `fy_purchase` where status =#{statusPass} or status=#{statusRefuse} and buy_channel_id in
+        <foreach collection="list" open="(" close=")" index="index" item="item" separator=",">
+            #{item}
+        </foreach>
+        ORDER BY create_time desc
+    </select>
 </mapper>

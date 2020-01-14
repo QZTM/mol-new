@@ -119,14 +119,14 @@ ActController {
     }
 
     @GetMapping("/getActKey")
-    public ServiceResult getActKey(String orgId,String buyChannelId,String userId){
-        if (orgId==null || buyChannelId ==null || userId==null){
+    public ServiceResult getActKey(String orgId,String buyChannelId){
+        if (orgId==null || buyChannelId ==null ){
             return ServiceResult.failureMsg("审批实例查询失败，请稍后重试");
         }
         //先查询公司的
         AppOrgBuyChannelApproveMiddle appOrgBuyChannelApproveMiddle=actService.findAppOrgBuyChannelApproveMiddleByOrgIdAndBuyChannellId(orgId,buyChannelId);
         if (appOrgBuyChannelApproveMiddle!=null){
-            AppPurchaseApprove appPurchaseApprove=actService.findAppPurchaseApproveByIdAndPurchaseMainPerson(appOrgBuyChannelApproveMiddle.getPurchaseApproveId(),userId);
+            AppPurchaseApprove appPurchaseApprove=actService.findAppPurchaseApproveByIdAndPurchaseMainPerson(appOrgBuyChannelApproveMiddle.getPurchaseApproveId());
             //查询
             if (appPurchaseApprove!=null){
                 return ServiceResult.success(appPurchaseApprove);
