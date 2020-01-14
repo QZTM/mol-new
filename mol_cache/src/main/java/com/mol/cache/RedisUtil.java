@@ -84,8 +84,8 @@ public class RedisUtil {
             jedisPoolConfig.setMaxWaitMillis(2000);
             //对拿到的connection进行validateObject校验
             jedisPoolConfig.setTestOnBorrow(true);
-            //jedis = new JedisCluster(nodes,10000,1000,1000,"ald377",jedisPoolConfig);
-            jedis = new JedisCluster(nodes, jedisPoolConfig);
+            jedis = new JedisCluster(nodes,10000,1000,1000,"ald377",jedisPoolConfig);
+            //jedis = new JedisCluster(nodes, jedisPoolConfig);
         }
     }
 

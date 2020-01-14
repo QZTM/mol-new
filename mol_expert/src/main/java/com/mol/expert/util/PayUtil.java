@@ -73,10 +73,12 @@ public class PayUtil//微信支付需要用到的算法
     }
 
     private static boolean isValidChar(char ch) {
-        if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'))
+        if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
             return true;
-        if ((ch >= 0x4e00 && ch <= 0x7fff) || (ch >= 0x8000 && ch <= 0x952f))
+        }
+        if ((ch >= 0x4e00 && ch <= 0x7fff) || (ch >= 0x8000 && ch <= 0x952f)) {
             return true;// 简体中文汉字编码
+        }
         return false;
     }
 
